@@ -1,0 +1,635 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>http://xzhewei.com/about/index.html</loc>
+    
+    <lastmod>2023-03-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/about/index%20copy.html</loc>
+    
+    <lastmod>2023-03-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/uncategorized/%E5%A4%9A%E7%94%A8%E6%88%B7%E5%A4%9A%E8%B4%A6%E6%88%B7GitHub%E7%9A%84ssh%E8%AE%BE%E7%BD%AE/</loc>
+    
+    <lastmod>2023-03-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/about/index-bak.html</loc>
+    
+    <lastmod>2023-03-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Data-Distillation-Towards-Omni-Supervised-Learning/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Learning-non-maximum-suppression/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Repulsion-Loss-Detecting-Pedestrians-in-a-Crowd/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-How-Far-are-We-from-Solving-Pedestrian-Detection/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Seq-NMS-for-Video-Object-Detection/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Note-Road-detection-using-convolutional-neural-networks/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Note-Seeing-Small-Faces-from-Robust-Anchors-Perspective/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DuBox-No-Prior-Box-Objection-Detection-via-Residual-Dual-Scale-Detectors/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-CityPersons-A-Diverse-Dataset-for-Pedestrian-Detection/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Tutorial-%E6%95%99%E7%A8%8B/VPN-shadowsocks-and-v2ray/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Semantic-Segmentation/Note-Rethinking-Atrous-Convolution-for-Semantic-Image-Segmentation/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Soft-NMS-%E2%80%93-Improving-Object-DetectionWith-One-Line-of-Code/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Flow-Guided-Feature-Aggregation-for-Video-Object-Detection/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Training-Region-Based-Object-Detectors-with-Online-Hard-Example-Mining/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Tutorial-%E6%95%99%E7%A8%8B/remote-debug/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-An-Analysis-of-Scale-Invariance-in-Object-Detection-SNIP/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Seq-nms-for-video-object-detection/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Tutorial-%E6%95%99%E7%A8%8B/Markdown-storage-image/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Deep-Feature-Flow-for-Video-Recognition/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DeNet-Scalable-Real-time-Object-Detection-with-Directed-Sparse-Sampling/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-A-unified-multi-scale-deep-convolutional-neural-network-for-fast-object-detection/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Faster-R-CNN-Towards-Real-Time-Object-Detection-with-Region-Proposal-Networks/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Is-Faster-R-CNN-Doing-Well-for-Pedestrian-Detection/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Paper-Archives-%E8%AE%BA%E6%96%87%E9%9B%86/Object-Detection/</loc>
+    
+    <lastmod>2019-05-21</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Tutorial-%E6%95%99%E7%A8%8B/%E4%BF%AE%E6%94%B9Matlab%E9%BB%98%E8%AE%A4%E7%BC%96%E7%A0%81%E6%A0%BC%E5%BC%8F%E4%B8%BAUTF-8/</loc>
+    
+    <lastmod>2019-04-22</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Tutorial-%E6%95%99%E7%A8%8B/Hexo-Create-personal-blog/</loc>
+    
+    <lastmod>2018-10-27</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Deep-Learning-Dev/Detectron-caffemodel2pkl/</loc>
+    
+    <lastmod>2018-10-27</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/Tutorial-%E6%95%99%E7%A8%8B/TensorFlow-on-Ubuntu16-04/</loc>
+    
+    <lastmod>2018-10-27</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/404/index.html</loc>
+    
+    <lastmod>2018-10-27</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/categories/index.html</loc>
+    
+    <lastmod>2018-10-27</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/index.html</loc>
+    
+    <lastmod>2018-10-27</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+
+  <url>
+    <loc>http://xzhewei.com/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+
+  
+  <url>
+    <loc>http://xzhewei.com/tags/shadowsocks/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/v2ray/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/vpn/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Pedestrian-Detection/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Object-Detection/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/hexo/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/next/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/blog/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Datasets/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/CityPersons/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Multi-scale/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Atrous-Convolution/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Image-Segmentation/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/NMS/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/ICCV2017/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Video-Object-Detection/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/ROI/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/markdown/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Detectron/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/OHEM/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/tensorflow/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/python/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/SNIP/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Omni-Supervised-Learning/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Repulsion-Loss/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Post-Processing/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Matlab/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Road-Detection/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Anchor/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Small-Face/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/ssh/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/github/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Anchor-Free/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+
+  
+  <url>
+    <loc>http://xzhewei.com/categories/Tutorial-%E6%95%99%E7%A8%8B/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/categories/Note-%E7%AC%94%E8%AE%B0/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/categories/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/categories/Note-%E7%AC%94%E8%AE%B0/Semantic-Segmentation/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/categories/Note-%E7%AC%94%E8%AE%B0/Object-Detection/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/categories/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/categories/Deep-Learning-Dev/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/categories/Paper-Archives-%E8%AE%BA%E6%96%87%E9%9B%86/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+</urlset>

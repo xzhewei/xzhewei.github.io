@@ -225,7 +225,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2023-03-31 15:20:49 / 修改时间：15:39:35" itemprop="dateCreated datePublished" datetime="2023-03-31T15:20:49+08:00">2023-03-31</time>
+      <time title="创建时间：2023-03-31 15:20:49 / 修改时间：17:33:18" itemprop="dateCreated datePublished" datetime="2023-03-31T15:20:49+08:00">2023-03-31</time>
     </span>
 
   
@@ -242,27 +242,18 @@
 <p>场景：</p>
 <p>用户名1：jobs</p>
 <p>用户名2：musk</p>
-<p>仓库1：<a href="mailto:&#103;&#105;&#x74;&#x40;&#103;&#105;&#x74;&#x68;&#x75;&#x62;&#46;&#99;&#111;&#109;">&#103;&#105;&#x74;&#x40;&#103;&#105;&#x74;&#x68;&#x75;&#x62;&#46;&#99;&#111;&#109;</a>:jobs&#x2F;apple.git</p>
-<p>仓库2：<a href="mailto:&#x67;&#x69;&#116;&#x40;&#103;&#105;&#x74;&#104;&#117;&#98;&#x2e;&#x63;&#111;&#109;">&#x67;&#x69;&#116;&#x40;&#103;&#105;&#x74;&#104;&#117;&#98;&#x2e;&#x63;&#111;&#109;</a>:musk&#x2F;tesla.git</p>
+<p>仓库1：<a href="mailto:&#x67;&#x69;&#116;&#x40;&#103;&#105;&#116;&#104;&#117;&#98;&#46;&#99;&#111;&#109;">&#x67;&#x69;&#116;&#x40;&#103;&#105;&#116;&#104;&#117;&#98;&#46;&#99;&#111;&#109;</a>:jobs&#x2F;apple.git</p>
+<p>仓库2：<a href="mailto:&#103;&#x69;&#116;&#x40;&#x67;&#105;&#116;&#104;&#x75;&#x62;&#x2e;&#99;&#x6f;&#109;">&#103;&#x69;&#116;&#x40;&#x67;&#105;&#116;&#104;&#x75;&#x62;&#x2e;&#99;&#x6f;&#109;</a>:musk&#x2F;tesla.git</p>
 <p>ssh密钥1：~&#x2F;.ssh&#x2F;jobs</p>
 <p>ssh密钥2：~&#x2F;.ssh&#x2F;musk</p>
-<p>首先，假设你已经按照官方教程将jobs.pub和musk.pub分别加入两个账户的ssh公钥中。</p>
-<p>在~&#x2F;.ssh目录下找到config文件，如果没有就创建一个</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">touch config # 创建config</span><br></pre></td></tr></table></figure>
-
-<p>然后在config中写入如下信息</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"># 该文件用于配置私钥对应的服务器</span><br><span class="line"># Default github user(first@mail.com)</span><br><span class="line">Host jobs.com</span><br><span class="line"> HostName github.com</span><br><span class="line"> User git</span><br><span class="line"> IdentityFile C:/Users/Administrator/.ssh/jobs</span><br><span class="line"></span><br><span class="line"> # second user(second@mail.com)</span><br><span class="line"> # 建一个github别名，新建的帐号使用这个别名做克隆和更新</span><br><span class="line">Host musk.com</span><br><span class="line"> HostName github.com</span><br><span class="line"> User git</span><br><span class="line"> IdentityFile C:/Users/Administrator/.ssh/musk</span><br></pre></td></tr></table></figure>
-
-
-
-<p>测试一下</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ssh -T jobs.com</span><br><span class="line">Hi jobs! You&#x27;ve successfully authenticated, but GitHub does not provide shell access.</span><br><span class="line">ssh -T musk.com</span><br><span class="line">Hi musk! You&#x27;ve successfully authenticated, but GitHub does not provide shell access.</span><br></pre></td></tr></table></figure>
-
-
-<p>出现以上内容说明设置成功。</p>
-<p>最后，如果用github进行发布hexo，deploy可以写为：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: jobs.com/jobs.github.io.git</span><br><span class="line">  branch: master</span><br><span class="line">  message: </span><br></pre></td></tr></table></figure>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/uncategorized/%E5%A4%9A%E7%94%A8%E6%88%B7%E5%A4%9A%E8%B4%A6%E6%88%B7GitHub%E7%9A%84ssh%E8%AE%BE%E7%BD%AE/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

@@ -2,6 +2,15 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://xzhewei.com/uncategorized/%E5%A4%9A%E7%94%A8%E6%88%B7%E5%A4%9A%E8%B4%A6%E6%88%B7GitHub%E7%9A%84ssh%E8%AE%BE%E7%BD%AE/</loc>
+    
+    <lastmod>2023-03-31</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://xzhewei.com/about/index.html</loc>
     
     <lastmod>2023-03-31</lastmod>
@@ -12,15 +21,6 @@
   
   <url>
     <loc>http://xzhewei.com/about/index%20copy.html</loc>
-    
-    <lastmod>2023-03-31</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://xzhewei.com/uncategorized/%E5%A4%9A%E7%94%A8%E6%88%B7%E5%A4%9A%E8%B4%A6%E6%88%B7GitHub%E7%9A%84ssh%E8%AE%BE%E7%BD%AE/</loc>
     
     <lastmod>2023-03-31</lastmod>
     
@@ -56,7 +56,7 @@
   </url>
   
   <url>
-    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Repulsion-Loss-Detecting-Pedestrians-in-a-Crowd/</loc>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Note-Road-detection-using-convolutional-neural-networks/</loc>
     
     <lastmod>2023-03-30</lastmod>
     
@@ -65,7 +65,7 @@
   </url>
   
   <url>
-    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/</loc>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Repulsion-Loss-Detecting-Pedestrians-in-a-Crowd/</loc>
     
     <lastmod>2023-03-30</lastmod>
     
@@ -83,6 +83,15 @@
   </url>
   
   <url>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/</loc>
+    
+    <lastmod>2023-03-30</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Seq-NMS-for-Video-Object-Detection/</loc>
     
     <lastmod>2023-03-30</lastmod>
@@ -92,7 +101,7 @@
   </url>
   
   <url>
-    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Note-Road-detection-using-convolutional-neural-networks/</loc>
+    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DuBox-No-Prior-Box-Objection-Detection-via-Residual-Dual-Scale-Detectors/</loc>
     
     <lastmod>2023-03-30</lastmod>
     
@@ -102,15 +111,6 @@
   
   <url>
     <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Note-Seeing-Small-Faces-from-Robust-Anchors-Perspective/</loc>
-    
-    <lastmod>2023-03-30</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DuBox-No-Prior-Box-Objection-Detection-via-Residual-Dual-Scale-Detectors/</loc>
     
     <lastmod>2023-03-30</lastmod>
     
@@ -344,6 +344,13 @@
 
   
   <url>
+    <loc>http://xzhewei.com/tags/Pedestrian-Detection/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://xzhewei.com/tags/shadowsocks/</loc>
     <lastmod>2023-03-31</lastmod>
     <changefreq>weekly</changefreq>
@@ -359,20 +366,6 @@
   
   <url>
     <loc>http://xzhewei.com/tags/vpn/</loc>
-    <lastmod>2023-03-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://xzhewei.com/tags/Pedestrian-Detection/</loc>
-    <lastmod>2023-03-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://xzhewei.com/tags/Object-Detection/</loc>
     <lastmod>2023-03-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -400,6 +393,13 @@
   </url>
   
   <url>
+    <loc>http://xzhewei.com/tags/Object-Detection/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://xzhewei.com/tags/Datasets/</loc>
     <lastmod>2023-03-31</lastmod>
     <changefreq>weekly</changefreq>
@@ -408,13 +408,6 @@
   
   <url>
     <loc>http://xzhewei.com/tags/CityPersons/</loc>
-    <lastmod>2023-03-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://xzhewei.com/tags/Multi-scale/</loc>
     <lastmod>2023-03-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -443,6 +436,13 @@
   
   <url>
     <loc>http://xzhewei.com/tags/ICCV2017/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Multi-scale/</loc>
     <lastmod>2023-03-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -498,6 +498,13 @@
   </url>
   
   <url>
+    <loc>http://xzhewei.com/tags/Omni-Supervised-Learning/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://xzhewei.com/tags/SNIP/</loc>
     <lastmod>2023-03-31</lastmod>
     <changefreq>weekly</changefreq>
@@ -505,7 +512,7 @@
   </url>
   
   <url>
-    <loc>http://xzhewei.com/tags/Omni-Supervised-Learning/</loc>
+    <loc>http://xzhewei.com/tags/Road-Detection/</loc>
     <lastmod>2023-03-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -533,21 +540,7 @@
   </url>
   
   <url>
-    <loc>http://xzhewei.com/tags/Road-Detection/</loc>
-    <lastmod>2023-03-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://xzhewei.com/tags/Anchor/</loc>
-    <lastmod>2023-03-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://xzhewei.com/tags/Small-Face/</loc>
+    <loc>http://xzhewei.com/tags/Anchor-Free/</loc>
     <lastmod>2023-03-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -568,13 +561,27 @@
   </url>
   
   <url>
-    <loc>http://xzhewei.com/tags/Anchor-Free/</loc>
+    <loc>http://xzhewei.com/tags/Anchor/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://xzhewei.com/tags/Small-Face/</loc>
     <lastmod>2023-03-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
 
+  
+  <url>
+    <loc>http://xzhewei.com/categories/Note-%E7%AC%94%E8%AE%B0/</loc>
+    <lastmod>2023-03-31</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
   
   <url>
     <loc>http://xzhewei.com/categories/Tutorial-%E6%95%99%E7%A8%8B/</loc>
@@ -584,7 +591,7 @@
   </url>
   
   <url>
-    <loc>http://xzhewei.com/categories/Note-%E7%AC%94%E8%AE%B0/</loc>
+    <loc>http://xzhewei.com/categories/Note-%E7%AC%94%E8%AE%B0/Object-Detection/</loc>
     <lastmod>2023-03-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -605,13 +612,6 @@
   </url>
   
   <url>
-    <loc>http://xzhewei.com/categories/Note-%E7%AC%94%E8%AE%B0/Object-Detection/</loc>
-    <lastmod>2023-03-31</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://xzhewei.com/categories/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/</loc>
     <lastmod>2023-03-31</lastmod>
     <changefreq>weekly</changefreq>
@@ -619,14 +619,14 @@
   </url>
   
   <url>
-    <loc>http://xzhewei.com/categories/Deep-Learning-Dev/</loc>
+    <loc>http://xzhewei.com/categories/Paper-Archives-%E8%AE%BA%E6%96%87%E9%9B%86/</loc>
     <lastmod>2023-03-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://xzhewei.com/categories/Paper-Archives-%E8%AE%BA%E6%96%87%E9%9B%86/</loc>
+    <loc>http://xzhewei.com/categories/Deep-Learning-Dev/</loc>
     <lastmod>2023-03-31</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

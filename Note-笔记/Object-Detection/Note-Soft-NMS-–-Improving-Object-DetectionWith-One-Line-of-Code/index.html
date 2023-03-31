@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"intellisoftx.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="AbstractNon-maximum suppression（NMS）是目标检测流程中重要的组成部分。首先根据得分对bbox排序，然后选择得分最高的bbox M, 将与M有较大重叠的bbox抑制掉。以前的方法中，如果一个bbox重叠率大于设定的阈值则称为漏检。所以，提出 Soft-NMS, 一个衰减得分与重叠率成函数关系。该方法在coco-style mAP评价尺度上都有提升。计算复杂度，参数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记《Soft-NMS – Improving Object Detection With One Line of Code》">
+<meta property="og:url" content="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Soft-NMS-%E2%80%93-Improving-Object-DetectionWith-One-Line-of-Code/index.html">
+<meta property="og:site_name" content="Intelligent Software X">
+<meta property="og:description" content="AbstractNon-maximum suppression（NMS）是目标检测流程中重要的组成部分。首先根据得分对bbox排序，然后选择得分最高的bbox M, 将与M有较大重叠的bbox抑制掉。以前的方法中，如果一个bbox重叠率大于设定的阈值则称为漏检。所以，提出 Soft-NMS, 一个衰减得分与重叠率成函数关系。该方法在coco-style mAP评价尺度上都有提升。计算复杂度，参数">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/6f066bd9-979f-4e52-b5bb-b7780a2527f4.jpg">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/921487d8-8ee5-4c41-9d33-827cc4764d92.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/4679005e-94d2-4be0-8914-8b115a254f8d.jpg">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/600fecc0-66a4-4aa8-8a76-627a24dc523c.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/e4682ee9-d71e-408d-b5cc-5f04721f1344.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/e5390b66-2484-47ee-987f-d0f7ee6af4d8.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/b4fd5cdb-5067-4fc2-8094-f7b8b457bb8e.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/3cc88fce-aba9-4a02-a6b1-2b52eaf15eb4.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/2260ccaa-9534-4582-a151-5f06675a3185.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/c479385e-adfc-48eb-bab3-fbf00ba48f02.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/1509521123325.png">
+<meta property="article:published_time" content="2017-11-11T12:27:08.000Z">
+<meta property="article:modified_time" content="2023-03-30T11:43:21.442Z">
+<meta property="article:author" content="intellisoftx">
+<meta property="article:tag" content="Object Detection">
+<meta property="article:tag" content="ICCV2017">
+<meta property="article:tag" content="NMS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/6f066bd9-979f-4e52-b5bb-b7780a2527f4.jpg">
+
+
+<link rel="canonical" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Soft-NMS-%E2%80%93-Improving-Object-DetectionWith-One-Line-of-Code/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Soft-NMS-%E2%80%93-Improving-Object-DetectionWith-One-Line-of-Code/","path":"Note-笔记/Object-Detection/Note-Soft-NMS-–-Improving-Object-DetectionWith-One-Line-of-Code/","title":"论文笔记《Soft-NMS – Improving Object Detection With One Line of Code》"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>论文笔记《Soft-NMS – Improving Object Detection With One Line of Code》 | Intelligent Software X</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Intelligent Software X</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">IntelliSoftx</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstract"><span class="nav-number">1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">2.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Related-Work"><span class="nav-number">3.</span> <span class="nav-text">2. Related Work</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Background"><span class="nav-number">4.</span> <span class="nav-text">3. Background</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Soft-NMS"><span class="nav-number">5.</span> <span class="nav-text">4. Soft-NMS</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%95%B0%E6%8D%AE%E9%9B%86%E5%92%8C%E8%AF%84%E4%BC%B0"><span class="nav-number">6.</span> <span class="nav-text">5. 数据集和评估</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E5%AE%9E%E9%AA%8C"><span class="nav-number">7.</span> <span class="nav-text">6. 实验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E7%BB%93%E6%9E%9C"><span class="nav-number">7.1.</span> <span class="nav-text">6.1 结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E6%95%8F%E6%84%9F%E5%BA%A6%E5%88%86%E6%9E%90"><span class="nav-number">7.2.</span> <span class="nav-text">6.2 敏感度分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99S-NMS-work-better"><span class="nav-number">7.3.</span> <span class="nav-text">6.3 什么时候S-NMS work better</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-%E9%87%8F%E5%8C%96%E7%BB%93%E6%9E%9C"><span class="nav-number">7.4.</span> <span class="nav-text">6.4 量化结果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">8.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">intellisoftx</p>
+  <div class="site-description" itemprop="description">智软X</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Soft-NMS-%E2%80%93-Improving-Object-DetectionWith-One-Line-of-Code/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="intellisoftx">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Intelligent Software X">
+      <meta itemprop="description" content="智软X">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="论文笔记《Soft-NMS – Improving Object Detection With One Line of Code》 | Intelligent Software X">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记《Soft-NMS – Improving Object Detection With One Line of Code》
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-11-11 20:27:08" itemprop="dateCreated datePublished" datetime="2017-11-11T20:27:08+08:00">2017-11-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-30 19:43:21" itemprop="dateModified" datetime="2023-03-30T19:43:21+08:00">2023-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Note 笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/Object-Detection/" itemprop="url" rel="index"><span itemprop="name">Object Detection</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/6f066bd9-979f-4e52-b5bb-b7780a2527f4.jpg"></p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>Non-maximum suppression（NMS）是目标检测流程中重要的组成部分。首先根据得分对bbox排序，然后选择得分最高的bbox M, 将与M有较大重叠的bbox抑制掉。以前的方法中，如果一个bbox重叠率大于设定的阈值则称为漏检。所以，提出 Soft-NMS, 一个衰减得分与重叠率成函数关系。该方法在coco-style mAP评价尺度上都有提升。计算复杂度，参数都没有特别增加，很容易集成到任何目标检测框架中。</p>
+<span id="more"></span>
+
+<ul>
+<li><a target="_blank" rel="noopener" href="http://bit.ly/2nJLNMu">code</a></li>
+</ul>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>目标检测在各个领域都有重要作用，其各个模块都需要谨慎设计，不能称为计算瓶颈。任何需要大量计算、重新训练的模块，如果只能带来一点提升都会被忽略。但是如果一个简单不需要重新训练的模块也能带来性能提升，那么就会被广泛采纳。本文，提出一个S-NMS，作为传统NMS的替代。</p>
+<p>一般一个检测框旁边会议多个得分同样很高的检测框（增加虚警率），所以需要采用NMS进行抑制。近年来RPN等方法所产生的ROI已经大大减少，但是仍然需要NMS来减少虚警率。</p>
+<p>首先NMS的输入是 $B$ 和 $S$, 选择得分高的 $M$, 抑制掉大部分BBox得到 $D$。这个过程不断迭代剩下的 $B$。这个过程中，将 $M$ 周围的 BBox 的得分设为0，导致漏检了部分目标，如图1所示。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/921487d8-8ee5-4c41-9d33-827cc4764d92.png"></p>
+<p>因此，我们在传统的贪心NMS算法中提出一行改动，使得得分的下降随着重叠率的升高的增加，而不是直接为0。</p>
+<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p>NMS作为检测算法的一个部分已经有50年的历史。第一次是用于边缘检测中，之后逐渐用于特征点检测，人脸检测，目标检测。</p>
+<ul>
+<li>边缘检测中，NMS用于细化边缘（edge thinning）移除虚警</li>
+<li>特征点检测中，NMS通过局部阈值得到唯一的特征点</li>
+<li>人脸检测中，通过重叠率来分割BBox为不连续的子集</li>
+<li>人体检测中，Dala等人证明使用贪心NMS，可以实现性能提升</li>
+</ul>
+<p>从此之后贪心NMS称为目标检测中默认的算法。近几十年，贪心NMS仍然取得最好的性能。也有一些基于学习的方法被提出。例如：</p>
+<ul>
+<li>先进行两两重叠率计算，然后使用相似传播聚类（affinity propagation clustering）选择最后的检测结果[^26]</li>
+<li>另一个多类别版本也提出了[^21], 但是多类别检测是一个不同的问题，我们需要选择一个阈值可用于多类的目标</li>
+<li>由于不同的目标可能适合不同的NMS阈值，因此采用mAP作为评价</li>
+</ul>
+<p>在显著目标检测中，有人提出了推荐子集优化算法[^30]. 其基于MAP，联合优化检测窗口的位置和数量。<br>在行人检测中，一个二元约束的二元优化方案（a quadratic unconstrained binary optimization, QUBO）[^27]，使用检测得分作为一元潜在因子，重叠率作为成对因子用于优化后的检测BBox子集。<br>另外一些基于学习的框架中，决策处理时结合个体预测得分用于优化选择最后的结果[^15]。<br>据我们所知，对于一般目标检测，贪心NMS仍然是PASCAL VOC MS-COCO等数据集的baseline方法。</p>
+<h2 id="3-Background"><a href="#3-Background" class="headerlink" title="3. Background"></a>3. Background</h2><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/4679005e-94d2-4be0-8914-8b115a254f8d.jpg"></p>
+<p>这里描述R-CNN系列方法的流程，proposal分支，classifcation分支。proposal提出K个anchor box，然后按得分排序，进行NMS。<br>分类网络不对ROI做限制，导致可能对一个物体有多个检测框，因此需要用NMS对每个类别筛选BBox。然后在这个基础上在去除一些得分特别低的检测结果。目标检测流程如图3所示。</p>
+<h2 id="4-Soft-NMS"><a href="#4-Soft-NMS" class="headerlink" title="4. Soft-NMS"></a>4. Soft-NMS</h2><ul>
+<li>当NMS阈值取得低时，例如0.3，那么会导致高IOU评估时的平均精度降低，例如IOU&#x3D;0.7当NMS阈值取得低时，例如0.3，那么会导致高IOU评估时的平均精度降低，例如IOU&#x3D;0.7</li>
+<li>因为一个高得分的box会抑制周围的目标因为一个高得分的box会抑制周围的目标</li>
+<li>当NMS阈值取的高时 $N _ t$ 取 0.7 会增加虚警</li>
+<li>并且虚警增加的数量远多于目标（因为ROI数量远多于目标数量），因此使用高NMS也不是一个好选择</li>
+</ul>
+<p>NMS算法可以写成如下形式，即一个re-scoring函数</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/600fecc0-66a4-4aa8-8a76-627a24dc523c.png"></p>
+<p>我们的想法是降低高重叠率的box的得分，而不是一起抑制，因此NMS应该考虑以下因素：</p>
+<ul>
+<li>抑制一个box周围似然概率更低的box</li>
+<li>低NMS是次优的，会造成漏检率增加</li>
+<li>高NMS会导致平均精度下降</li>
+</ul>
+<p><strong>重新设计函数Soft-NMS</strong><br>Linear-S-NMS<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/e4682ee9-d71e-408d-b5cc-5f04721f1344.png"></p>
+<p>Gaussian-S-NMS<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/e5390b66-2484-47ee-987f-d0f7ee6af4d8.png"></p>
+<p>Soft-NMS 一次的计算复杂度是 $O(N)$, N是检测框的数量。对于所有检测框，那计算复杂度是 $O(N^2)$, 这个与贪心NMS一样。由于目前的NMS是在得分阈值之后进行，因此不是对所有检测框进行，因此计算复杂度不是高。</p>
+<p>需要指出，S-NMS也是贪心算法，但是S-NMS是一个更一般的版本，传统的NMS是其特殊情况。除了这两个函数外，其实还可以考虑有更多参数的函数，例如将重叠率，检测得分都考虑进去。例如，一般的逻辑函数Gompertz函数，但是会引入更多超参。</p>
+<h2 id="5-数据集和评估"><a href="#5-数据集和评估" class="headerlink" title="5. 数据集和评估"></a>5. 数据集和评估</h2><p>实验在PASCAL VOC 和 MS-COCO上进行。评估的方法有三个：</p>
+<ul>
+<li>Faster R-CNN[^24]</li>
+<li>R-FCN[^16]</li>
+<li>Deformable-RFCN</li>
+</ul>
+<p>采用的评估模型：</p>
+<ul>
+<li>在PASCAL上使用的model选择已经训练好的，公开的，由作者提供的模型</li>
+<li>在COCO上R-FCN没有训练好的，因此我们在Caffe上自己训练一个，从ResNet-101开始，并做了一些改动，5 scale anchor，800 pixel，16 img&#x2F;minibatch，256 ROI&#x2F;img，结果比原作者的提升1.9%</li>
+<li>同样 Deformable-R-FCN 也使用相同的设定训练。</li>
+</ul>
+<p>传统NMS效率</p>
+<ul>
+<li>上述NMS均使用0.3</li>
+<li>一张图最多400个检测结果，每个类别最多100个，将每张图最多检测结果降为100，则AP减少0.1</li>
+<li>阈值0.0001，4 CPU threads，0.01 s&#x2F;img，80 classes</li>
+<li>阈值0.01， 1 CPU core， 0.005 s&#x2F;img</li>
+</ul>
+<h2 id="6-实验"><a href="#6-实验" class="headerlink" title="6. 实验"></a>6. 实验</h2><p>我们展现了S-NMS的鲁棒性，并且进行特定实验理解为何S-NMS会比粗汉同NMS好</p>
+<h3 id="6-1-结果"><a href="#6-1-结果" class="headerlink" title="6.1 结果"></a>6.1 结果</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/b4fd5cdb-5067-4fc2-8094-f7b8b457bb8e.png"></p>
+<p>表1展示了NMS和S-NMS的有效性，我们设定线性NMS为 $N _ t &#x3D; 0.3$，高斯NMS $\sigma _ t &#x3D; 0.5$。S-NMS都在改进。我们比较了S-NMS在MS-COCO每个类别上的改进，我们发现对于动物（马，长颈鹿，羊，大象等）提升有3-6%，但是对一些物体（烤面包机，球等等）提升较少，因为前者更容易出现交叠的情况。</p>
+<h3 id="6-2-敏感度分析"><a href="#6-2-敏感度分析" class="headerlink" title="6.2 敏感度分析"></a>6.2 敏感度分析</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/3cc88fce-aba9-4a02-a6b1-2b52eaf15eb4.png"></p>
+<p>图4分析了当$N _ t$ 和 $ \sigma _ t$ 变化时对AP[0.5:0.95]。我们发现0.3到0.6之间AP相对稳定。在后面的实验，未特别说明$\sigma$取0.5。</p>
+<h3 id="6-3-什么时候S-NMS-work-better"><a href="#6-3-什么时候S-NMS-work-better" class="headerlink" title="6.3 什么时候S-NMS work better"></a>6.3 什么时候S-NMS work better</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/2260ccaa-9534-4582-a151-5f06675a3185.png"></p>
+<p><strong>定位性能</strong> 如表3所示，我们发现两个超参基本都是跟评价指标变化，但是当$N _ t$增加时，AP会降低，但是其取低值时，AP下降没那么多，因此低$N _ t$具有更好的泛化性。但是，高斯S-NMS的参数增高时可以得到更好的性能。并且相比比线性S-NMS更好，提升也更大。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/c479385e-adfc-48eb-bab3-fbf00ba48f02.png"></p>
+<p><strong>精度与召回率</strong> 图5显示了在不同$O _ t$ 下的召回率与精度的关系。我们发现当要求定位精度很高时，S-NMS也有很好的改进，因为传统的NMS是直接将得分置为0，而S-NMS是衰减得分，变相保留了一些BBox。</p>
+<h3 id="6-4-量化结果"><a href="#6-4-量化结果" class="headerlink" title="6.4 量化结果"></a>6.4 量化结果</h3><p>图7显示了一些检测结果，当IoU阈值为0.45时。</p>
+<ul>
+<li>No.8 中有一个横跨多个人人群的BBox，它与多个BBox有交集，但是NMS不足以抑制，但是S-NMS可以对其得分进行多次衰减。</li>
+<li>No.9 中也有相似的现象。</li>
+<li>No.1 中在女士手包周围的BBox被抑制了。</li>
+<li>No.4 中在晚旁边的虚警被抑制</li>
+<li>NO.2,5,6,13 中的动物有些被NMS抑制掉了，但是S-NMS只是稍微降低了得分，但是仍然保留了下来</li>
+</ul>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/1509521123325.png" alt="1509521123325"></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>[^15]: D. Lee, G. Cha, M.-H. Yang, and S. Oh. Individualness and determinantal point processes for pedestrian detection. In European Conference on Computer Vision, pages 330–346. Springer, 2016.<br>[^16]: Y. Li, K. He, J. Sun, et al. R-fcn: Object detection via region- based fully convolutional networks. In Advances in Neural Information Processing Systems, pages 379–387, 2016.<br>[^21]: D. Mrowca, M. Rohrbach, J. Hoffman, R. Hu, K. Saenko, and T. Darrell. Spatial semantic regularisation for large scale object detection. In Proceedings of the IEEE international conference on computer vision, pages 2003–2011, 2015.<br>[^24]: S. Ren, K. He, R. Girshick, and J. Sun. Faster r-cnn: Towards real-time object detection with region proposal networks. In Advances in neural information processing systems, pages 91–99, 2015.<br>[^26]: R. Rothe, M. Guillaumin, and L. Van Gool. Non-maximum suppression for object detection by passing messages be- tween windows. In Asian Conference on Computer Vision, pages 290–306. Springer, 2014.<br>[^27]: S. Rujikietgumjorn and R. T. Collins. Optimized pedestrian detection for multiple and occluded people. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pages 3690–3697, 2013.<br>[^30]: J. Zhang, S. Sclaroff, Z. Lin, X. Shen, B. Price, and R. Mech. Unconstrained salient object detection via proposal sub- set optimization. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pages 5733– 5742, 2016.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>intellisoftx
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Soft-NMS-%E2%80%93-Improving-Object-DetectionWith-One-Line-of-Code/" title="论文笔记《Soft-NMS – Improving Object Detection With One Line of Code》">http://intellisoftx.com/Note-笔记/Object-Detection/Note-Soft-NMS-–-Improving-Object-DetectionWith-One-Line-of-Code/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Object-Detection/" rel="tag"># Object Detection</a>
+              <a href="/tags/ICCV2017/" rel="tag"># ICCV2017</a>
+              <a href="/tags/NMS/" rel="tag"># NMS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Semantic-Segmentation/Note-Rethinking-Atrous-Convolution-for-Semantic-Image-Segmentation/" rel="prev" title="论文笔记《Rethinking Atrous Convolution for Semantic Image Segmentation》">
+                  <i class="fa fa-chevron-left"></i> 论文笔记《Rethinking Atrous Convolution for Semantic Image Segmentation》
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Flow-Guided-Feature-Aggregation-for-Video-Object-Detection/" rel="next" title="论文笔记《Flow-Guided Feature Aggregation for Video Object Detection》">
+                  论文笔记《Flow-Guided Feature Aggregation for Video Object Detection》 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">intellisoftx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

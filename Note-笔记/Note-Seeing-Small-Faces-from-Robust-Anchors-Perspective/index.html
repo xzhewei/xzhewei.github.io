@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"intellisoftx.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Abstract本文针对基于anchor的人脸检测提出了一种新的anchor设计方法，具有出色的尺度不变性，尤其是针对小脸的检测效果很好。 以往基于anchor的检测器存在的问题：对小尺寸的脸部检测性能降低，比如小于16×16pixels的脸部。 作者的发现：  当前的anchor设计方法不能保证小脸与anchor boxes之间的高重合度，增加了训练的难度  EMO   效果：比baseline">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记 Seeing Small Faces from Robust Anchors Perspective">
+<meta property="og:url" content="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Note-Seeing-Small-Faces-from-Robust-Anchors-Perspective/index.html">
+<meta property="og:site_name" content="Intelligent Software X">
+<meta property="og:description" content="Abstract本文针对基于anchor的人脸检测提出了一种新的anchor设计方法，具有出色的尺度不变性，尤其是针对小脸的检测效果很好。 以往基于anchor的检测器存在的问题：对小尺寸的脸部检测性能降低，比如小于16×16pixels的脸部。 作者的发现：  当前的anchor设计方法不能保证小脸与anchor boxes之间的高重合度，增加了训练的难度  EMO   效果：比baseline">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/baseline_anchors_vs_ours.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/EMO.png">
+<meta property="article:published_time" content="2018-11-10T06:50:06.000Z">
+<meta property="article:modified_time" content="2023-03-30T11:43:21.443Z">
+<meta property="article:author" content="intellisoftx">
+<meta property="article:tag" content="Anchor">
+<meta property="article:tag" content="Small Face">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/baseline_anchors_vs_ours.png">
+
+
+<link rel="canonical" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Note-Seeing-Small-Faces-from-Robust-Anchors-Perspective/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Note-Seeing-Small-Faces-from-Robust-Anchors-Perspective/","path":"Note-笔记/Note-Seeing-Small-Faces-from-Robust-Anchors-Perspective/","title":"论文笔记 Seeing Small Faces from Robust Anchors Perspective"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>论文笔记 Seeing Small Faces from Robust Anchors Perspective | Intelligent Software X</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Intelligent Software X</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">IntelliSoftx</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstract"><span class="nav-number">1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">2.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Expected-Max-Overlapping-Scores"><span class="nav-number">3.</span> <span class="nav-text">3. Expected Max Overlapping Scores</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Overview-of-Anchor-Based-Detector"><span class="nav-number">3.1.</span> <span class="nav-text">3.1. Overview of Anchor-Based Detector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Anchor-Setup-and-Matching"><span class="nav-number">3.2.</span> <span class="nav-text">3.2. Anchor Setup and Matching</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Computing-the-EMO-Score"><span class="nav-number">3.3.</span> <span class="nav-text">3.3. Computing the EMO Score</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Strategies-of-New-Anchor-Design"><span class="nav-number">4.</span> <span class="nav-text">4. Strategies of New Anchor Design</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-Stride-Reduction-with-Enlarged-Feature-Maps"><span class="nav-number">4.1.</span> <span class="nav-text">4.1. Stride Reduction with Enlarged Feature Maps</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-Extra-Shifted-Anchors"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 Extra Shifted Anchors</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-Face-Shift-Jittering"><span class="nav-number">4.3.</span> <span class="nav-text">4.3. Face Shift Jittering</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-Hard-Face-Compensation"><span class="nav-number">4.4.</span> <span class="nav-text">4.4. Hard Face Compensation</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">intellisoftx</p>
+  <div class="site-description" itemprop="description">智软X</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Note-Seeing-Small-Faces-from-Robust-Anchors-Perspective/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="intellisoftx">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Intelligent Software X">
+      <meta itemprop="description" content="智软X">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="论文笔记 Seeing Small Faces from Robust Anchors Perspective | Intelligent Software X">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记 Seeing Small Faces from Robust Anchors Perspective
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-11-10 14:50:06" itemprop="dateCreated datePublished" datetime="2018-11-10T14:50:06+08:00">2018-11-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-30 19:43:21" itemprop="dateModified" datetime="2023-03-30T19:43:21+08:00">2023-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Note 笔记</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>本文针对基于anchor的人脸检测提出了一种新的anchor设计方法，具有出色的尺度不变性，尤其是针对小脸的检测效果很好。</p>
+<p>以往基于anchor的检测器存在的问题：对小尺寸的脸部检测性能降低，比如小于16×16pixels的脸部。</p>
+<p>作者的发现：</p>
+<ul>
+<li><p>当前的anchor设计方法不能保证小脸与anchor boxes之间的高重合度，增加了训练的难度</p>
+</li>
+<li><p><u>EMO</u></p>
+</li>
+</ul>
+<p>效果：比baseline anchor-based检测器表现要好，在具有挑战性的人脸检测数据集上达到了state-of-the-art，而且运行速度也具有竞争力。</p>
+<span id="more"></span>
+
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>目前的最先进人脸检测器是一些基于anchor的深度卷积神经网络方法，这些方法受到了主流目标检测器的启发，比如SSD&#x2F;Faster R-CNN&#x2F;R-FCN。</p>
+<p>虽然基于anchor的检测器在解决形状和外观不变性的问题上取得了成功，但是它们解决尺度不变性的能力却不让人满意。而现在非常小的脸部在人脸检测领域是极具挑战性的问题之一。</p>
+<p>![52127364131](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/Recall">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/Recall</a> Rate-Face Scale.png)</p>
+<p>从图中（IoU&#x3D;0.5）可以看出：</p>
+<ul>
+<li><p>大于64×64pixels的脸部几乎能够100%被检测出来，而当脸部的尺寸在小于16×16范围时，召回率有了明显的下降。</p>
+</li>
+<li><p>其原因在于：在分类和调整anchor boxes之后，这些anchors与那些足够小脸部的重合度还不够高。进一步分析：在训练之前，对每一张脸计算它与重叠anchors的最高IoU，然后根据尺寸将faces进行分组，再对每一组计算平均最高IoU值，如下图：  </p>
+<p>![52127432957](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/Average">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/Average</a> IoU-Face Scale.png)</p>
+<p>召回率与脸部尺寸呈现正相关的关系，而那些与小脸的IoU很低的anchor boxes难以被调整到GT的位置，导致了小脸的召回率很低</p>
+</li>
+</ul>
+<p>本文针对于设计一种新的anchor方案来支持基于anchor的检测器，以获得更好的尺度不变性。如下图所示，我们新提出的anchors相比于以往的anchors与脸部有更高的IoU：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/baseline_anchors_vs_ours.png" alt="52127498686"></p>
+<p>红色的anchors比黄色的anchors更容易调整到GT的位置，从而使得网络比之前更容易学习如何将anchors回归到GT faces。因此作者深入研究了faces是如何与不同配置的anchors进行匹配的，并且提出了一种新的EMO得分来描述anchors与faces取得高IoU的能力。具体来说：</p>
+<ul>
+<li>给定一个已知尺寸的face，以及一组anchors，先计算face与这组anchors的最大IoU，<u>假设该face的位置来自于图像上的一个二维分布</u>。然后EMO得分能从理论上解释出“为什么大尺寸的脸部更容易被anchors高重合程度地覆盖，而且分布密集的anchors更有可能覆盖到脸部”</li>
+<li>EMO得分启发了几种简单却有效的anchor设计策略，以获得更高的face IoU得分，同时又不会向网络引入过多复杂度。</li>
+</ul>
+<p>具体来说，作者提出：</p>
+<ul>
+<li>减少各种网络架构设计anchor的步长</li>
+<li>增加不在中心位置的anchors，使anchors的分布更加密集</li>
+<li>随机移动face boxes，增加获得更高IoU的概率</li>
+<li>将重叠率低的face boxes与多种anchors匹配</li>
+</ul>
+<p>通过<strong>消融实验</strong>证明了本文提出的方法比以往基于anchors的检测器有很大的提升，在Wider Face，AFW，PASCAL Faces，FDDB上都取得了目前最先进的结果</p>
+<p>主要贡献：</p>
+<ol>
+<li>使用新提出的EMO得分对不同条件下的anchor匹配机制进行了深度分析</li>
+<li>为了更高的IoU，尤其针对小脸提出了几种新的anchor设计方法，包括anchor步长的减小；额外平移过的anchors；随机faces平移，并证明了这些方法比baseline有很大提升效果</li>
+<li>在Wider Face，AFW，PASCAL Faces，FDDB上达到了目前最先进水平，而且运行速度有竞争力</li>
+</ol>
+<p>##2. Related Work</p>
+<h2 id="3-Expected-Max-Overlapping-Scores"><a href="#3-Expected-Max-Overlapping-Scores" class="headerlink" title="3. Expected Max Overlapping Scores"></a>3. Expected Max Overlapping Scores</h2><h3 id="3-1-Overview-of-Anchor-Based-Detector"><a href="#3-1-Overview-of-Anchor-Based-Detector" class="headerlink" title="3.1. Overview of Anchor-Based Detector"></a>3.1. Overview of Anchor-Based Detector</h3><p>基于anchors的检测方法将anchor boxes进行分类和回归来检测目标。</p>
+<p>Anchors是一组多尺寸多宽高比的预定义boxes，规律地平铺在图像平面上。在训练过程中，这些anchors根据IoU重叠率与GT boxes进行匹配，匹配的条件有以下两种情况：</p>
+<ul>
+<li>该anchor与某GT box的IoU是最高的</li>
+<li>该anchor与某GT box的IoU比阈值$T_h$高</li>
+</ul>
+<blockquote>
+<p>如果某个anchor与所有的GT boxes的IoU都低于阈值$T_l$，那么该anchor会被标记为背景</p>
+</blockquote>
+<p>Anchors会与特征图联系起来，特征图决定了anchors的位置和步长。</p>
+<p>特征图是尺寸为$c×h×w$的张量（tensor），$s_F$为特征的步长，即相邻位置之间的距离，$\frac{H}{h}&#x3D;\frac{W}{w}&#x3D;s_F$，anchors将这些位置作为中心点，使用这种联合的表征来计算置信度得分和bounding boxes回归，所以anchor的步长与特征的步长是相等的，$s_A&#x3D;s_F$。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/EMO.png" alt="52142838391"></p>
+<h3 id="3-2-Anchor-Setup-and-Matching"><a href="#3-2-Anchor-Setup-and-Matching" class="headerlink" title="3.2. Anchor Setup and Matching"></a>3.2. Anchor Setup and Matching</h3><p>$S$代表一个预定义的尺度集合，表示anchor boxes的尺度；$R$代表一个预定义的宽高比集合，表示anchors的宽高比；于是不同anchor boxes的总数为$|S×R|&#x3D;|S||R|$，$×$为两个集合的笛卡尔乘积，$|*|$代表集合的基数。</p>
+<p>举例：有3种尺度和1种宽高比的anchor boxes如Fig2(a)所示，让$L​$代表一种按规律分布位置的合集，即图中的“+”位置，相邻两个“+”之间的距离为anchor的步长$s_A​$。$A​$代表所有anchors的集合，表示以“+”位置为中心平铺各种尺度和宽高比的anchor boxes，$A&#x3D;S×R×L​$。</p>
+<p>Fig2(b)中，假设某face box表示为$B_f$（绿色），与anchor box $B_a$ （红色虚线）有最大的IoU，max IoU此时可由以下等式(1)计算得到：</p>
+<p>​                                                          $\max \limits_{α\in{A}}\frac{|B_f\cap{B_a}|}{|B_f\cup{B_a}|}$                                                              (1)</p>
+<h3 id="3-3-Computing-the-EMO-Score"><a href="#3-3-Computing-the-EMO-Score" class="headerlink" title="3.3. Computing the EMO Score"></a>3.3. Computing the EMO Score</h3><p>![52151028737](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/computing">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/computing</a> EMO score.png)</p>
+<p>在图(c)中，用$(x,y)$表示一个face的中心位置，$p(x,y)$表示face位置的概率密度分布函数，且满足$\int_{0}^{H}\int_{0}^{W}p(x,y)dxdy&#x3D;1$，再根据等式(1)，EMO得分的计算方式为等式(2)：</p>
+<p>​                                       $EMO&#x3D;\int_{0}^{H}\int_{0}^{W}p(x,y)\max \limits_{α\in{A}}\frac{|B_f\cap{B_a}|}{|B_f\cup{B_a}|}dxdy$                              (2)</p>
+<p>Fig4显示了不同尺度face和anchor步长下的EMO得分：</p>
+<p>![52152753475](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/EMO">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/EMO</a> scores.png)   </p>
+<p>由图可见尺度较大的脸部与anchors的IoU更高；当face的尺度固定时，anchors的步长越小，EMO得分越高。   </p>
+<h2 id="4-Strategies-of-New-Anchor-Design"><a href="#4-Strategies-of-New-Anchor-Design" class="headerlink" title="4. Strategies of New Anchor Design"></a>4. Strategies of New Anchor Design</h2><p>目标是从提高EMO得分为切入点，针对小脸提高平均IoU。基于之前的分析，作者提出：通过减小anchor的步长来增加平均IoU，同时减小face与anchor中心之间的距离。</p>
+<h3 id="4-1-Stride-Reduction-with-Enlarged-Feature-Maps"><a href="#4-1-Stride-Reduction-with-Enlarged-Feature-Maps" class="headerlink" title="4.1. Stride Reduction with Enlarged Feature Maps"></a>4.1. Stride Reduction with Enlarged Feature Maps</h3><p>由于anchor步长与特征步长一致，所以可以通过放大feature map来减小anchor的步长。</p>
+<ul>
+<li>双线性上采样将feature map扩大</li>
+</ul>
+<h3 id="4-2-Extra-Shifted-Anchors"><a href="#4-2-Extra-Shifted-Anchors" class="headerlink" title="4.2 Extra Shifted Anchors"></a>4.2 Extra Shifted Anchors</h3><p>通过扩大feature maps的方法来减小anchor strides并没有改变$s_A&#x3D;s_F$这一条件，在本节中作者将会通过增加额外的辅助性anchors来减小$s_A$使得$s_A&lt;s_F$，这些anchors被称为shifted anchors，它们并不以滑窗的中心位置为中心。这种方法可以在不改变feature maps分辨率的情况下提高EMO得分。这些shifted anchors与那些定位在“+”中心的anchors共享特征。</p>
+<p>具体来说，假设feature map的步长是$s_F$，两个相邻滑窗位置之间的距离是$s_F$，在Fig6中由黑点标记：</p>
+<p>![52153156197](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/shifted">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/shifted</a> anchors.png)</p>
+<p>在图(a)中，每个位置（黑点）都有一个以其为中心的anchor；当每个位置的右下方添加了额外的anchors（绿色的）时，如图(b)，anchor stride减少到了$s_F&#x2F;\sqrt{2}$；当如图(c)中的蓝色和品红色anchor加入时，anchor stride减少到了$s_F&#x2F;2$。实际上，只需要加入小尺寸的shifted anchors，因为大尺寸的anchors已经能够保证较高的IoU了，这样能够节约计算时间。举例来说，在扩大的feature maps上增加了三种小尺寸的anchor（16×16）对平均IoUs的提升效果如Fig7所示：</p>
+<p>![52153220169](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/our">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Face_Anchor/our</a> anchor design.png)</p>
+<p>可见小尺寸脸部的平均IoU在作者的改进方法下有了显著的提升。</p>
+<h3 id="4-3-Face-Shift-Jittering"><a href="#4-3-Face-Shift-Jittering" class="headerlink" title="4.3. Face Shift Jittering"></a>4.3. Face Shift Jittering</h3><p>当对每个face计算EMO得分时，是假设face的中心是服从二维均匀分布的。然而在真实数据集中，每个face的位置是固定的，一些faces距离anchors的中心较近，所以它们更有可能与anchors有更高的IoU；而一些faces本来就距离anchors的中心较远，经常会取得较低的IoU值。为了增加后一种faces与anchors获得较高IoU的概率，作者将这些faces在训练的每次迭代过程中进行随机的平移。</p>
+<p>具体来说，在每次迭代过程中，图像平移的偏移量在每次迭代中为$(\delta_x,\delta_y)$，$\delta_x$和$\delta_y$为图像向右和向下平移的像素值，所以图像中所有faces的位置增量都为$(\delta_x,\delta_y)$。偏移量服从离散均匀分布，比如$\delta_x,\delta_y\in{0,1,…,s_A&#x2F;2-1}$。即使用服从离散均匀分布的偏移量（offsets）来处理服从连续均匀分布的face locations。作者将随机偏移量的最大值设置为$s_A&#x2F;2-1$，因为重叠的一个周期距离为$s_A&#x2F;2$。</p>
+<h3 id="4-4-Hard-Face-Compensation"><a href="#4-4-Hard-Face-Compensation" class="headerlink" title="4.4. Hard Face Compensation"></a>4.4. Hard Face Compensation</h3><p>由Fig7可见，即使将feature strides减半、对小尺寸的anchors做了平移，那些尺寸非常小脸部的IoU与更大的脸部相比来说还是处于较低的水平。这是因为脸部的尺寸和位置是连续的，而anchor的尺寸和位置是离散的。因此，仍然有一些脸部的尺寸和位置离anchor很远，这些离得很远的脸部难以与anchors匹配上。</p>
+<p>因此作者提出了一种补偿性的策略，让很难匹配到anchors的脸部尝试与更多的anchors匹配。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>intellisoftx
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Note-Seeing-Small-Faces-from-Robust-Anchors-Perspective/" title="论文笔记 Seeing Small Faces from Robust Anchors Perspective">http://intellisoftx.com/Note-笔记/Note-Seeing-Small-Faces-from-Robust-Anchors-Perspective/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Anchor/" rel="tag"># Anchor</a>
+              <a href="/tags/Small-Face/" rel="tag"># Small Face</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Learning-non-maximum-suppression/" rel="prev" title="论文笔记 Learning non-maximum suppression">
+                  <i class="fa fa-chevron-left"></i> 论文笔记 Learning non-maximum suppression
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Note-Road-detection-using-convolutional-neural-networks/" rel="next" title="论文笔记 Road detection using convolutional neural networks">
+                  论文笔记 Road detection using convolutional neural networks <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">intellisoftx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

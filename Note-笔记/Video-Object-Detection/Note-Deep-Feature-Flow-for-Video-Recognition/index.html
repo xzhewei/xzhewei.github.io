@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"intellisoftx.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Abstract深度卷积网络在许多特性识别任务上取得成果，然而在视频任务上单帧检测太慢，因此将先进的图像识别网络迁移到视频任务上意义重大。我们提出深度特征流（Deep Feature Flow）框架用于快速精确的视频识别。该框架仅在稀疏关键帧上运行卷积网络的子网络，并通过流场将特征传递到其他帧，由于流场计算相对较快因此速度得到显著提升。端到端训练整体框架，识别精度显著提升。深度特征流框架灵活且通">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记《Deep Feature Flow for Video Recognition》">
+<meta property="og:url" content="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Deep-Feature-Flow-for-Video-Recognition/index.html">
+<meta property="og:site_name" content="Intelligent Software X">
+<meta property="og:description" content="Abstract深度卷积网络在许多特性识别任务上取得成果，然而在视频任务上单帧检测太慢，因此将先进的图像识别网络迁移到视频任务上意义重大。我们提出深度特征流（Deep Feature Flow）框架用于快速精确的视频识别。该框架仅在稀疏关键帧上运行卷积网络的子网络，并通过流场将特征传递到其他帧，由于流场计算相对较快因此速度得到显著提升。端到端训练整体框架，识别精度显著提升。深度特征流框架灵活且通">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515674206560.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515485794145.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515659482706.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515663944929.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515674206560.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515676597477.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515678762441.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515682224218.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515682632317.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515683850796.png">
+<meta property="article:published_time" content="2018-03-27T14:39:29.000Z">
+<meta property="article:modified_time" content="2023-03-30T11:43:21.439Z">
+<meta property="article:author" content="intellisoftx">
+<meta property="article:tag" content="Video Object Detection">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515674206560.png">
+
+
+<link rel="canonical" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Deep-Feature-Flow-for-Video-Recognition/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Deep-Feature-Flow-for-Video-Recognition/","path":"Note-笔记/Video-Object-Detection/Note-Deep-Feature-Flow-for-Video-Recognition/","title":"论文笔记《Deep Feature Flow for Video Recognition》"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>论文笔记《Deep Feature Flow for Video Recognition》 | Intelligent Software X</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Intelligent Software X</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">IntelliSoftx</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstract"><span class="nav-number">1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">2.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Related-Work"><span class="nav-number">3.</span> <span class="nav-text">2. Related Work</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Deep-Feature-Flow"><span class="nav-number">4.</span> <span class="nav-text">3. Deep Feature Flow</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E7%89%B9%E5%BE%81%E6%B5%81DFF%E6%8E%A8%E7%90%86%EF%BC%88Deep-Feature-Flow-Inference%EF%BC%89"><span class="nav-number">4.1.</span> <span class="nav-text">深度特征流DFF推理（Deep Feature Flow Inference）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DFF%E8%AE%AD%E7%BB%83"><span class="nav-number">4.2.</span> <span class="nav-text">DFF训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6%E5%88%86%E6%9E%90"><span class="nav-number">4.3.</span> <span class="nav-text">复杂度分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E5%B8%A7%E5%AE%89%E6%8E%92"><span class="nav-number">4.4.</span> <span class="nav-text">关键帧安排</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84"><span class="nav-number">5.</span> <span class="nav-text">4. 网络架构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Flow-Network"><span class="nav-number">5.1.</span> <span class="nav-text">Flow Network</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%B9%E5%BE%81%E7%BD%91%E7%BB%9C"><span class="nav-number">5.2.</span> <span class="nav-text">特征网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E4%B9%89%E5%88%86%E5%89%B2"><span class="nav-number">5.3.</span> <span class="nav-text">语义分割</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%A9%E4%BD%93%E6%A3%80%E6%B5%8B"><span class="nav-number">5.4.</span> <span class="nav-text">物体检测</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%AE%9E%E9%AA%8C"><span class="nav-number">6.</span> <span class="nav-text">5. 实验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E5%AE%9E%E9%AA%8C%E8%AE%BE%E7%BD%AE"><span class="nav-number">6.1.</span> <span class="nav-text">5.1 实验设置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Cityscapes"><span class="nav-number">6.1.1.</span> <span class="nav-text">Cityscapes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ImageNet-VID"><span class="nav-number">6.1.2.</span> <span class="nav-text">ImageNet VID</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E8%AF%84%E4%BC%B0%E6%96%B9%E6%B3%95%E5%92%8C%E7%BB%93%E6%9E%9C"><span class="nav-number">6.2.</span> <span class="nav-text">5.2 评估方法和结果</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81DFF%E6%9E%B6%E6%9E%84"><span class="nav-number">6.2.1.</span> <span class="nav-text">验证DFF架构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B2%BE%E5%BA%A6%E4%B8%8E%E9%80%9F%E5%BA%A6%E7%9A%84%E5%B9%B3%E8%A1%A1"><span class="nav-number">6.2.2.</span> <span class="nav-text">精度与速度的平衡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E7%B1%BB%E7%BD%91%E7%BB%9C%E7%9A%84%E5%88%86%E5%89%B2%E7%82%B9"><span class="nav-number">6.2.3.</span> <span class="nav-text">分类网络的分割点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%9C%AA%E6%9D%A5%E5%B7%A5%E4%BD%9C"><span class="nav-number">7.</span> <span class="nav-text">6. 未来工作</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">intellisoftx</p>
+  <div class="site-description" itemprop="description">智软X</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Deep-Feature-Flow-for-Video-Recognition/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="intellisoftx">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Intelligent Software X">
+      <meta itemprop="description" content="智软X">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="论文笔记《Deep Feature Flow for Video Recognition》 | Intelligent Software X">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记《Deep Feature Flow for Video Recognition》
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-03-27 22:39:29" itemprop="dateCreated datePublished" datetime="2018-03-27T22:39:29+08:00">2018-03-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-30 19:43:21" itemprop="dateModified" datetime="2023-03-30T19:43:21+08:00">2023-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Note 笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/" itemprop="url" rel="index"><span itemprop="name">Video Object Detection</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515674206560.png" alt="1515674206560"></p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>深度卷积网络在许多特性识别任务上取得成果，然而在视频任务上单帧检测太慢，因此将先进的图像识别网络迁移到视频任务上意义重大。我们提出深度特征流（Deep Feature Flow）框架用于快速精确的视频识别。该框架仅在稀疏关键帧上运行卷积网络的子网络，并通过流场将特征传递到其他帧，由于流场计算相对较快因此速度得到显著提升。端到端训练整体框架，识别精度显著提升。深度特征流框架灵活且通用，该方法在两个视频数据集上验证。</p>
+<ul>
+<li>MSA</li>
+<li>视频识别</li>
+<li>Deep Feature Flow</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>随着深度神经网络在图像识别任务上的成功，识别任务也从图像拓展到了视频，例如语义分割Cityspaces数据集和物体检测ImageNet VID数据集。对于重要场景，快速精确的视频识别非常重要，例如自动驾驶、视频监控。然后采用当前图像识别网络对视频单帧进行识别，对于大部分应用计算量都无法承担。</p>
+<p>一般认为图像内容在视频上的变化是缓慢的，尤其是高级语义[^45][^51][^21]。因此在特征学习时采用means of regularization，认为视频是一种无监督的数据源。并且，数据冗余和连续性也可以用于减少计算开销。但是相关的研究在视频识别的CNN上却较少。</p>
+<p>现代CNN具有相同的架构，大部分层为卷积计算，卷积特征与原图具有空间对应性，因此有机会通过空间扭曲将特征传播到邻近帧。</p>
+<p>本文的工作中，我们提出深度特征流（Deep Feature Flow）框架用于快速精确的视频识别，通过流场将关键帧的深度特征传播到其他帧。如图1，特征图对汽车和行人有响应，且邻近两帧相似，通过传播后特征也与原始的特征相似。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515485794145.png" alt="1515485794145"></p>
+<p>一般，流场估计和特征传播比卷积特征计算快得多。因此能够避免计算瓶颈，速度得到显著提升。整个系统通过端到端训练，显著提升识别精度。</p>
+<p>总结，深度特征流是一个用于视频识别的快速、精确、同样的端到端框架。其采目前先进的图像识别网络。据我们所知，这是第一次在深度学习框架中联合训练流和视频识别任务。后续的实验证实了该框架在视频物体检测和语义分割任务上的有效性。与单帧方法比，实现了巨大的提升（10X），精度稍有损失。</p>
+<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p>据我们所知，我们的工作很特别没有相似的工作进行直接比较。但是，在部分内容有一些相关工作如下所示。</p>
+<ul>
+<li>图像识别：目标检测领域代表方法是基于区域方法（R-CNN, Fast R-CNN, SPP-Net, Faster R-CNN, R-FCN），语义分割领域代表方法是全卷积神经网络（FCN，[^4], [^50] ）。</li>
+<li>网络加速：矩阵分解，量化权重。</li>
+<li>光流：相关方法研究主要进行了10多年，且光流主要针对小偏移。目前一些针对大偏移并组合匹配的方法（DeepFlow和EpicFlow），但是都是手工设计。最近，深度学校和语义信息用于光流。FlowNet第一次使用CNN估计运动。在文献[^32]网络结构简化为空间金字塔网络。另一些工作尝试开发语义分割信息帮助光流估计[^37][^1][^19] ，即根据区域的类别对运动流程进行特定的约束。光流信息可用于如姿势估计等视觉任务。本工作开发光流用于加快一般视频识别任务。</li>
+<li>开发时序信息：T-CNN在视频的tubelets中融合时序和上下文信息。密集3D CRF提出大范围的时空归一化进行语义视频分割。STFCN[^10]考虑时空FCN，用于视频语义分割。这些工作能够提升精度但是也极大的增加计算开销。然而，我们的方法旨视频上通过时序信息减少计算量。</li>
+<li>缓慢特征分析：高级语义特征一般比低级语义特征的变化更慢，因此在连续视频帧上，深度特征变化非常缓慢且连续。这个发现已经被用于视频特征学习的调整中[^45][^21][^51][^49][^40] 。我们推测，我们的方法也能从这个特性上受益。</li>
+<li>Clockwork卷积网络[^38] 该工作与我们的工作最接近，其对于特征视频帧抑制某些网络层，并实验之前的特征。但是我们的方法更简单且有效。从速度上该方法仅减少了一些帧的一些层的计算（1&#x2F;3 or 2&#x2F;3）。而我们工作是节省大部分帧的大部分层的计算。<br>对于准确性，Clockwork没有考虑多帧和简单复制特征的关系，并且仅对一个现成的网络进行计算编排，没有fine-tuning或再训练。其一点速度的提升都带来较大的精度下降。我们的工作重新端到端训练了一个考虑运动的两帧网络，并且在速度提升3倍的情况下仅带来很小的精度下降。<br>Clockwork仅应用于FCN的语义分割，我们的工作将一般的图像识别网络迁移到视频领域。</li>
+</ul>
+<h2 id="3-Deep-Feature-Flow"><a href="#3-Deep-Feature-Flow" class="headerlink" title="3. Deep Feature Flow"></a>3. Deep Feature Flow</h2><p>表1总结了本文的符号，图2为方法示意图。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515659482706.png" alt="1515659482706"></p>
+<h3 id="深度特征流DFF推理（Deep-Feature-Flow-Inference）"><a href="#深度特征流DFF推理（Deep-Feature-Flow-Inference）" class="headerlink" title="深度特征流DFF推理（Deep Feature Flow Inference）"></a>深度特征流DFF推理（Deep Feature Flow Inference）</h3><p>对于给定的前馈神经网络$N$ ，$I$为图像输入，结果$y&#x3D;N(I)$，我们将$N$分解为两个连续的子网络。第一个子网络为$N_{feat}$特征子网络，该网络是全卷积且输出一些中间特征图$f&#x3D;N_{feat}(I)$。第二个子网络为任务网络，对于特定任务有特征的结构，并基于上述特征图$y&#x3D;N_{task}(f)$。</p>
+<p>连续的视频帧具有高度的相似性，且越深的特征层相似性越高，我们通过该相似性减少计算开销。具体的，$N_{feat}$仅在特定稀疏关键帧上计算，非关键帧$I_i$的特征通过其之前的关键帧传播得到。</p>
+<p>$M _ {i \rightarrow k}$ 是一个二维的流场，其通过一个流估计算法 $F$ 得到。然后通过双线性缩放到与特征图相同的大小，用于传播。当前帧i的位置p通过流场得到其与关键帧k的位置偏差 $\delta p&#x3D;M _ {i \rightarrow k}(p)$ 。</p>
+<p>因此特征扭曲可以通过双线性差值得到：</p>
+<p>$$ f_i^c(p) &#x3D; \sum_q G(q,p+\delta p)f_k^c(q) $$</p>
+<p>c表示特征通道，q是特征图的所有空间位置，$G(·,·)$为双线性差值核，其为二维，因此将其分解为两个一维核：</p>
+<p>$$ G(q,p+\delta p)&#x3D;g(q_x,p_x+\delta p_x)\cdot g(q_y, p_y+\delta p_y) $$</p>
+<p>$g(a,b)&#x3D;max(0,1-|a-b|)$。</p>
+<p>空间扭曲可能由于流估计错误导致不准确。为了更好估计特征，其强度通过尺度场（scale field）进行调节。尺度场通过尺度函数$S$得到$S_{i\rightarrow k}&#x3D;S(I_k,I_i)$。最后，特征传播方程定义为：</p>
+<p>$f_i&#x3D;W(f_k,M_{i\rightarrow k},S_{i \rightarrow k}) （3）$</p>
+<p>该函数对所有位置、所有通道的特征进行处理，并对特征乘以尺度因子。</p>
+<p>该视频识别算法被称为深度特征流，如算法1所示。$F$流场函数是手工设计的低级别流，如SIFT-Flow，不需要训练，马上可用。尺度函数S的每个位置为1。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515663944929.png" alt="1515663944929"></p>
+<h3 id="DFF训练"><a href="#DFF训练" class="headerlink" title="DFF训练"></a>DFF训练</h3><p>流函数一般用于低级图像像素的相关性，计算快，但是对于识别任务不够准确，并且高级特征的改变比像素小。因此为了对此建模，我们也使用一个CNN来估计流场和尺度场，所有的组件都能够端到端训练。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515674206560.png" alt="1515674206560"></p>
+<p>架构如图2（b）所示。使用SGD训练，在每个mini-batch，随机选择一对邻近帧，${I _ k,I _ i},0\le i-k \le 9$。前向传播时，特征网络$N _ {feat}$对关键帧图像$I _ k$计算特征图$f _ k$，之后流网络$F$计算流场和尺度场。当$i&gt;k$时，根据式（3）计算特征$f _ i$，否则不传播。最后，任务网络$N _ {task}$基于特征图生成结果，并产生损失值。反向传播损失到所以组件。可以发现，当$i&#x3D;k$时即退化为每帧训练。</p>
+<p>流网络比特征网络快，在Fly Chair dataset[^9]上进行预训练。通过最后一层卷积适当的增加通道数，我们在网络最后增加了一个尺度函数输出。尺度函数都使用（权重0，偏置1进行初始化）。流网络然后按照图2（b）fine-tuned。</p>
+<p>特征传播函数是无参且可微的，我们计算特征$f _ i$的导数，对应于$f_k$，尺度场$S _ {i\rightarrow j}$，流场$M _ {i\rightarrow j}$。前两个使用链式法则容易计算。对于后一个，导数为：</p>
+<p>$$\frac{\partial f _ i^c(p)}{\partial M _ {i\rightarrow j}}&#x3D;S _ {i\rightarrow j}\sum _ q \frac{\partial G(q,p+\delta p)}{\partial \delta p}f _ k^c(q) ~ (4)$$</p>
+<p>然后通过公式2即可计算导数，由于M是二维的，因此$\partial \delta p$可分为$\partial \delta p_x$ $\partial \delta p_y$ 。</p>
+<p>本方法可以在稀疏标记的帧上进行训练，并利用所有的数据（这里不理解）。</p>
+<h3 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a>复杂度分析</h3><p>非关键帧计算开销与每帧计算开销的比例：</p>
+<p>$$r&#x3D;\frac{O(F)+O(S)+O(W)+O(N _ {task})}{O(N _ {feat})+O(N _ {task})}~(5)$$</p>
+<p>由于复杂度相差较大，可简化为：</p>
+<p>$$r\approx \frac{O(F)}{O(N_{feat})}~(6)$$</p>
+<p>因此复杂度比例由流网络和特征网络决定，可以通过每秒浮点操作FLOPs评估，表2显示了我们实现的典型值。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515676597477.png" alt="1515676597477"></p>
+<p>另外，速度还跟关键帧的稀疏程度相关，我们定义每$l$连续帧选一个关键帧，则加速因子为：</p>
+<p>$$s&#x3D;\frac{l}{1+(l-1)*r}~(7)$$</p>
+<h3 id="关键帧安排"><a href="#关键帧安排" class="headerlink" title="关键帧安排"></a>关键帧安排</h3><p>在本文工作中，我们简单的固定关键帧的安排，关键帧的应用区间$l$固定。然而根据图像内容的变化可能变化的$l$能够实现更好的精度和速度的权衡。一般，关键帧应该是图像内容具有显著变化时。</p>
+<p>如何设计高效和调整关键真的安排是我们之后改进工作。不同的视频任务可能有不同的行为和需求。从数据调整关键帧的安排是一个有趣的选择。</p>
+<h2 id="4-网络架构"><a href="#4-网络架构" class="headerlink" title="4. 网络架构"></a>4. 网络架构</h2><p>本方法拟用于不同的网络和识别任务，因此我们采用先进的架构和重要的视觉任务。</p>
+<h3 id="Flow-Network"><a href="#Flow-Network" class="headerlink" title="Flow Network"></a>Flow Network</h3><p>我们采用基于CNN的FlowNet[^9] 作为默认方法，并设计了两个低复杂度变体 FlowNet Half，每层减少一半的卷积核，复杂度为1&#x2F;4，另一个采用Inception 结构[^42] 的FlowNet Inception，复杂度减少为1&#x2F;8。</p>
+<p>三个网络都在相同的数据集上训练，输出的stride为4。输入图像为1&#x2F;2，因此流网络的输出是原图的1&#x2F;8。特征图的stride是16，使用双线性差值将流场降采样，双线性差值为网络的中的非参数层，且可微。</p>
+<h3 id="特征网络"><a href="#特征网络" class="headerlink" title="特征网络"></a>特征网络</h3><p>我们使用ResNet作为特征网络，最后一层1000路分类层去掉，特征stride从32减少为16得到分辨率更高的特征图，后面接DeepLab用于语义分割和R-FCN用于物体检测。跳着第一个block的conv5，其stride从2变为1，使用holing算法，保证感知域的情况下。另外我们增加了（dilation&#x3D;6）的3x3卷积核，减少特征通道维度减少为1024。该1024维的特征图作为后续任务的中间特征图。</p>
+<p>表2显示了复杂度的比例。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515678762441.png" alt="1515678762441"></p>
+<h3 id="语义分割"><a href="#语义分割" class="headerlink" title="语义分割"></a>语义分割</h3><p>随机初始化1x1的卷积核得到（C+1）得分图，C是类别数。之后跟一个softmax层输出每个像素的概率。因此任务网络仅有一个可学习的网络层，整体的网络结果与DeepLab类似。</p>
+<h3 id="物体检测"><a href="#物体检测" class="headerlink" title="物体检测"></a>物体检测</h3><p>我们采用先进的R-FCN，对于中间特征图，两个全卷积网络分别应用于前512维特征和后512维特征，分别用于区域推荐任务和检测任务。</p>
+<p>区域推荐分支，使用RPN，我们设定9个anchors，两个并排的1x1的卷积层得到2n维的物体得分和4n的回归值。通过NMS（0.7）后得到300个ROI。</p>
+<p>检测分支，两个并排的1x1卷积层输出位置敏感的得分图和bbox回归图。他们的维度是$(C+1)k^2$和$4k^2$。k是检测器&#x2F;回归器数量，细节见[^8] 。最后使用NMS（0.3）得到最后的结果。</p>
+<h2 id="5-实验"><a href="#5-实验" class="headerlink" title="5. 实验"></a>5. 实验</h2><p>Cityscapes用于语义分割，ImageNet VID用于物体检测。</p>
+<h3 id="5-1-实验设置"><a href="#5-1-实验设置" class="headerlink" title="5.1 实验设置"></a>5.1 实验设置</h3><h4 id="Cityscapes"><a href="#Cityscapes" class="headerlink" title="Cityscapes"></a>Cityscapes</h4><p>50个不同城市，帧率17fps，训练集2975，验证500，测试1525个snippets。每个snippet有30帧，第20帧一像素级的标注，可用于语义分割，30个语义类别。遵守[^5]的规则，训练集上训练，验证集上测试，语义分割的精确度使用像素级的平均交并比得分评估。</p>
+<p>对于训练，图像都缩放为短边1024pixels用于特征网络，512pixels用于流网络。使用SGD训练，20K迭代，在8GPU上，每个GPU一个mini-batch，学习率前15K迭代0.001，后5K迭代0.0001。</p>
+<h4 id="ImageNet-VID"><a href="#ImageNet-VID" class="headerlink" title="ImageNet VID"></a>ImageNet VID</h4><p>训练集3862，验证集555，测试集937，全标注的视频段，帧率25或30，30个类别，使用mAP作为评价。</p>
+<p>训练图像短边分别为600和300pixels，60K迭代，40K学习率0.001，20K学习率0.0001。</p>
+<p>训练时，不仅使用VID训练集，还使用DET训练集，每个mini-batch提取图像的比例VID:DET &#x3D; 2:1。</p>
+<h3 id="5-2-评估方法和结果"><a href="#5-2-评估方法和结果" class="headerlink" title="5.2 评估方法和结果"></a>5.2 评估方法和结果</h3><p>由于DFF灵活且有多种设计选择，我们为了评估，设定一些默认设置，特征网络ResNet-101，流网络使用FlowNet，关键帧$l$为5用于C的语义分割，10用于I的物体检测。对于每个snippet我们评估l个图像对，k&#x3D;i-l+1,…,i，每个帧i有gt标注。</p>
+<h4 id="验证DFF架构"><a href="#验证DFF架构" class="headerlink" title="验证DFF架构"></a>验证DFF架构</h4><p>如表3所示。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515682224218.png" alt="1515682224218"></p>
+<ul>
+<li>Frame：在单帧上训练N</li>
+<li>SFF：使用预先计算大偏移flow，SFF-fast和SFF-slow采用不同的参数。</li>
+<li>DFF：N和F使用端到端训练，固定N训练，固定F训练，分别训练</li>
+</ul>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515682632317.png" alt="1515682632317"></p>
+<p>图4整理各种方法的精度和速度。我们发现单帧方法具有很强性能可以作为参考方法。我们使用DeepLab和R-FCN作为参考。SFF方法的精度不够好，虽然采用了最优的参数，提升有限，速度下降很大。</p>
+<p>DFF得到了最后的结果，速度相同。但是发现固定N或F，或者分别训练精度下降很大，说明联合序列的重要性。</p>
+<h4 id="精度与速度的平衡"><a href="#精度与速度的平衡" class="headerlink" title="精度与速度的平衡"></a>精度与速度的平衡</h4><p>我们设定了不同的关键帧区间l，看对与精度和速度的影响。结果如图3所示，DFF得到了极大的速度提升，速度和精度的变化是平滑的，因此可针对特定应用调整，例如对于检测任务ResNet-101从4.05fps增加到41.26fps，10倍的速度提升，精度仅从73.9%下降到69.5%。对于分割任务，ResNet-50的速度从2.24fps提升到17.48 fps，精度从69.7%下降到62.4%。</p>
+<p>图3也显示我们应用使用那个流场网络，发现最小的FlowNet Inception优势最大，在相同精度下比另外两个网络更快。</p>
+<p>应该用什么特征网络呢，在高精度区域，明显ResNet-101更好，在高速度区域，对于检测ResNet-101更好，对分割ResNet-50更好。这个差别可能与视频帧率有关，对于数据集C，其帧率更低，变化更大，因此很难采用长时间的传播，而为了获得较快的速度，ResNet-101要采用比ResNet-50更大的l才行。</p>
+<p>上面的发现对于实际应用具有一定推荐意义，然而收到数据和任务限制，为了我们开发更多的设计得到更多的经验。</p>
+<h4 id="分类网络的分割点"><a href="#分类网络的分割点" class="headerlink" title="分类网络的分割点"></a>分类网络的分割点</h4><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515683850796.png" alt="1515683850796"></p>
+<p>我们应该在网络的什么位置对特征和任务网络进行分割，默认只保留一层网络。分割点分别为5，12，21层。5层是增加了一个维度约减层（1层）和一个瓶颈单元（conv5c，3层），21层是增加了两个单元（conv5a和conv5b），21层是增加了三个单元（conv4）。0层是把任务网络加入到特征网络中，等同于直接输出最后的结果进行传播。</p>
+<p>表5展示了不同的结果，可以发现精度的变化可以忽略，而随着任务网络层的增加，速度降低。任务层使用1层和0基本抑制，我们设定为1是为了给特征融合后提供以小额可调的参数，使其更具一般性。</p>
+<p>由于版面限制，更多的结果和细节请看本的在线版。</p>
+<h2 id="6-未来工作"><a href="#6-未来工作" class="headerlink" title="6. 未来工作"></a>6. 未来工作</h2><p>有几个研究重点用于之后的研究。首先就是联合学习对于流场质量的影响，我们无法评估由于缺少gt数据。目前的光流工作受限于合成数据或小数据，对与深度学习不足。</p>
+<p>我们的工作在流场估计和关键帧安排上有改进空间，本文我们采用FlowNet主要是能选择的方法很少。设计更快更精确的流场网络在未来值得研究。对于关键帧的安排，好的方法能够同时显著提升精度和速度。</p>
+<p>我们详细该项研究打开了许多新的研究问题，并希望激发更多的研究工作。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>intellisoftx
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Deep-Feature-Flow-for-Video-Recognition/" title="论文笔记《Deep Feature Flow for Video Recognition》">http://intellisoftx.com/Note-笔记/Video-Object-Detection/Note-Deep-Feature-Flow-for-Video-Recognition/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Video-Object-Detection/" rel="tag"># Video Object Detection</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Seq-nms-for-video-object-detection/" rel="prev" title="论文笔记《Seq-nms for video object detection》">
+                  <i class="fa fa-chevron-left"></i> 论文笔记《Seq-nms for video object detection》
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Deep-Learning-Dev/Detectron-caffemodel2pkl/" rel="next" title="Detectron: caffemodel转pkl">
+                  Detectron: caffemodel转pkl <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">intellisoftx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

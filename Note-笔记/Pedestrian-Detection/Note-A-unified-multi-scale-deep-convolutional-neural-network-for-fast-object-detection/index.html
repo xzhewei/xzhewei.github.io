@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"intellisoftx.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Abstract本文主要提出了一个多分支的检测网络来匹配多尺度目标的感知域和anchor尺寸。  multi-scale CNN for fast multi-scale object detection proposal sub-network detect at multi output layer scale-specific detectors combined optimizing a">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记《A unified multi-scale deep convolutional neural network for fast object detection》">
+<meta property="og:url" content="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-A-unified-multi-scale-deep-convolutional-neural-network-for-fast-object-detection/index.html">
+<meta property="og:site_name" content="Intelligent Software X">
+<meta property="og:description" content="Abstract本文主要提出了一个多分支的检测网络来匹配多尺度目标的感知域和anchor尺寸。  multi-scale CNN for fast multi-scale object detection proposal sub-network detect at multi output layer scale-specific detectors combined optimizing a">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508297031192.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508332598574.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508336633269.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508338563779.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508339139882.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508383544192.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508399094430.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508403256331.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508403584903.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508419232345.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508421600322.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508423079688.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508423826969.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508425810979.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508425896306.png">
+<meta property="article:published_time" content="2017-10-21T04:47:31.000Z">
+<meta property="article:modified_time" content="2023-03-30T11:43:21.424Z">
+<meta property="article:author" content="intellisoftx">
+<meta property="article:tag" content="Pedestrian Detection">
+<meta property="article:tag" content="Multi-scale">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508297031192.png">
+
+
+<link rel="canonical" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-A-unified-multi-scale-deep-convolutional-neural-network-for-fast-object-detection/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-A-unified-multi-scale-deep-convolutional-neural-network-for-fast-object-detection/","path":"Note-笔记/Pedestrian-Detection/Note-A-unified-multi-scale-deep-convolutional-neural-network-for-fast-object-detection/","title":"论文笔记《A unified multi-scale deep convolutional neural network for fast object detection》"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>论文笔记《A unified multi-scale deep convolutional neural network for fast object detection》 | Intelligent Software X</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Intelligent Software X</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">IntelliSoftx</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstract"><span class="nav-number">1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">2.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Related-Work"><span class="nav-number">3.</span> <span class="nav-text">2. Related Work</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%A4%9A%E5%B0%BA%E5%BA%A6%E7%9B%AE%E6%A0%87%E6%8E%A8%E8%8D%90%E7%BD%91%E7%BB%9C-Multi-scale-Object-Proposal-Network"><span class="nav-number">4.</span> <span class="nav-text">3. 多尺度目标推荐网络 Multi-scale Object Proposal Network</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E5%A4%9A%E5%B0%BA%E5%BA%A6%E6%A3%80%E6%B5%8B"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 多尺度检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 网络结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E9%87%87%E6%A0%B7"><span class="nav-number">4.3.</span> <span class="nav-text">3.3 采样</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="nav-number">4.4.</span> <span class="nav-text">3.4 实现细节</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E7%BD%91%E7%BB%9C"><span class="nav-number">5.</span> <span class="nav-text">4. 目标检测网络</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-CNN-%E7%89%B9%E5%BE%81%E5%9B%BE%E4%BC%B0%E8%AE%A1"><span class="nav-number">5.1.</span> <span class="nav-text">4.1 CNN 特征图估计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%B5%8C%E5%85%A5%E8%AF%AD%E4%B9%89"><span class="nav-number">5.2.</span> <span class="nav-text">4.2 嵌入语义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="nav-number">5.3.</span> <span class="nav-text">4.3 实现细节</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%AE%9E%E9%AA%8C%E8%AF%84%E4%BC%B0"><span class="nav-number">6.</span> <span class="nav-text">5. 实验评估</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-Proposal-%E8%AF%84%E4%BC%B0"><span class="nav-number">6.1.</span> <span class="nav-text">5.1 Proposal 评估</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E8%AF%84%E4%BC%B0"><span class="nav-number">6.2.</span> <span class="nav-text">5.2 目标检测评估</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E7%BB%93%E8%AE%BA"><span class="nav-number">7.</span> <span class="nav-text">6 结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">8.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">intellisoftx</p>
+  <div class="site-description" itemprop="description">智软X</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-A-unified-multi-scale-deep-convolutional-neural-network-for-fast-object-detection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="intellisoftx">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Intelligent Software X">
+      <meta itemprop="description" content="智软X">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="论文笔记《A unified multi-scale deep convolutional neural network for fast object detection》 | Intelligent Software X">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记《A unified multi-scale deep convolutional neural network for fast object detection》
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-10-21 12:47:31" itemprop="dateCreated datePublished" datetime="2017-10-21T12:47:31+08:00">2017-10-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-30 19:43:21" itemprop="dateModified" datetime="2023-03-30T19:43:21+08:00">2023-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Note 笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/" itemprop="url" rel="index"><span itemprop="name">Pedestrian Detection</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508297031192.png" alt="1508297031192"></p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>本文主要提出了一个多分支的检测网络来匹配多尺度目标的感知域和anchor尺寸。</p>
+<ul>
+<li>multi-scale CNN for fast multi-scale object detection</li>
+<li>proposal sub-network detect at multi output layer</li>
+<li>scale-specific detectors combined</li>
+<li>optimizing a multi-task loss</li>
+<li>feature upsampling by deconvolution</li>
+</ul>
+<span id="more"></span>
+
+
+<ul>
+<li>Multi-scale CNN (MS-CNN)</li>
+<li>UC San Diego, IBM</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/zhaoweicai/mscnn">code</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianguoyun.com/p/DfCoF8IQoY3_BRiisTc">pdf</a></li>
+</ul>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p><strong>Motivation</strong></p>
+<ul>
+<li>目标检测主要基于滑窗法来搜索多尺度多比例的目标。</li>
+<li>这些方法虽然在人脸、行人检测能够实现实时的检测，但是在多类目标检测却很困难</li>
+<li>R-CNN 利用预选的ROI，将其缩放到224 $\times$ 224 用CNN进行分类，这样在计算效率底下</li>
+<li>Faster R-CNN 固定了 receptive field 感知域（这里主要指RPN）</li>
+</ul>
+<p><strong>Invention</strong></p>
+<ul>
+<li>MS-CNN</li>
+<li>为了目标尺寸和感知域不一致的问题，proposal 网络在多层进行预测，每层针对特定尺寸的目标</li>
+<li>各个层的检测器组合成一个strong multi-scale detector</li>
+<li>对特征图升采样替代对图像升采样，能够减少计算量和内存</li>
+</ul>
+<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p>最早实现实时检测是级联 (cascaded) 检测器<code>VJ</code>[^1] ，之后有两条研究路径提高效率：</p>
+<ul>
+<li><p>快速特征提取：VJ使用积分图计算Haar特征，之后ACF在其基础上实现100fps的HOG特征计算。</p>
+</li>
+<li><p>级联学习：软级联[^14]，拉格朗日公式学习级联[^17]，学习异质 (heterogeneous) 特征[^15]</p>
+</li>
+<li><p>级联检测器的问题是，在此框架下很难实现多类检测</p>
+</li>
+</ul>
+<p>此后，相关研究尝试使用深度神经网络提升目标分类</p>
+<ul>
+<li>R-CNN，组合了目标推荐机制和CNN分类器，但是速度受到proposal数量和重复CNN计算的限制</li>
+<li>SPPnet，通过空间金字塔池化，实现一张图片只计算一次特征图，速度提升了一个数量级</li>
+<li>Fast R-CNN，提出了通过ROI池化和多任务学习（分类+回归）进行反向传播的思想，但是仍然依赖一个独立的proposal</li>
+<li>Faster R-CNN，使用相同的神经网络，从而极大的加快proposal的速度。</li>
+<li>YOLO，是另一个有趣的尝试，其能够实现~40 fps，但是会妥协一些精度</li>
+</ul>
+<p>对于目标检测，一些研究表明在单一网络中组合中间层是有益的。</p>
+<ul>
+<li>GoogLeNet[^22], 提出在中间的高层网络上使用三加权分类损失，这样正则化方法对深层模型有效</li>
+<li>Full CNN[^11], 高层具有更高的语义信息，高层与中间层组合后实现更精确的语义分割。</li>
+</ul>
+<p>MS-CNN与上面的方法类似，也从中间层计算损失，但是其目的不是正则化学习，而是为了提供更多的细节信息。并且是对每个中间层生成一个独立的目标检测器。</p>
+<h2 id="3-多尺度目标推荐网络-Multi-scale-Object-Proposal-Network"><a href="#3-多尺度目标推荐网络-Multi-scale-Object-Proposal-Network" class="headerlink" title="3. 多尺度目标推荐网络 Multi-scale Object Proposal Network"></a>3. 多尺度目标推荐网络 Multi-scale Object Proposal Network</h2><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508332598574.png" alt="1508332598574"></p>
+<h3 id="3-1-多尺度检测"><a href="#3-1-多尺度检测" class="headerlink" title="3.1 多尺度检测"></a>3.1 多尺度检测</h3><blockquote>
+<p>覆盖各种尺寸的目标是目标检测的重要问题。</p>
+</blockquote>
+<ul>
+<li>单一模型，多尺度图像和特征图，一般具有较好的精度，但是计算开销大</li>
+<li>多个模型，单一图像尺寸和特征图，避免重复计算特征，但是对每个尺度生成一个检测器</li>
+<li>多个模型，多个尺度图像和特征图，这样是上述两个方法的折中</li>
+<li>单一模型，几个尺度图像和多个尺度特征图（估计），通过差值计算得到中间缺失的特征图</li>
+</ul>
+<p>基于CNN的多尺度策略与上面的一些区别</p>
+<ul>
+<li>将输入的目标区域全部缩放到同一尺寸计算卷积特征，R-CNN，类似a</li>
+<li>RPN，是在同一个特征图上将多尺寸的ROI生成相同尺寸的模型（一个检测器），类似b</li>
+<li>收到c的启发，我们提出一个新的多尺度策略，从单一输入图像中，在多个中间特征层上进行多尺度的目标检测（后面SSD，FPN的做法也很类似）</li>
+</ul>
+<h3 id="3-2-网络结构"><a href="#3-2-网络结构" class="headerlink" title="3.2 网络结构"></a>3.2 网络结构</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508336633269.png" alt="1508336633269"></p>
+<p>该网络有多个检测分支，每个检测分支都是最终的proposal检测结果。该网络有个标准的主干CNN，一组单一检测分支。</p>
+<p>注意，这里在conv4-3之后开始建立检测分支，因为在之前，回传的梯度会对后面的检测结果具有较大影响，造成训练的不稳定。</p>
+<p>多分支的联合损失</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508338563779.png" alt="1508338563779"></p>
+<ul>
+<li>$W$是网络参数</li>
+<li>$Y_i&#x3D;(y_i,b_i)$是Ground Truth</li>
+<li>$X_i$是训练图像块</li>
+<li>$a_m$是损失权重</li>
+<li>$S&#x3D;{(X_i,Y_i)}_{i&#x3D;1}^N&#x3D;{S^1,S^2,\dots,S^M}$ 是训练样本</li>
+<li>$M$ 是检测分支的数量</li>
+</ul>
+<p>注意，属于$S^m$的样本只对其分支贡献损失，这个样本在训练之前会规划好。</p>
+<p>损失$l^m$采用的是Faster R-CNN之前采用的方法，联合分类和回归损失</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508339139882.png" alt="1508339139882"></p>
+<ul>
+<li>一个是多类分类损失</li>
+<li>一个是定位损失，背景样本不提供定位损失</li>
+</ul>
+<h3 id="3-3-采样"><a href="#3-3-采样" class="headerlink" title="3.3 采样"></a>3.3 采样</h3><p>对于每个检测层，$S^m&#x3D;{S^m _ +,S^m _ -}$   </p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508383544192.png" alt="1508383544192"></p>
+<p>anchor尺寸是与filter的尺寸相关的，anchor与标记IoU$\ge$0.5认为是正样本，$\le$0.2认为是负样本。$|S_-|&#x3D;\gamma|S_+|$</p>
+<p>对于自然图像，目标和非目标的数量具有极大的不平衡。采样是为了补偿这种不平衡。考虑三种采样策略：随机，bootstrapping，混合。</p>
+<ul>
+<li>随机采样获得的样本大量为随机样本，我们知道困难样本挖掘能提升性能</li>
+<li>Bootstrapping策略，用物体性得分对样本排序。然后从高到低收集负样本</li>
+<li>混合策略，就是随和和bootstrapping一半一半，在我们的实验中其效果和bootstrapping相似</li>
+</ul>
+<p>为了保证每个检测层只检测特定尺度范围的目标，训练集按照相应的范围组织。但是，在一张图中，一些尺度可能没有正样本，导致正负样本不平衡$|S_-|&#x2F;|S_+|\gg\gamma$ ，导致学习不稳定。为了解决这个问题，交叉熵损失修改为：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508399094430.png" alt="1508399094430"></p>
+<h3 id="3-4-实现细节"><a href="#3-4-实现细节" class="headerlink" title="3.4 实现细节"></a>3.4 实现细节</h3><p><strong>数据增强</strong> 在[^4][^6] 中说，多尺度的训练不必要，因为深度神经网络适应尺度不变性。然而，在Caltech和KITTI这类数据集上不成立，因为目标的尺度范围可以跨多个倍数（octaves）。但是，不同尺寸的正样本数量也具有很大的差别。为了解决这个不平衡，对原图像进行随机缩放为多个尺度。</p>
+<p><strong>Fine-tuning</strong> Fast R-CNN 和 RPN原始训练一个小的mini-batch需要大量的内存，但是一个图像中有很多区域是没有用的背景。为了节省内存，我们在目标周围裁剪一个448 $\times$ 448 的图像块。这样能够极大的减少内存的需求，从而使得mini-batch能够适应4张图片，对一个12G内存的GPU。</p>
+<p>网络采用流行的VGG16初始化。由于采用了bootstrapping和多任务损失，可能导致在早期的迭代中不稳定。因此采用two-stage步骤。</p>
+<ul>
+<li>第一阶段，随机采样，定位损失系数小（$\lambda&#x3D;$0.05），迭代10000次，学习率0.00005。</li>
+<li>第二阶段，bootstrapping采样，定位损失系数（$\lambda&#x3D;$1），“det-8”的检测分支损失$a_i&#x3D;0.9$，其他检测分支系数为1，迭代25000次，学习率0.00005，每10000次缩小10倍。</li>
+</ul>
+<p>two-stage训练流程能够实现稳定的多任务训练。</p>
+<h2 id="4-目标检测网络"><a href="#4-目标检测网络" class="headerlink" title="4. 目标检测网络"></a>4. 目标检测网络</h2><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508403256331.png" alt="1508403256331"></p>
+<p>RPN本身虽然也可以作为检测器，但滑窗不能很好覆盖目标，所以不是很好。为了提高精度，因此增加了检测网络。ROI pooling层在特征图上提取固定维度的特征（7$\times$7$\times$512），然后送入fc层，如图4所示。这里增加了一个反卷机层来提升特征图分辨率。因此，多任务损失扩展为：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508403584903.png" alt="1508403584903"></p>
+<p>其中$l^{M+1}$和$S^{M+1}$损失和训练样本对于检测子网络。$S^{M+1}$是用Fast R-CNN方式采集。检测子网络与proposal子网络共享参数W，然后增加了一些参数$W_d$。ROI pooling应用于”conv4-3”具有更好的效果。可能的原因是”conv4-3”相对更高的分辨率，更适合位置感知的bounding box回归。</p>
+<h3 id="4-1-CNN-特征图估计"><a href="#4-1-CNN-特征图估计" class="headerlink" title="4.1 CNN 特征图估计"></a>4.1 CNN 特征图估计</h3><p>升采样虽然能提升小目标检测效果，但是有三个副作用：</p>
+<ul>
+<li>内存需求增加</li>
+<li>训练、测试慢</li>
+<li>不会增加图像信息</li>
+</ul>
+<p>我们考虑用更有效的方法提升特征图分辨率：</p>
+<ul>
+<li>这个做法类似上面的图2（d）不是通过对图像缩放，而是对特征图缩放，采用最小二乘法估计</li>
+<li>在CNN中，使用反卷积更好</li>
+<li>特征图缩放，不会带来太多的计算和内存成本</li>
+</ul>
+<p>据我们所知，这是第一次应用翻卷机到目标检测中，用于改善速度和精度</p>
+<h3 id="4-2-嵌入语义"><a href="#4-2-嵌入语义" class="headerlink" title="4.2 嵌入语义"></a>4.2 嵌入语义</h3><p>在文献[^7][^5][^26]中表明语义信息对目标检测有用。本文专注于从多个区域中提取语义。如图4所示，我们从目标区域（绿色）和语义区域（蓝色）提取特征，然后堆叠在一起。语义区域是目标区域的1.5倍，后面增加一个卷积层减少通道数，从而保证在不增加模型参数的同时不损失精度。</p>
+<h3 id="4-3-实现细节"><a href="#4-3-实现细节" class="headerlink" title="4.3 实现细节"></a>4.3 实现细节</h3><p>用3.4节描述的proposal网络训练好的结果初始化。学习率为0.0005，每10000次迭代减小10倍，25000次迭代后终止。通过反向传播优化（6）。使用Bootstrapping采样策略，$\lambda&#x3D;1$，前两层”conv1-1”和”conv2-2”的参数固定，用于加速训练。</p>
+<h2 id="5-实验评估"><a href="#5-实验评估" class="headerlink" title="5. 实验评估"></a>5. 实验评估</h2><p>我们在KITTI和Caltech上评估MS-CNN检测器，不同于VOC和ImageNet，这两个数据集中有更多的小目标。由于KITTI没有测试集标注，我们参考[^5]的方法，将训练集分为训练和验证集，并且训练一个用于车辆检测，另一个用于行人&#x2F;骑车人检测。表1描述了模型的对多尺度目标所使用的不同anchor。硬件平台E5-2630单核，64GB内存，TITAN GPU。</p>
+<h3 id="5-1-Proposal-评估"><a href="#5-1-Proposal-评估" class="headerlink" title="5.1 Proposal 评估"></a>5.1 Proposal 评估</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508419232345.png" alt="1508419232345"></p>
+<p>使用oracle recall用于评估指标[^31]。car的IOU大于等于70%，行人、骑车人IOU大于等于50%。</p>
+<p><strong>独立检测分支的作用</strong> 表2显示了不同检测分支与行人高度的检测精度关系。与期望的一致，尺度匹配的精度越高。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508421600322.png" alt="1508421600322"></p>
+<p><strong>输入图像尺寸的作用</strong> 图5显示了proposal网络与输入图像尺寸的关系。行人和车辆的proposal网络对图像尺寸较为鲁棒，骑车行人从384-576性能有提升。这说明，proposal网络不需要增加图像输入尺寸也能得到较好的proposal结果。</p>
+<p><strong>检测子网络改进推荐子网络</strong> 论文[^4]表明多任务学习能有利于bb回归和分类。另一方面，论文[^9]显示，两个任务共享特征也并不能改进proposal。图5显示，多任务学习能有效帮助proposal的生成，尤其是对于行人。（这个跟我所实验的不一样，检测和推荐共享网络会相互干扰，原因可能是用）</p>
+<p><strong>与其他先进方法比较</strong> 图6比较了多种方法：BING[^32], Selective Search[^8], EdgeBoxes[^33], MCG[^34], 3DOP[^5], RPN[^9]。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508423079688.png" alt="1508423079688"></p>
+<p>图像第一排是IoU确定时，召回率与候选样本数量的关系。第二排是100个候选样本，召回率与IoU的关系。MS-CNN在只有100个proposal的情况下实现了98%的召回率。有监督学习的方法比无监督的方法好。RPN与MS-CNN的结果最接近，RPN对图像进行了两倍的上采样。MS-CNN能够与GT有高度的重合，说明了回归网络的作用。</p>
+<h3 id="5-2-目标检测评估"><a href="#5-2-目标检测评估" class="headerlink" title="5.2 目标检测评估"></a>5.2 目标检测评估</h3><p>由于cyclist数量较少，本实验只考虑car 和 pedestrian。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508423826969.png" alt="1508423826969"></p>
+<p><strong>输入图像上采样的影响</strong> 表3显示了输入上采样是检测的很重要的因素。上采样1.5~2倍时能显著的改善性能。（这里有个问题，图像上采样之后，网络每个层的感知域就变小了，所以大目标精度下降，中小目标提升）</p>
+<p><strong>采样策略</strong> 表3比较了随机采样，bootstrapping采样，混合采样。对于车辆这三种没有太大区别，对于行人，随机采样效果更差。</p>
+<p><strong>CNN 特征估计</strong> 我们尝试了三种学习反卷积的方法：1）双线性差值权重（bilinearly interpolated weights）；2）双线性差值权重初始化，然后通过反向传播学习；3）高斯噪声初始化，然后反向传播学习。我们发现第一种方法最好。表3中显示，反卷积能在输入图像尺寸较小时提升。</p>
+<p><strong>嵌入语义</strong> 嵌入语义信息后，精度也有提升，但是参数会增加，因此对通道缩减能有效解决问题。</p>
+<p><strong>基于proposal的目标检测</strong> 相比于proposal，增加了detection后结果提升。表4是公开的KITTI上的结果。</p>
+<p><strong>在KITTI上比较</strong> MS-CNN使用“h768-ctx-c”模型（所以没用反卷积？还是直接增加输入图像尺寸来的有效？）</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508425810979.png" alt="1508425810979"></p>
+<p><strong>Caltech上的效果</strong> MS-CNN使用“h720-ctx” （所以没有反卷积，没有-c）</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/MS-CNN/1508425896306.png" alt="1508425896306"></p>
+<h2 id="6-结论"><a href="#6-结论" class="headerlink" title="6 结论"></a>6 结论</h2><ul>
+<li>提出了一个统一的深度卷积神经网络MS-CNN，用于快速多尺度目标检测</li>
+<li>在多个中间网络层进行检测，使得感知域匹配目标尺寸</li>
+<li>探究了CNN特征估计（反卷积），作为输入升采样的另一种选择，能节省计算和内存开销</li>
+<li>综上，MS-CNN能实现15fps的检测速度</li>
+</ul>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>[^1]: P. Viola and M. Jones, “Robust real-time face detection,” , IJCV, vol. 57, no. 2, pp. 137–154, 2004.<br>[^4]: R. Girshick, “Fast R-CNN,” In ICCV, 2015.<br>[^5 ]: X. Chen and Y. Zhu, “3D Object Proposals for Accurate Object Class Detection,” In NIPS, pp. 1–9, 2015.<br>[^6]: K. He, X. Zhang, S. Ren, and J. Sun, “Spatial Pyramid Pooling in Deep Convolutional Networks for Visual Recognition,” In ECCV, 2014.<br>[^7]: S. Gidaris and N. Komodakis, “Object detection via a multi-region and semantic segmentation-aware U model,” In ICCV, 2015.<br>[^8]: K. E. A. van de Sande, J. R. R. Uijlings, T. Gevers, and A. W. M. Smeulders, “Segmentation as selective search for object recognition,” in ICCV, 2011.<br>[^9 ]: S. Ren, K. He, R. Girshick, and J. Sun, “Faster R-CNN: Towards Real-Time Object Detection with Region Proposal Networks,” In NIPS, 2015.<br>[^11]: Long, J., Shelhamer, E., Darrell, T.: Fully convolutional networks for semantic segmentation. In CVPR, 2015.<br>[^14]: L. Bourdev and J. Brandt, “Robust object detection via soft cascade,” In CVPR, 2005<br>[^15]: Cai, Z., Saberian, M.J., Vasconcelos, N.: Learning complexity-aware cascades for deep pedestrian detection, In ICCV, 2015<br>[^17]: Saberian, M.J., Vasconcelos, N.: Boosting algorithms for detector cascade learning. Journal of Machine Learning Research 15(1) (2014) 2569–2605<br>[^22]: Szegedy, C., Liu, W., Jia, Y., Sermanet, P., Reed, S., Anguelov, D., Erhan, D., Vanhoucke, V., Rabinovich, A.: Going deeper with convolutions. In CVPR, 2015<br>[^26]: S. Bell, C. Lawrence Zitnick, K. Bala, and R. Girshick, “Inside-outside net: Detecting objects in context with skip pooling and recurrent neural networks,” In CVPR, 2016.<br>[^31]: Hosang, R. Benenson, P. Dollar, and B. Schiele, “What Makes for Effective Detection Proposals?,” TPAMI, vol. 38, no. 4, pp. 814–830, 2016.<br>[^32]: M. M. Cheng, Z. Zhang, W. Y. Lin, and P. Torr, “BING: Binarized normed gradients for objectness estimation at 300fps,” in CVPR, 2014, pp. 3286–3293.<br>[^33]: C. L. Zitnick and P. Dollár, “Edge Boxes: Locating Object Proposals from Edges,” in ECCV, 2014.<br>[^34]: P. Arbeláez, J. Pont-Tuset, J. Barron, F. Marques, and J. Malik, “Multiscale combinatorial grouping,” in CVPR, 2014.</p>
+<p><strong>Citation</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@inproceedings&#123;cai2016unified,</span><br><span class="line">annote = &#123;MS-CNN&#125;,</span><br><span class="line">author = &#123;Cai, Zhaowei and Fan, Quanfu and Feris, Rogerio S and Vasconcelos, Nuno&#125;,</span><br><span class="line">booktitle = &#123;ECCV&#125;,</span><br><span class="line">organization = &#123;Springer&#125;,</span><br><span class="line">pages = &#123;354--370&#125;,</span><br><span class="line">title = &#123;&#123;A unified multi-scale deep convolutional neural network for fast object detection&#125;&#125;,</span><br><span class="line">year = &#123;2016&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>intellisoftx
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-A-unified-multi-scale-deep-convolutional-neural-network-for-fast-object-detection/" title="论文笔记《A unified multi-scale deep convolutional neural network for fast object detection》">http://intellisoftx.com/Note-笔记/Pedestrian-Detection/Note-A-unified-multi-scale-deep-convolutional-neural-network-for-fast-object-detection/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Pedestrian-Detection/" rel="tag"># Pedestrian Detection</a>
+              <a href="/tags/Multi-scale/" rel="tag"># Multi-scale</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Tutorial-%E6%95%99%E7%A8%8B/VPN-shadowsocks-and-v2ray/" rel="prev" title="VPS搭建VPN（shadowsocks和v2ray）">
+                  <i class="fa fa-chevron-left"></i> VPS搭建VPN（shadowsocks和v2ray）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Semantic-Segmentation/Note-Rethinking-Atrous-Convolution-for-Semantic-Image-Segmentation/" rel="next" title="论文笔记《Rethinking Atrous Convolution for Semantic Image Segmentation》">
+                  论文笔记《Rethinking Atrous Convolution for Semantic Image Segmentation》 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">intellisoftx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

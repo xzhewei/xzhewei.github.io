@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"intellisoftx.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="![](http:&#x2F;&#x2F;zavix-image.oss-cn-shenzhen.aliyuncs.com&#x2F;note&#x2F;Training Region-based Object Detectors with Online Hard Example Mining&#x2F;f1.png) Abstractregion-based ConvNets（R-CNN）极大的推动了目标检测领域的发展，但是其训练过程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记《Training Region-Based Object Detectors with Online Hard Example Mining》">
+<meta property="og:url" content="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Training-Region-Based-Object-Detectors-with-Online-Hard-Example-Mining/index.html">
+<meta property="og:site_name" content="Intelligent Software X">
+<meta property="og:description" content="![](http:&#x2F;&#x2F;zavix-image.oss-cn-shenzhen.aliyuncs.com&#x2F;note&#x2F;Training Region-based Object Detectors with Online Hard Example Mining&#x2F;f1.png) Abstractregion-based ConvNets（R-CNN）极大的推动了目标检测领域的发展，但是其训练过程">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-03-27T14:32:18.000Z">
+<meta property="article:modified_time" content="2023-03-30T11:43:21.442Z">
+<meta property="article:author" content="intellisoftx">
+<meta property="article:tag" content="Video Object Detection">
+<meta property="article:tag" content="OHEM">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Training-Region-Based-Object-Detectors-with-Online-Hard-Example-Mining/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Training-Region-Based-Object-Detectors-with-Online-Hard-Example-Mining/","path":"Note-笔记/Object-Detection/Note-Training-Region-Based-Object-Detectors-with-Online-Hard-Example-Mining/","title":"论文笔记《Training Region-Based Object Detectors with Online Hard Example Mining》"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>论文笔记《Training Region-Based Object Detectors with Online Hard Example Mining》 | Intelligent Software X</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Intelligent Software X</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">IntelliSoftx</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstract"><span class="nav-number">1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">2.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Related-Work"><span class="nav-number">3.</span> <span class="nav-text">2. Related Work</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%B0%E9%9A%BE%E6%A0%B7%E6%9C%AC%E6%8C%96%E6%8E%98HEM"><span class="nav-number">3.1.</span> <span class="nav-text">困难样本挖掘HEM</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8E%E5%8D%B7%E7%A7%AF%E7%BD%91%E7%BB%9C%E7%9A%84%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B"><span class="nav-number">3.2.</span> <span class="nav-text">基于卷积网络的目标检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%AD%E7%9A%84%E5%9B%B0%E9%9A%BE%E6%A0%B7%E6%9C%AC%E9%80%89%E6%8B%A9"><span class="nav-number">3.3.</span> <span class="nav-text">深度学习中的困难样本选择</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Fast-R-CNN%E7%AE%80%E4%BB%8B"><span class="nav-number">4.</span> <span class="nav-text">3. Fast R-CNN简介</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Training"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 Training</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%89%8D%E6%99%AFROI"><span class="nav-number">4.1.1.</span> <span class="nav-text">前景ROI</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%83%8C%E6%99%AFROI"><span class="nav-number">4.1.2.</span> <span class="nav-text">背景ROI</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B3%E8%A1%A1fg-bg%E7%9A%84ROI"><span class="nav-number">4.1.3.</span> <span class="nav-text">平衡fg-bg的ROI</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%88%91%E4%BB%AC%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">5.</span> <span class="nav-text">4. 我们的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%9C%A8%E7%BA%BF%E5%9B%B0%E9%9A%BE%E6%A0%B7%E6%9C%AC%E6%8C%96%E6%8E%98"><span class="nav-number">5.1.</span> <span class="nav-text">4.1 在线困难样本挖掘</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="nav-number">5.2.</span> <span class="nav-text">4.2 实现细节</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%88%86%E6%9E%90%E5%9C%A8%E7%BA%BF%E5%9B%B0%E9%9A%BE%E6%A0%B7%E6%9C%AC%E6%8C%96%E6%8E%98"><span class="nav-number">6.</span> <span class="nav-text">5. 分析在线困难样本挖掘</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E5%AE%9E%E9%AA%8C%E8%AE%BE%E7%BD%AE"><span class="nav-number">6.1.</span> <span class="nav-text">5.1 实验设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-OHEM%E4%B8%8E%E5%90%AF%E5%8F%91%E5%BC%8F%E6%96%B9%E6%B3%95"><span class="nav-number">6.2.</span> <span class="nav-text">5.2 OHEM与启发式方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E9%B2%81%E6%A3%92%E6%A2%AF%E5%BA%A6%E4%BC%B0%E8%AE%A1"><span class="nav-number">6.3.</span> <span class="nav-text">5.3 鲁棒梯度估计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-4-%E4%B8%BA%E4%BB%80%E4%B9%88%E5%8F%AA%E6%98%AF%E5%9B%B0%E9%9A%BE%E6%A0%B7%E6%9C%AC%EF%BC%8C%E5%BD%93%E4%BD%A0%E4%BD%BF%E7%94%A8%E6%89%80%E6%9C%89%E6%A0%B7%E6%9C%AC%E7%9A%84%E6%97%B6%E5%80%99%E5%91%A2%EF%BC%9F"><span class="nav-number">6.4.</span> <span class="nav-text">5.4 为什么只是困难样本，当你使用所有样本的时候呢？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-5-%E6%9B%B4%E5%A5%BD%E7%9A%84%E4%BC%98%E5%8C%96"><span class="nav-number">6.5.</span> <span class="nav-text">5.5 更好的优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-6-%E8%AE%A1%E7%AE%97%E6%88%90%E6%9C%AC"><span class="nav-number">6.6.</span> <span class="nav-text">5.6 计算成本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E5%A2%9E%E5%8A%A0%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">7.</span> <span class="nav-text">7 增加的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Multi-scale%EF%BC%88M%EF%BC%89%E5%A4%9A%E5%B0%BA%E5%BA%A6"><span class="nav-number">7.0.1.</span> <span class="nav-text">Multi-scale（M）多尺度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%AD%E4%BB%A3BB%E5%9B%9E%E5%BD%92%EF%BC%88B%EF%BC%89"><span class="nav-number">7.0.2.</span> <span class="nav-text">迭代BB回归（B）</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">intellisoftx</p>
+  <div class="site-description" itemprop="description">智软X</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Training-Region-Based-Object-Detectors-with-Online-Hard-Example-Mining/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="intellisoftx">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Intelligent Software X">
+      <meta itemprop="description" content="智软X">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="论文笔记《Training Region-Based Object Detectors with Online Hard Example Mining》 | Intelligent Software X">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记《Training Region-Based Object Detectors with Online Hard Example Mining》
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-03-27 22:32:18" itemprop="dateCreated datePublished" datetime="2018-03-27T22:32:18+08:00">2018-03-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-30 19:43:21" itemprop="dateModified" datetime="2023-03-30T19:43:21+08:00">2023-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Note 笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/Object-Detection/" itemprop="url" rel="index"><span itemprop="name">Object Detection</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;f1.png)</p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>region-based ConvNets（R-CNN）极大的推动了目标检测领域的发展，但是其训练过程仍然包括很多启发知识和超参来进行优化。我们提出一种简单但是非常有效的<em>在线困难样本挖掘算法online hard example mining（OHEM）</em>用于训练R-CNN检测器。<strong>我们的动机是：在被检测的数据集中总是包含大量简单的样本和少量困难样本。自动的选择这些困难样本进行训练能够更加快速和有效</strong>。OHEM是一种简单直观的算法，能够避免一些常用的启发只是和超参。更重要的是，其对检测性能有稳定和显著的提升。在数据集变得越来越大的今天，如MS COCO，这项工作是十分有意义的。最后，OHEM与该领域先进的方法结合后，在PASCAL VOC 2007和2012数据集上实现78.9%和76.3%的mAP。</p>
+<ul>
+<li>OHEM</li>
+<li>FAIR</li>
+<li>Ross Girshick</li>
+<li>Hard Example Mining</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>图像分类和目标检测是计算机时间两项基本任务。通常将目标检测任务简化为分类任务进行训练。这个简化操作带来了图像分类任务中不存在的新挑战：训练集中的目标和背景样本的数量非常不平衡。在滑窗目标检测器中，例如DPM，这种不平衡的比例可以达到100000:1。最近研究提出的基于目标推荐的检测器能够缓解上述问题，但是比例仍然有70:1。这项挑战属于学习方法领域，如何处理不平衡，并且更快速的训练，实现更高精度。</p>
+<p>很明显，这不是一个新问题，一种标准的解决方法叫做<code>bootstrapping</code>，现在称为<code>hard negative mining</code>，从提出已有20年。Bootstrapping是Sung和Poggio[^33]在90年代中期提出，用于训练人流检测模型。其核心思想是逐渐的增长或bootstrap，选择检测器检测的虚警样本，进行训练。通过一种迭代的算法，先以当前训练集训练检测器，然后发现新的虚警样本增加到bootstrapped训练集。这个操作一般包含所有的目标样本和少量随机的背景样本（所以说，这个方法可以辅助选择负样本）。</p>
+<p>Bootstrapping广泛应用于目标检测研究：</p>
+<ul>
+<li>Dala和Triggs的SVM行人检测器</li>
+<li>Felzenszwalb之后证明bootstrapping能够使得SVM在整个数据集上达到全局优化的效果。</li>
+</ul>
+<p>这些算法一般被认为是<code>hard negative mining</code>，经常用于训练目标检测的SVM。Bootstrapping还成功的用于许多其他的学习模型，包括浅层神经网络、boosted决策树。甚至目前先进的基于深度卷积神经网络[^19,20]，如R-CNN[^15]，SPPnet[^16]，仍然采用hard negative mining训练的SVM。</p>
+<p>然而目前先进的目标检测器如Fast R-CNN以及变体没有使用Bootstrapping。<strong>可能的原因是将目前的技术转为纯在线学习算法是困难的，尤其是在几百万个样本中进行SGD训练深度卷积网络的情况下。</strong> Bootstrapping需要依赖上述交换模版：（a）一会固定模型寻找新样本；（b）一会固定样本训练模型。SGD训练深度卷积网络需要几十万次SGD，因此在几个迭代中固定模型也会极大的减慢处理过程。因此，需要的是一种在线的困难样本选择方法。</p>
+<p>本文，我们提出一个新型的Bootstrapping技术，称为OHEM——在线困难样本挖掘，用于训练基于深度卷积网络的检测器。该算法是对SGD的简单修改，其中训练样本根据正在计算的每个样本当前的损失进行不均匀、非平稳分布的采样。该方法利用了检测问题的优势，该问题中每个SGD mini-batch虽然仅包含1或2个图像，但是有上千个候选样本。<strong>对候选样本进行降采样，考虑样本多样性和高损失值。</strong>由于仅使用候选区的一个小子集，因此梯度计算仍然是高效的。我们将OHEM应用与Fast R-CNN方法，显示出3个优点：</p>
+<ul>
+<li>去除了一些常用的启发式线索和超参</li>
+<li>在mAP上显示出稳定、显著的提升</li>
+<li>在更大更困难的数据集上效率更高，如MS COCO数据集</li>
+</ul>
+<p>除此之外，OHEM与目前的一些方法互补，如多尺度测试[^16]，迭代bounding-box回归[^13]。与上面这些技巧结合，OHEM在VOC 2007和2012的结果分别为78.9%，76.3%。</p>
+<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p>目标检测是计算机视觉领域最古老也是最基础的问题之一。数据集的Bootstrapping，目前称为hard negative mining，应用于很多目标检测器的训练中。这些方法用深度卷积神经网络提取特这后，大部分使用SVM作为检测器对样本打分排序。其中的例外是Fast R-CNN和Faster R-CNN。由于这些方法步使用SVM，使用纯粹的在线SGD训练，因此目前的困难样本挖掘方法不能直接使用。本文使用在线困难样本挖掘算法解决这个问题，提高效率和进度。我们简单回顾下困难样本挖掘、基于卷积网络的目标检测器，以及他们之间的合作——使用困难样本挖掘训练深度网络。</p>
+<h3 id="困难样本挖掘HEM"><a href="#困难样本挖掘HEM" class="headerlink" title="困难样本挖掘HEM"></a>困难样本挖掘HEM</h3><p>目前主要有两种HEM。</p>
+<p>第一种主要用于优化SVM。方法就是先在一个样本集上训练SVM至收敛，然后根据一定的规则去除一些样本，新增一些样本。去除的是在当前模型下离分类边界很远的那些“容易”分类的样本。反之，将违反当前边界的样本，即错分的样本加入训练集中。应用上述规则实现全局优化的SVM。重要的是通常工作集是整个训练样本集的一个小子集。</p>
+<p>第二种一般用于非SVM方法，例如浅神经网络和boosted决策树。该算法首先包含正样本和随机负样本。然后训练模型至收敛。之后在一个更大的数据集上获取虚警。将虚警加入训练集中再次进行训练。这个流程一般只迭代一次，并且没有任何收敛性证明。</p>
+<h3 id="基于卷积网络的目标检测"><a href="#基于卷积网络的目标检测" class="headerlink" title="基于卷积网络的目标检测"></a>基于卷积网络的目标检测</h3><p>近三年，目标检测领域发展迅速。这种进步主要是由于ImageNet出现后对深度卷积网络的训练。R-CNN和Over Feat[^26]检测器在PASCAL VOC和ImageNet detection上的结果改善显著。OverFeat基于滑窗法，R-CNN基于区域推荐法——Selective search算法。由于R-CNN基于卷积网络的处理流程更快，SPPnet[^16]，MR-CNN[^13]，Fast R-CNN[^14]，因此我们的工作主要在此模型上展开。</p>
+<h3 id="深度学习中的困难样本选择"><a href="#深度学习中的困难样本选择" class="headerlink" title="深度学习中的困难样本选择"></a>深度学习中的困难样本选择</h3><p>目前有也有一些工作研究在训练深度网络中挑选困难样本[^22][^27][^33]。与我们的方法类似，这些方法也都是具有当前数据点的损失值来挑选样本。</p>
+<ul>
+<li>论文[^27]从一个大型数据集中随机样本的loss独立的选择困难正样本和负样本，用于学习图像描述符。</li>
+<li>论文[^33]对于给定的一对正样本块，使用triplet loss在数据集中寻找困难负样本块</li>
+<li>与我们的方法类似，论文[^22]研究对mini-batch SGD的在线困难样本选择方法。他们的方法也基于loss，但是主要面向分类问题。<em>而我们的关注于基于区域推荐的目标检测器的在线困难样本选择策略。</em>（这个理由有点牵强）</li>
+</ul>
+<h2 id="3-Fast-R-CNN简介"><a href="#3-Fast-R-CNN简介" class="headerlink" title="3. Fast R-CNN简介"></a>3. Fast R-CNN简介</h2><p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;f1.png)</p>
+<p>我们首先总结下Fast R-CNN（FRCN）的框架。FRCN是输入一幅图像和一系列ROI。FRCN网络本身分为两个部分：一个是卷积网络层，包含卷积和池化层；另一个是ROI网络，包含ROI池化层，以及全连接层和两个损失层。如图1。</p>
+<p>卷积网络将图像转换为卷积特征图，然后对于每个目标推荐，ROI池化层，将ROI映射到卷积特征图上，然后提取固定长度的特征向量（<em>通过插值或超采样</em>）。每个特征向量输入给fc层，最后输出两个结果：（1）softmax，所有类别和背景的概率分布；（2）bounding-box的重新定位的位置回归。</p>
+<p>选择FRCN作为我们的基础目标检测器有以下原因：</p>
+<ul>
+<li>一个快速的端到端的系统</li>
+<li>conv和ROI两个网络层是设计也用于其他的检测器SPPnet和MR-CNN，因此我们提出的方法更加有广泛性</li>
+<li>基本设置相似，FRCN也允许训练整个卷积网络，相反SPPnet和MR-CNN会固定卷积层。</li>
+<li>SPPnet和MR-CNN都需要缓存ROI网络的特征用于训练一个分离的SVM分类器（用于困难负样本挖掘）。FRCN使用ROI网络本身来训练期望的分类器。后面会证明在统一系统中使用SVM分类器是没必要的。</li>
+</ul>
+<h3 id="3-1-Training"><a href="#3-1-Training" class="headerlink" title="3.1 Training"></a>3.1 Training</h3><p>类似大部分深度网络，FRCN也是使用随机梯度下降进行训练。每个ROI的loss是所有分类的log loss的综合，目的是鼓励准确预测目标类别；另一个位置loss孤立预测精确的bounding box位置。</p>
+<p>为了分享ROI之间的卷积计算，SGD的mini-batch创建为层级结构。对于每个mini-batch，先从数据集中选择N个图像，每个图像选择B&#x2F;N个ROI。设置N&#x3D;2，B&#x3D;128。ROI的采样设计到一些启发式方法，后面我们进行简要介绍。<strong>本文的一个贡献是去除一些启发式方法和他们的超参数。</strong></p>
+<h4 id="前景ROI"><a href="#前景ROI" class="headerlink" title="前景ROI"></a>前景ROI</h4><p>例如一个ROI被标记为前景fg，其与gt的IoU应该≥0.5。这是一种标准的设计选择，是PASCAL VOC目标检测基准数据集的评估标准。相同的标准也用在R-CNN，SPPnet，MR-CNN等模型中SVM的困难样本挖掘。我们也使用相同的标准。</p>
+<h4 id="背景ROI"><a href="#背景ROI" class="headerlink" title="背景ROI"></a>背景ROI</h4><p>一个区域被标记为bg，其最大IoU的区间在[bg_lo, 0.5)之间。在FRCN和SPPnet中使用bg_lo&#x3D;0.1，文献[^14]使用更粗略的困难负样本。<strong>这里假设区域与gt有一些重叠的区域更有可能混淆，称为困难样本。</strong>5.4节显示启发式方法能够帮助收敛、提高精度，这是一种次优方法，<strong>因为忽略一些不经常出现但是重要困难的背景区域。我们的方法移除了bg_lo的阈值。</strong></p>
+<h4 id="平衡fg-bg的ROI"><a href="#平衡fg-bg的ROI" class="headerlink" title="平衡fg-bg的ROI"></a>平衡fg-bg的ROI</h4><p>为了处理section1中的数据不平衡性，论文[^14]设计启发式方法平衡每个mini-batch的fg-bg比例，目标比例为1：3，通过随机降采样背景块，因此确保mini-batch中25%的样本是fg。我们发现这是一个训练FRCN的重要设计。去除这个比例（随机采样ROI）或者增加比例，会降低检测精度mAP，3个点。基于我们的方法，可以去除这个比例参数，并且不造成影响。</p>
+<h2 id="4-我们的方法"><a href="#4-我们的方法" class="headerlink" title="4. 我们的方法"></a>4. 我们的方法</h2><p>我们提出简单、有效的在线困难样本挖掘算法用于训练Fast R-CNN（或Fast R-CNN类似的目标检测器）。我们认为目前的方法构造mini-batch用于SGD是低效、次优的。我们方法能够更好的训练（训练误差更低）更高的检测性能（mAP）。</p>
+<h3 id="4-1-在线困难样本挖掘"><a href="#4-1-在线困难样本挖掘" class="headerlink" title="4.1 在线困难样本挖掘"></a>4.1 在线困难样本挖掘</h3><p>基于SVM的目标检测器中，例如R-CNN或SPPnet中训练的SVM，其步骤是：</p>
+<ul>
+<li>激活一定数量的图片（j经常为10多，100多）使得训练集达到一定阈值</li>
+<li>在该激活的训练集上训练SVM至收敛。</li>
+<li>重复上述过程，直到激活训练集包含所有支持向量</li>
+</ul>
+<p>将类似的策略应用于FRCN后会减慢训练速度，因为在挑选样本时不能更新模型。</p>
+<p>我们发现，两个步骤可以结合FRCN的在线SGD进行训练。主要原因是虽然每个SGD迭代只有少量图像，但是每个图像包含上千个ROI样本，从中我们可以挑选困难样本，而不是启发式筛选子集。这个策略适用于SGD中固定模型用于mini-batch的交换模版，且只固定模型一次，在一个mini-batch中。因此模型更新速度跟SGD方法一样快，所以学习没有延迟。</p>
+<ul>
+<li>输入图像，在SGD的第t次迭代，计算卷积特征图</li>
+<li>ROI网络计算所有输入的ROI，ROI池化，几个全连接层，计算loss</li>
+<li>loss表示对当前ROI的性能</li>
+<li>对ROI以loss排序选择前B&#x2F;N个ROI表示当前检测最差的ROI</li>
+<li>由于只选择一小部分ROI更新模型，反向传播更加快速</li>
+</ul>
+<p>但是，这里有个小问题：区域重叠的位置相关ROI区域具有相关的损失。并且重叠的ROI可能投影到相同的卷积特征区域，因此导致对同一区域的loss加倍考虑。为了处理这些冗余和相关的区域，我们使用标准的非极大值抑制NMS删除重复数据。对于给定的ROI列表和他们的损失，NMS的工作是选择高loss的ROI，删除低loss的ROI和具有高度重叠的区域。我们选择的IoU阈值为0.7。</p>
+<p>网盘， 发现上面描述的过程不需要fg-bg比例参数用于数据平衡。如果任何类被忽略，那他们的loss会增加，然后就会有更高的可能性对其采样。</p>
+<h3 id="4-2-实现细节"><a href="#4-2-实现细节" class="headerlink" title="4.2 实现细节"></a>4.2 实现细节</h3><p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;f2.png)</p>
+<p>有很多方法可以实现OHEM，每种都有不同的权衡。一个明显的方法是修改loss层来做困难样本的选择。loss层可以计算所有ROI的loss，然后排序，然后选择困难的ROI，然后将所有非困难ROI的loss置0。这种方法虽然直接，但是并不高效，因为ROI网络仍然会分配内存给所有的ROI，进行反向传播，即使大部分ROI的loss是0，因此没有梯度更新。</p>
+<p>为了解决这个，我们提出的架构如图2所示。我们实现维护两个相同的ROI网络，其中一个是只读的。这意味着，只读的ROI网络只在前向传播的时候分配内存，而一般的网络是前向&#x2F;反向都分配内存。对于一个SGD迭代，给定一个卷积特征图，只读ROI网络前向计算所有ROI的损失值，然后困难ROI采样模块使用如4.1描述的方法选择困难样本($R_{hard-set}$)，其输入给一般的ROI网络这个网络分别计算前向和反向，但是仅在$R_{hard-set}$上累计梯度并传递给卷积网络。实际中，我们使用N个图片的所有ROI作为R，因此只读网络的的batch尺寸是$|R|$，而常规网络是$|B|$。</p>
+<p>我们使用Caffe实现上述网络，N次前向反向梯度累积，在一个image mini-batch。对于FRCN，我们使用N&#x3D;2，B&#x3D;128。使用上述方法后速度提升两倍。除非特殊说明，否则本文使用上述方法。</p>
+<h2 id="5-分析在线困难样本挖掘"><a href="#5-分析在线困难样本挖掘" class="headerlink" title="5. 分析在线困难样本挖掘"></a>5. 分析在线困难样本挖掘</h2><p>这一届比较采用OHEM的FRCN的模型和一般的启发式样本算则方法。我们还比较了一些更抵消的方法，即使用所有ROI，而不是仅仅B个最困难的样本。</p>
+<h3 id="5-1-实验设置"><a href="#5-1-实验设置" class="headerlink" title="5.1 实验设置"></a>5.1 实验设置</h3><p>我们主要对两个标准卷积网络架构实验：一个是VGG_CNN_M_1024(VGGM)，是AlexNet的一种扩展版，一个是VGG16。所有实验都在VOC 07数据集上进行。训练所有的SGD对80k个mini-batch迭代，初始化学习率为0.001，每30k次迭代衰减0.1。表1中的1，2行是我们的标准做法，比原文的结果稍微提高。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;t1.png)</p>
+<h3 id="5-2-OHEM与启发式方法"><a href="#5-2-OHEM与启发式方法" class="headerlink" title="5.2 OHEM与启发式方法"></a>5.2 OHEM与启发式方法</h3><p>标准的FRCN，如表1所述，1-2行。为了测试启发式方法的重要性，去除bg_lo，之后VGGM的mAP掉了2.4，但是VGG16基本一致。与OHEM训练FRCN相比，有2.4mAP的提升。这证明启发式方法是次优的，我们的OHEM是更有效的方法。</p>
+<h3 id="5-3-鲁棒梯度估计"><a href="#5-3-鲁棒梯度估计" class="headerlink" title="5.3 鲁棒梯度估计"></a>5.3 鲁棒梯度估计</h3><p>采用两个图片的ROI进行优化，这是因为单一图像由于ROI具有较高的相似性，可能会导致不稳定的梯度，从而减慢收敛的过程。这个对于FRCN可能不是一个问题，但是对我们的方法可能是需要考虑的，因为我们对同一幅图像中的高loss进行采样，这些ROI可能具有较高的相似性。为了解决这个问题，我们实验了当N&#x3D;1时，增加ROI相关性，FRCN会产生1个点的下降，但是我们的方法没有下降，说明更加具有鲁棒性。</p>
+<h3 id="5-4-为什么只是困难样本，当你使用所有样本的时候呢？"><a href="#5-4-为什么只是困难样本，当你使用所有样本的时候呢？" class="headerlink" title="5.4 为什么只是困难样本，当你使用所有样本的时候呢？"></a>5.4 为什么只是困难样本，当你使用所有样本的时候呢？</h3><p>在线困难样本挖掘有一个基本假设，考虑所有ROI是必要的，然后选择困难的样本进行训练。但是如果我用所有ROI进行训练呢？容易样本具有低loss，不会对gradient具有太多贡献，本身训练的过程就会关注困难的样本。为了比较这个，我们使用了大尺寸的mini-size，B&#x3D;2048，由于使用了大数据量，调整学习率是必要。虽然结果不基准要高1个点，但是我们的方法更加好。</p>
+<h3 id="5-5-更好的优化"><a href="#5-5-更好的优化" class="headerlink" title="5.5 更好的优化"></a>5.5 更好的优化</h3><p>最后，我们分析上述不同FRCN训练方法的loss的变化。我们每20k次优化计算一次所有ROI的平均loss。图3显示了结果：</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;f3.png)</p>
+<h3 id="5-6-计算成本"><a href="#5-6-计算成本" class="headerlink" title="5.6 计算成本"></a>5.6 计算成本</h3><p>OHEM整机了合理的计算量和内存消耗。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;t2.png)</p>
+<h2 id="7-增加的方法"><a href="#7-增加的方法" class="headerlink" title="7 增加的方法"></a>7 增加的方法</h2><h4 id="Multi-scale（M）多尺度"><a href="#Multi-scale（M）多尺度" class="headerlink" title="Multi-scale（M）多尺度"></a>Multi-scale（M）多尺度</h4><p>我们采用多尺度策略。尺度定义为图像的短边长s，训练期间随机选择尺度，测试时测试所有尺度。对于VGG16，训练时s&#x3D;{480,576,688,864,900}，测试时s&#x3D;{480,576,688,864,1000}</p>
+<h4 id="迭代BB回归（B）"><a href="#迭代BB回归（B）" class="headerlink" title="迭代BB回归（B）"></a>迭代BB回归（B）</h4><p>论文[^13]中采用迭代定位和bbox投票方案。网络评估每个ROI得到一个得分和重新定位的box R1。高得分的R1进行再次评价和定位得到R2。R1和R1组成最终的RF用于后处理，RF_NMS得到NMS后的RF，IoU为0.3。</p>
+<p><strong>BibTex</strong></p>
+<figure class="highlight latex"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@inproceedings&#123;</span><br><span class="line">Shrivastava2016,</span><br><span class="line">author = &#123;Shrivastava, Abhinav and Gupta, Abhinav and Girshick, Ross&#125;,</span><br><span class="line">booktitle = &#123;2016 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)&#125;,</span><br><span class="line">doi = &#123;10.1109/CVPR.2016.89&#125;,</span><br><span class="line">month = &#123;jun&#125;,</span><br><span class="line">pages = &#123;761--769&#125;,</span><br><span class="line">publisher = &#123;IEEE&#125;,</span><br><span class="line">title = &#123;&#123;Training Region-Based Object Detectors with Online Hard Example Mining&#125;&#125;,</span><br><span class="line">year = &#123;2016&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>intellisoftx
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Training-Region-Based-Object-Detectors-with-Online-Hard-Example-Mining/" title="论文笔记《Training Region-Based Object Detectors with Online Hard Example Mining》">http://intellisoftx.com/Note-笔记/Object-Detection/Note-Training-Region-Based-Object-Detectors-with-Online-Hard-Example-Mining/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Video-Object-Detection/" rel="tag"># Video Object Detection</a>
+              <a href="/tags/OHEM/" rel="tag"># OHEM</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Tutorial-%E6%95%99%E7%A8%8B/Markdown-storage-image/" rel="prev" title="解决Markdown图片存放">
+                  <i class="fa fa-chevron-left"></i> 解决Markdown图片存放
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Seq-nms-for-video-object-detection/" rel="next" title="论文笔记《Seq-nms for video object detection》">
+                  论文笔记《Seq-nms for video object detection》 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">intellisoftx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

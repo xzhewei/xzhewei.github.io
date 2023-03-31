@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"intellisoftx.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Abstract CNN在行人检测上的发展显著，但是考虑训练数据和模型架构上仍有需要解决的问题。我们回顾CNN的设计和适应性使得Faster R-CNN在Caltech上实现先进的结果。 为了从更多更好的数据中得到改进，我们提出CityPersons行人数据集，该数据集在Cityscapes数据集的基础上标注。CityPersons的多样性使得我们第一次实现训练一个的CNN模型能够在多个基准数据集">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记《CityPersons: A Diverse Dataset for Pedestrian Detection》">
+<meta property="og:url" content="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-CityPersons-A-Diverse-Dataset-for-Pedestrian-Detection/index.html">
+<meta property="og:site_name" content="Intelligent Software X">
+<meta property="og:description" content="Abstract CNN在行人检测上的发展显著，但是考虑训练数据和模型架构上仍有需要解决的问题。我们回顾CNN的设计和适应性使得Faster R-CNN在Caltech上实现先进的结果。 为了从更多更好的数据中得到改进，我们提出CityPersons行人数据集，该数据集在Cityscapes数据集的基础上标注。CityPersons的多样性使得我们第一次实现训练一个的CNN模型能够在多个基准数据集">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-05-10T05:23:44.000Z">
+<meta property="article:modified_time" content="2023-03-30T11:43:21.442Z">
+<meta property="article:author" content="intellisoftx">
+<meta property="article:tag" content="Pedestrian Detection">
+<meta property="article:tag" content="Datasets">
+<meta property="article:tag" content="CityPersons">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-CityPersons-A-Diverse-Dataset-for-Pedestrian-Detection/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-CityPersons-A-Diverse-Dataset-for-Pedestrian-Detection/","path":"Note-笔记/Pedestrian-Detection/Note-CityPersons-A-Diverse-Dataset-for-Pedestrian-Detection/","title":"论文笔记《CityPersons: A Diverse Dataset for Pedestrian Detection》"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>论文笔记《CityPersons: A Diverse Dataset for Pedestrian Detection》 | Intelligent Software X</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Intelligent Software X</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">IntelliSoftx</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">1.</span> <span class="nav-text">1. Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-Related-work"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 Related work</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%B7%E7%A7%AF%E7%BD%91%E7%BB%9C%E7%94%A8%E4%BA%8E%E8%A1%8C%E4%BA%BA%E6%A3%80%E6%B5%8B"><span class="nav-number">1.2.</span> <span class="nav-text">卷积网络用于行人检测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%8C%E4%BA%BA%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">1.3.</span> <span class="nav-text">行人数据集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E4%B9%89%E6%A0%87%E7%AD%BE%E7%94%A8%E4%BA%8E%E8%A1%8C%E4%BA%BA%E6%A3%80%E6%B5%8B"><span class="nav-number">1.4.</span> <span class="nav-text">语义标签用于行人检测</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E4%B8%80%E4%B8%AA%E8%A1%8C%E4%BA%BA%E6%A3%80%E6%B5%8Bconvnet"><span class="nav-number">2.</span> <span class="nav-text">2. 一个行人检测convnet</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E3%80%81%E6%B5%8B%E8%AF%95%EF%BC%88-MR-O-MR-N-%EF%BC%89"><span class="nav-number">2.1.</span> <span class="nav-text">训练、测试（$MR^O$,$MR^N$）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Faster-R-CNN"><span class="nav-number">2.2.</span> <span class="nav-text">Faster R-CNN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E8%BF%9B1-%E9%87%8F%E5%8C%96-RPN-%E5%B0%BA%E5%BA%A6"><span class="nav-number">2.3.</span> <span class="nav-text">改进1 量化 RPN 尺度</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E8%BF%9B2-%E8%BE%93%E5%85%A5%E5%9B%BE%E5%83%8F%E5%8D%87%E9%87%87%E6%A0%B7"><span class="nav-number">2.4.</span> <span class="nav-text">改进2 输入图像升采样</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E8%BF%9B3-%E7%BB%86%E5%8C%96%E7%89%B9%E5%BE%81%E6%AD%A5%E9%95%BF"><span class="nav-number">2.5.</span> <span class="nav-text">改进3 细化特征步长</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E8%BF%9B4-%E5%A4%84%E7%90%86%E5%BF%BD%E7%95%A5%E5%8C%BA%E5%9F%9F"><span class="nav-number">2.6.</span> <span class="nav-text">改进4 处理忽略区域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E8%BF%9B5-%E6%B1%82%E8%A7%A3%E5%99%A8"><span class="nav-number">2.7.</span> <span class="nav-text">改进5 求解器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E6%9E%B6%E6%9E%84"><span class="nav-number">2.8.</span> <span class="nav-text">其他架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">2.9.</span> <span class="nav-text">结论</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-CityPersons%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">3.</span> <span class="nav-text">3. CityPersons数据集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Bounding-Box-%E6%A0%87%E6%B3%A8"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 Bounding Box 标注</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B2%BE%E7%BB%86%E5%8C%96%E5%88%86%E7%B1%BB"><span class="nav-number">3.2.</span> <span class="nav-text">精细化分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E6%B3%A8%E8%A7%84%E5%88%99"><span class="nav-number">3.3.</span> <span class="nav-text">标注规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E8%AE%B0%E5%B7%A5%E5%85%B7"><span class="nav-number">3.4.</span> <span class="nav-text">标记工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E7%BB%9F%E8%AE%A1"><span class="nav-number">3.5.</span> <span class="nav-text">3.2 统计</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%93%E7%A7%AF"><span class="nav-number">3.5.1.</span> <span class="nav-text">体积</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E6%A0%B7%E6%80%A7"><span class="nav-number">3.5.2.</span> <span class="nav-text">多样性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%81%AE%E6%8C%A1"><span class="nav-number">3.5.3.</span> <span class="nav-text">遮挡</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E5%9F%BA%E5%87%86"><span class="nav-number">3.6.</span> <span class="nav-text">3.3 基准</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E5%9F%BA%E5%87%86%E5%AE%9E%E9%AA%8C"><span class="nav-number">3.7.</span> <span class="nav-text">3.4 基准实验</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%BD%BF%E7%94%A8CityPersons%E6%94%B9%E8%BF%9B%E8%B4%A8%E9%87%8F"><span class="nav-number">4.</span> <span class="nav-text">4. 使用CityPersons改进质量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E8%B7%A8%E6%95%B0%E6%8D%AE%E9%9B%86%E7%9A%84%E6%B3%9B%E5%8C%96%E6%80%A7"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 跨数据集的泛化性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E6%9B%B4%E5%A5%BD%E7%9A%84%E9%A2%84%E8%AE%AD%E7%BB%83%E6%94%B9%E8%BF%9B%E8%B4%A8%E9%87%8F"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 更好的预训练改进质量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E5%BC%80%E5%8F%91Cityscapes%E7%9A%84%E8%AF%AD%E4%B9%89%E6%A0%87%E7%AD%BE"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 开发Cityscapes的语义标签</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">intellisoftx</p>
+  <div class="site-description" itemprop="description">智软X</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-CityPersons-A-Diverse-Dataset-for-Pedestrian-Detection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="intellisoftx">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Intelligent Software X">
+      <meta itemprop="description" content="智软X">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="论文笔记《CityPersons: A Diverse Dataset for Pedestrian Detection》 | Intelligent Software X">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记《CityPersons: A Diverse Dataset for Pedestrian Detection》
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-05-10 13:23:44" itemprop="dateCreated datePublished" datetime="2017-05-10T13:23:44+08:00">2017-05-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-30 19:43:21" itemprop="dateModified" datetime="2023-03-30T19:43:21+08:00">2023-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Note 笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/" itemprop="url" rel="index"><span itemprop="name">Pedestrian Detection</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><strong>Abstract</strong></p>
+<p>CNN在行人检测上的发展显著，但是考虑训练数据和模型架构上仍有需要解决的问题。我们回顾CNN的设计和适应性使得Faster R-CNN在Caltech上实现先进的结果。</p>
+<p>为了从更多更好的数据中得到改进，我们提出<code>CityPersons</code>行人数据集，该数据集在Cityscapes数据集的基础上标注。<strong>CityPersons的多样性使得我们第一次实现训练一个的CNN模型能够在多个基准数据集上具有较好的泛化性能。</strong>并且使用CityPerson训练的FasterR-CNN模型在Caltech上实现更高的检测率和定位精度。</p>
+<span id="more"></span>
+
+<ul>
+<li>CVPR 2017</li>
+<li>CityPerson DataSet</li>
+<li>ShanShan Zhang</li>
+<li><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1702.05693">pdf</a></li>
+</ul>
+<p><strong>理解</strong></p>
+<p>本文的创新的主要在两个方面：<br>    1.建立了一个行人检测数据集，包含丰富的信息；<br>    2.证明该数据集训练的分类器泛化性更好。</p>
+<p>从作者张珊珊以前的工作看，她对如何标记行人检测数据集是有经验的。16年CVPR她就对caltech进行的重新标记，使得检测器性能有较大的提升。然后这一次又是在别人的数据集基础上进行标记，不同的是该数据集为语义分割数据集，本身没有行人检测所需的bounding box，然后她把在caltech上标记的技巧应用上来，并且利用语义分割信息，简化了可见区域的标注问题。但是本文最大的创新点还是该数据集对检测器泛化性能的影响。该影响可能会使得CityPersons数据集成为可见光行人检测领域的ImageNet。</p>
+<p>最后，对目前工作有借鉴的是对Faster R-CNN的改动。改进的思路仍然是提高特征图尺寸、对CityPersons数据集调整proposal的候选尺寸、剔除干扰样本、使用更新的求解器。这些改进有的不是最优的，但是可以作为tracke在以后的优化处理上用到。</p>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>行人检测是计算机视觉的流行领域，广泛的应用于监控、辅助驾驶、移动机器人等。近10年发布了多个行人检测基准数据集，使得该领域得到长足的发展。</p>
+<p>虽然在这些基准数据集上相关方法的效果得到长足进步，但是这些方法在实际应用中的效果缺不明朗。我们认为是时候不仅关注数据集内的性能，而是跨数据集间的性能。</p>
+<p>最近，一系列卷积神经网络的方法在Caltech鞠准数据集上得到较好的排名。大部分模型是基于Faster R-CNN的变种。我们提出对Faster R-CNN的适当调整就能实现这些变种相同的效果。然而，由于卷积网络是高容量模型，不清楚是否更多的数据能够使这类模型变得更好。</p>
+<p>为了推动行人检测领域，我们提出“CityPersons”数据集，具有高质量的标注、丰富的多样性、可以用于训练新的模型或作为新的基准数据集。</p>
+<p>我们的主要贡献是：</p>
+<ol>
+<li>提出CityPersons数据集，将公开，并提供在线评估。</li>
+<li>使用CityPerson预训练的Faster R-CNN，通过适当的调整在Caltech和KITTI数据集上实现先进的结果，尤其是对于困难实验（小目标、遮挡），并且定位精度更高。</li>
+<li>使用CityPersons能够实现更好的跨数据集的泛化性能。</li>
+<li>我们的初步试验结果显示。使用语义标签作为增加的监督信息有希望能够改进小目标的检测。</li>
+</ol>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-</a> A Diverse Dataset for Pedestrian_Attachments&#x2F;f10c.png)<br>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-</a> A Diverse Dataset for Pedestrian_Attachments&#x2F;f10d.png)</p>
+<h3 id="1-1-Related-work"><a href="#1-1-Related-work" class="headerlink" title="1.1 Related work"></a>1.1 Related work</h3><p>本文，我们研究了卷积神经网络、数据集和语义标签用于行人检测，所以对这三个方面的相关工作进行讨论。</p>
+<h3 id="卷积网络用于行人检测"><a href="#卷积网络用于行人检测" class="headerlink" title="卷积网络用于行人检测"></a>卷积网络用于行人检测</h3><p>卷积神经网络在ImageNet、Pascal、MS COCO数据集上实现了较好的分类和检测效果。Faster R-CNN已经成为了标准的检测器架构。许多研究尝试在此基础上扩展，但是少数几个效果更好的方法却具有更简单的架构。一个需要注意的例外的SSD[^23],其使用更简单的架构实现的相似的效果。</p>
+<p>早期尝试将convnet用于行人检测的方法，使用传统检测器的输出（主要是决策森林和手工特征），然后convnet对他们进行重新打分（并进行bbox回归）。现在更好的方法是用convnet的输出作为proposal，然后用决策森林进行重新打分（利用卷积特征）。</p>
+<p>本文我们提出对Faster R-CNN适当的调整就能实现现金的检测效果，而不需要其他的部件。</p>
+<h3 id="行人数据集"><a href="#行人数据集" class="headerlink" title="行人数据集"></a>行人数据集</h3><p>过去十年间发布了多个行人检测数据集。INRIA，ETH，TudBrussels，Daimler，这些数据集被更大更流行的Caltech-USA和KITTI超过。这两个数据集都是基于车载视角在大城市中采集，并提供标注的视频序列。</p>
+<p>尽管帧数多，但是数据集密度低。一张图像平均1人，遮挡情况数量不足。并且两个数据集都只在一个城市采集，因此行人和背景的多样性受限。</p>
+<p>基于Cityscapes数据集的优势，我们在其基础上标注高质量的bbox，保护大量被遮挡的行人，27个不同的城市。数据集的多样性是的在CityPersons上训练的模型更具泛化性。</p>
+<h3 id="语义标签用于行人检测"><a href="#语义标签用于行人检测" class="headerlink" title="语义标签用于行人检测"></a>语义标签用于行人检测</h3><p>在4.3节，我们采用CityPersons中的语义标签用于训练行人检测器，实现更好的语义建模。我们使用语义标记网络得到的语义概率图作为增加通道输入行人检测convnet中。</p>
+<h2 id="2-一个行人检测convnet"><a href="#2-一个行人检测convnet" class="headerlink" title="2. 一个行人检测convnet"></a>2. 一个行人检测convnet</h2><p>首先建立一个较强的参考检测器，作为我们的试验工具。我们的目标是找到一个直接的架构实现在Caltech-USA数据集上更好的性能。</p>
+<h3 id="训练、测试（-MR-O-MR-N-）"><a href="#训练、测试（-MR-O-MR-N-）" class="headerlink" title="训练、测试（$MR^O$,$MR^N$）"></a>训练、测试（$MR^O$,$MR^N$）</h3><p>我们训练Caltech模型使用改进的标注，更少的位置错误、更高的召回率、改进的忽略区域、更对齐的bbox）。遵循标准的Caltech评估方法；log miss-rate在0.01到1 FPPI之间。我们同时评估原始标记$MR^O$和改进标记$MR^N$。其他的设置均为Reasonable。</p>
+<h3 id="Faster-R-CNN"><a href="#Faster-R-CNN" class="headerlink" title="Faster R-CNN"></a>Faster R-CNN</h3><p>使用Faster R-CNN的默认参数训练，在行人检测上效果不是太好。因为Faster R-CNN在处理小尺度目标（50~70pixel）事的效果不好，而这类尺度目标是Caltech等行人检测数据集上的主要尺寸。为了处理小行人，我们提出了5点改进，使得$MR^O$的漏检率从20.98降到10.27。在本论文写作的时候，Caltech上的最好成绩是9.6，我们的Faster R-CNN排名第三。</p>
+<h3 id="改进1-量化-RPN-尺度"><a href="#改进1-量化-RPN-尺度" class="headerlink" title="改进1 量化 RPN 尺度"></a>改进1 量化 RPN 尺度</h3><p>Faster R-CNN中RPN的默认尺度是稀疏的[0.5 1 2]，并且认为目标尺度的分布是均匀的。然而，当我们观察Caltech的训练数据时，我们发现小尺度行人比大尺度多。我们的目标是让网络生成更多的小尺寸proposals，以至于更好的处理。我们将所有尺寸范围分解为10个小bin，每个bin的样本数量相同。最后使用11个点的尺寸作为RPN的proposal的尺寸。</p>
+<h3 id="改进2-输入图像升采样"><a href="#改进2-输入图像升采样" class="headerlink" title="改进2 输入图像升采样"></a>改进2 输入图像升采样</h3><p>对输入图像进行升采样，能够提升$MR^O$3.74。我们将其原因归结于升采样后目标的尺寸与ImageNet目标尺寸的分布更接近。同时我们发现，使用更大的升采样因子不能实现更好的提升。</p>
+<h3 id="改进3-细化特征步长"><a href="#改进3-细化特征步长" class="headerlink" title="改进3 细化特征步长"></a>改进3 细化特征步长</h3><p>Caltech中大部分行人的尺寸为80x40。VGG16的特征步长是16个像素。这样大的步长减少了bbox覆盖行人的机会，强迫网络处理偏移行人较大的bbox的识别。去除VGG16第四个max-pooling层使得特征的步长变为8pixels，帮助检测器更好的处理小目标。</p>
+<h3 id="改进4-处理忽略区域"><a href="#改进4-处理忽略区域" class="headerlink" title="改进4 处理忽略区域"></a>改进4 处理忽略区域</h3><p>传统的Faster R-CNN是不处理忽略区域的。一般做法是将该区域认为是背景、混淆区域，这样会影响检测器的性能。通过避免选择忽略区域作为负样本训练RPN，我们得到了1.33 MR的提升。</p>
+<h3 id="改进5-求解器"><a href="#改进5-求解器" class="headerlink" title="改进5 求解器"></a>改进5 求解器</h3><p>我们将Caffe标准的SGD求解器改为Adam，得到了性能提升。</p>
+<p>表1显示了我们每个改进加入后的性能提升。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-</a> A Diverse Dataset for Pedestrian_Attachments&#x2F;t1.png)</p>
+<h3 id="其他架构"><a href="#其他架构" class="headerlink" title="其他架构"></a>其他架构</h3><p>我们也探索了其他架构如SSD，MS-CNN等，但是调整之后没有得到改进的效果。在上述改进后，我们的Faster R-CNN得到10%的改进。</p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>通过适当的调整，Faster R-CNN在Caltech数据集上能够实现较好的性能。我们在后续的实验中将使用该模型。</p>
+<h2 id="3-CityPersons数据集"><a href="#3-CityPersons数据集" class="headerlink" title="3. CityPersons数据集"></a>3. CityPersons数据集</h2><p>Cityscapes数据集用于城市道路场景的语义分割任务。其包括一个很大且多样的立体视频序列，从德国和周边其他国家的多个城市采集。具有精细的像素级的标注信息，包含30个语义类别，超过5000个图像，采集自27个城市。精细的标注包括行人个体和车辆。另外20000张图像从其他23个城市采集，包括粗糙的语义标签，不标记个体标签。</p>
+<p>本论文提出的CityPersons数据集，在Cityscapes基础上建立，为行人检测领域提供了一个新的有趣的数据集。在5000个精细标注的数据集上，我们为每个行人都建立了高质量bbox标记。第3.2节，我们比较了CityPersons与其他数据集在体积、多样性和遮挡上的差异。第4节，我们现实了新数据如何改进在其他数据集上的结果。</p>
+<h3 id="3-1-Bounding-Box-标注"><a href="#3-1-Bounding-Box-标注" class="headerlink" title="3.1 Bounding Box 标注"></a>3.1 Bounding Box 标注</h3><p>Cityscapes已经提供了实例级别的标记。但是这些标记只提供了可见区域的像素。直接使用这些标记进行训练会有以下问题：1）box的比例是不规则的会影响bbox的归一化；2）没有对准每个行人，可能在水平和垂直方向上不是行人的中心。3）现有的数据集都是标记整个行人，而不只是可见区域。因此我们需要对这些行人进行重新标记。</p>
+<h3 id="精细化分类"><a href="#精细化分类" class="headerlink" title="精细化分类"></a>精细化分类</h3><p>Cityscapes数据集对行人的分类为：person和rider。本文我们将所有humans分为四类：pedestrian（walking，running，standing up），rider（riding bicycles or motorbikes），sitting person，other person（非正常姿势）</p>
+<h3 id="标注规则"><a href="#标注规则" class="headerlink" title="标注规则"></a>标注规则</h3><p>对于pedestrians和riders我们遵循相同的标注规则。我们对其头顶到两腿之间划一条线，然后bbox自动按照固定比例（0.41）生成。这种规则能够实现更加精确的对准效果。行人的可见区域可以通过segment mask自动生成。如图2所示。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-</a> A Diverse Dataset for Pedestrian_Attachments&#x2F;f2.png)</p>
+<p>其他类别的person，如sitting和其他persons，没有统一的对准策略，所以我们只提供分割区域的bbox，而不是全身的bbox。</p>
+<p>同时，我们要求标注者在图像中搜索包含虚假行人的区域，例如雕塑、海报、模特、镜子反光等，都被标记为ignore区域。</p>
+<h3 id="标记工具"><a href="#标记工具" class="headerlink" title="标记工具"></a>标记工具</h3><p>由于我们已经有了每个个体的segment mask，我们标记更加快速。基于此，我们开发了一个新的标注工具，避免人工在图像上寻找分割实例。该工具自动提出一个行人分割区域，询问标注者对其进行细化分类。然后对其进行全身标记。感谢高质量的分割标记，使用该工具避免了遗漏行人，尤其是人气场景。但是忽略区域的标记还是需要人工在全图上搜索。</p>
+<h3 id="3-2-统计"><a href="#3-2-统计" class="headerlink" title="3.2 统计"></a>3.2 统计</h3><h4 id="体积"><a href="#体积" class="headerlink" title="体积"></a>体积</h4><p>我们数据集的bbox标注的数量如表2所示。一共5000张图像，35k个行人，13k个忽略区域。训练、验证、测试集的设置按照Cityscapes。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-</a> A Diverse Dataset for Pedestrian_Attachments&#x2F;t2.png)</p>
+<h4 id="多样性"><a href="#多样性" class="headerlink" title="多样性"></a>多样性</h4><p>我们比较了Caltech，KITTI，CityPersons的多样性如表3所示。由于KITTI测试集的标注非公开，我们只考虑训练集。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-</a> A Diverse Dataset for Pedestrian_Attachments&#x2F;t3.png)</p>
+<p>CityPersons的训练集包括18个不同城市，3种季节，多种天气条件。Caltech和KITTI数据集只在一个城市、一个季节采集。</p>
+<p>从密度上看，我们的数据集平均每个图像有7个行人，其他的大约只有1个行人。</p>
+<p>独立的行人也是多样性的重要体现。我们的数据集中，独立行人接近20000个，其他两个分别为1300个，和6000个。注意，在KITTI和CityPersons中，采样间隔非常大，因此每个行人都认为是独立行人。</p>
+<p>CityPersons提供了更加精细的标记。如图3所示，其中大部分是行人，骑行和坐着的人只有10%和5%。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-</a> A Diverse Dataset for Pedestrian_Attachments&#x2F;f3.png)</p>
+<h4 id="遮挡"><a href="#遮挡" class="headerlink" title="遮挡"></a>遮挡</h4><p>Cityscapes数据集是通过车辆进行采集，其中包含一些著名城市的中心，如法兰克福、汉堡。有些图片中包含100多个行人，每个都有很多的遮挡。如此多的遮挡情况在其他数据集上是很少见的。图4显示了不同遮挡等级的行人的分布。我们注意到Caltech种包含60%的行人是完全可见的，而CityPersons中是30%。这表明，我们有更多的遮挡情况，这也使得我们的数据集对处理遮挡更有兴趣。并且在Resonable子集中，Caltech大部分都是非遮挡行人，而CityPersons得遮挡情况更多。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-</a> A Diverse Dataset for Pedestrian_Attachments&#x2F;f4.png)</p>
+<p>为了更好的理解那种情况的遮挡更多，我们将所有遮挡模式量化为11种，图5显示了其中的9种。如图5所示。前两种遮挡基本覆盖了resonable，有55.9%。第三、第四个情况是左边或右边遮挡。除了这些之外，还有30%的其他遮挡类型。遮挡类型的分布多样性使得数据集更加具有挑战性。</p>
+<h3 id="3-3-基准"><a href="#3-3-基准" class="headerlink" title="3.3 基准"></a>3.3 基准</h3><p>本论文发表时，我们将建立一个CityPersons的网站，包含训练和验证集下载。以及一个在线评估服务器用于计算提交的测试集的结果。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-</a> A Diverse Dataset for Pedestrian_Attachments&#x2F;f5.png)</p>
+<p>我们遵循Caltech相同的评价规则，分为不同的自己进行评估。本文中MR代表log平均漏检率，在Resonable设置下。在评估行人检测性能时，cyclists、sitting、其他行人、忽略区域不予考虑，同时，检测到该区域的部分不认为是虚警。</p>
+<h3 id="3-4-基准实验"><a href="#3-4-基准实验" class="headerlink" title="3.4 基准实验"></a>3.4 基准实验</h3><p>为了更好的理解CityPersons数据集的困难，我们用三个检测器训练评估。ACF、Checkerboard、Faster R-CNN。我们队Faster R-CNN的设置从Caltech实践经验中得到。由于CityPersons的每张图像有7个行人，因此我们只采用1.3倍升采样来匹配12GB的GPU内存。</p>
+<p>我们使用CityPersons进行再训练，然后用验证集验证。图6显示了三个不同的检测器在两个数据集上的对比。FasterRCNN相比于ICF检测器有巨大提升，三个检测器的排名在两个数据集上相同，并且CityPersons得分更低，说明更具挑战性。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-</a> A Diverse Dataset for Pedestrian_Attachments&#x2F;f6.png)</p>
+<p>为了理解数据量队训练效果的影响，我们显示了随着数据增加的性能的提升如图7所示。我们可以看见随着数据的增加漏检率降低，说明数据量对CNN模型有较大影响。</p>
+<p>考虑到速度和质量的权衡，我们使用交替模型来开关是否升采样，速度快了两倍，但是性能降低2%。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-</a> A Diverse Dataset for Pedestrian_Attachments&#x2F;f7.png)</p>
+<h2 id="4-使用CityPersons改进质量"><a href="#4-使用CityPersons改进质量" class="headerlink" title="4. 使用CityPersons改进质量"></a>4. 使用CityPersons改进质量</h2><p>CityPersons在手，我们有两个不同的方法提升行人检测结果。我们将会看到，CityPersons能够提升小尺度行人、遮挡、的检测率，并且定位更精确。</p>
+<h3 id="4-1-跨数据集的泛化性"><a href="#4-1-跨数据集的泛化性" class="headerlink" title="4.1 跨数据集的泛化性"></a>4.1 跨数据集的泛化性</h3><p>通常，一个检测器在基准集的训练集上训练。因此在多个基准集评价时都进行重新训练。然而，我们希望在一个数据集上训练然后在多个基准集的效果都很好。由于CityPersons的大量、多样性，我们考虑，这个数据集能否训练出一个具有良好泛化性的检测器呢？</p>
+<p>为了体现CityPersons的跨数据集的泛化能力，我们分别在Caltech、KITTI、CityPersons上训练分类器，然后将他们在6个不同的数据集上进行测试。检测器分别为ACF和Faster R-CNN。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-</a> A Diverse Dataset for Pedestrian_Attachments&#x2F;t4.png)</p>
+<p>总体上看Faster R-CNN比ACF的泛化性更好。CityPersons训练的分类器的平均MR比其他两个数据集好。</p>
+<h3 id="4-2-更好的预训练改进质量"><a href="#4-2-更好的预训练改进质量" class="headerlink" title="4.2 更好的预训练改进质量"></a>4.2 更好的预训练改进质量</h3><p>我们可以发现，CityPersons可以作为很好的训练原数据，应用于不同的数据集。即可以用CityPersons进行预训练，或者是额外的训练数据来改进性能。</p>
+<p>例如，我们的目标域是Caltech，我们可以先在CityPersons上进行训练，然后在Caltech上finetune。表5显示了性能的提升。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-</a> A Diverse Dataset for Pedestrian_Attachments&#x2F;t5.png)</p>
+<p>同理，在KITTI上也是。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-</a> A Diverse Dataset for Pedestrian_Attachments&#x2F;t6.png)</p>
+<h3 id="4-3-开发Cityscapes的语义标签"><a href="#4-3-开发Cityscapes的语义标签" class="headerlink" title="4.3 开发Cityscapes的语义标签"></a>4.3 开发Cityscapes的语义标签</h3><p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-</a> A Diverse Dataset for Pedestrian_Attachments&#x2F;f9.png)</p>
+<p>使用FCN-8s在Cityscapes的粗糙语义标记图上进行训练，将FCN-8s的结果作为一个通道输入给convnet作为语义补充信息。实现大约0.6%的提升。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/CityPersons-</a> A Diverse Dataset for Pedestrian_Attachments&#x2F;t7.png)</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>intellisoftx
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-CityPersons-A-Diverse-Dataset-for-Pedestrian-Detection/" title="论文笔记《CityPersons: A Diverse Dataset for Pedestrian Detection》">http://intellisoftx.com/Note-笔记/Pedestrian-Detection/Note-CityPersons-A-Diverse-Dataset-for-Pedestrian-Detection/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Pedestrian-Detection/" rel="tag"># Pedestrian Detection</a>
+              <a href="/tags/Datasets/" rel="tag"># Datasets</a>
+              <a href="/tags/CityPersons/" rel="tag"># CityPersons</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Faster-R-CNN-Towards-Real-Time-Object-Detection-with-Region-Proposal-Networks/" rel="prev" title="论文笔记《Faster R-CNN Towards Real-Time Object Detection with Region Proposal Networks》">
+                  <i class="fa fa-chevron-left"></i> 论文笔记《Faster R-CNN Towards Real-Time Object Detection with Region Proposal Networks》
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Tutorial-%E6%95%99%E7%A8%8B/Hexo-Create-personal-blog/" rel="next" title="Hexo 搭建个人博客">
+                  Hexo 搭建个人博客 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">intellisoftx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

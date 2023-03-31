@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"intellisoftx.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Abstract将图像目标检测器用于视频是具有挑战性的，其精度受外观变化的影响很大，例如，运动模糊、失焦、奇特姿势等。目前很多方法尝试引入box级别的时间信息，但是都没有实现端到端的训练。我们提出一个 flow-guided 特征集合框架实现视频目标检测端到端的学习。它在特征层面上的时间相关性。通过聚合运动路径上的临近的特征能够改善前帧特征，从而改进视频目标检测精度。本文提出的方法显著的改善Im">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记《Flow-Guided Feature Aggregation for Video Object Detection》">
+<meta property="og:url" content="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Flow-Guided-Feature-Aggregation-for-Video-Object-Detection/index.html">
+<meta property="og:site_name" content="Intelligent Software X">
+<meta property="og:description" content="Abstract将图像目标检测器用于视频是具有挑战性的，其精度受外观变化的影响很大，例如，运动模糊、失焦、奇特姿势等。目前很多方法尝试引入box级别的时间信息，但是都没有实现端到端的训练。我们提出一个 flow-guided 特征集合框架实现视频目标检测端到端的学习。它在特征层面上的时间相关性。通过聚合运动路径上的临近的特征能够改善前帧特征，从而改进视频目标检测精度。本文提出的方法显著的改善Im">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1509936888557.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1510037047150.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1510062087184.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1510369413663.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1510066036034.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1510321692279.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1510385244941.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1510370625780.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1510389593609.png">
+<meta property="article:published_time" content="2017-11-11T12:32:50.000Z">
+<meta property="article:modified_time" content="2023-03-30T11:43:21.442Z">
+<meta property="article:author" content="intellisoftx">
+<meta property="article:tag" content="Video Object Detection">
+<meta property="article:tag" content="ICCV2017">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1509936888557.png">
+
+
+<link rel="canonical" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Flow-Guided-Feature-Aggregation-for-Video-Object-Detection/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Flow-Guided-Feature-Aggregation-for-Video-Object-Detection/","path":"Note-笔记/Video-Object-Detection/Note-Flow-Guided-Feature-Aggregation-for-Video-Object-Detection/","title":"论文笔记《Flow-Guided Feature Aggregation for Video Object Detection》"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>论文笔记《Flow-Guided Feature Aggregation for Video Object Detection》 | Intelligent Software X</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Intelligent Software X</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">IntelliSoftx</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstract"><span class="nav-number">1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">2.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Related-Work"><span class="nav-number">3.</span> <span class="nav-text">2. Related Work</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Flow-Guided-Feature-Aggregation"><span class="nav-number">4.</span> <span class="nav-text">3. Flow Guided Feature Aggregation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-A-Baseline-and-Motivation"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 A Baseline and Motivation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E6%A8%A1%E5%9E%8B%E8%AE%BE%E8%AE%A1"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 模型设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E8%AE%AD%E7%BB%83%E5%92%8C%E6%8E%A8%E7%90%86"><span class="nav-number">4.3.</span> <span class="nav-text">3.3 训练和推理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E7%BD%91%E7%BB%9C%E6%9E%B6%E6%9E%84"><span class="nav-number">4.4.</span> <span class="nav-text">3.4 网络架构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%AE%9E%E9%AA%8C"><span class="nav-number">5.</span> <span class="nav-text">4. 实验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E5%AE%9E%E9%AA%8C%E8%AE%BE%E7%BD%AE"><span class="nav-number">5.1.</span> <span class="nav-text">4.1 实验设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C"><span class="nav-number">5.2.</span> <span class="nav-text">4.2 消融实验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E7%BB%93%E5%90%88Box%E7%BA%A7%E5%88%AB%E7%9A%84%E6%8A%80%E6%9C%AF"><span class="nav-number">5.3.</span> <span class="nav-text">4.3 结合Box级别的技术</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">intellisoftx</p>
+  <div class="site-description" itemprop="description">智软X</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Flow-Guided-Feature-Aggregation-for-Video-Object-Detection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="intellisoftx">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Intelligent Software X">
+      <meta itemprop="description" content="智软X">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="论文笔记《Flow-Guided Feature Aggregation for Video Object Detection》 | Intelligent Software X">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记《Flow-Guided Feature Aggregation for Video Object Detection》
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-11-11 20:32:50" itemprop="dateCreated datePublished" datetime="2017-11-11T20:32:50+08:00">2017-11-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-30 19:43:21" itemprop="dateModified" datetime="2023-03-30T19:43:21+08:00">2023-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Note 笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/" itemprop="url" rel="index"><span itemprop="name">Video Object Detection</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1509936888557.png" alt="1509936888557"></p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>将图像目标检测器用于视频是具有挑战性的，其精度受外观变化的影响很大，例如，运动模糊、失焦、奇特姿势等。目前很多方法尝试引入box级别的时间信息，但是都没有实现端到端的训练。我们提出一个 <em>flow-guided</em> 特征集合框架实现视频目标检测端到端的学习。它在特征层面上的时间相关性。通过聚合运动路径上的临近的特征能够改善前帧特征，从而改进视频目标检测精度。本文提出的方法显著的改善ImageNet VID的单帧检测基准方法，特别是对于快速运动的目标。代码会公开。</p>
+<span id="more"></span>
+<ul>
+<li>中国科学技术大学</li>
+<li>Microsoft Research Asia</li>
+</ul>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>近几年目标检测发展迅速，大部分都具有相似的two-stage结构。一个深度卷积神经网络用于生成特征图，一个浅层检测网络在特征图上检测目标。</p>
+<p>这些方法在静止图像效果较好，但是直接用到视频目标检测上却存在问题。检测精度受目标外观变化的影响，例如运动模糊、视频失焦、罕见姿势等。</p>
+<p>然而，视频中在一段时间中包含个体的信息是非常丰富。一些视频目标检测方法使用简单的策略利用这些时间信息[^18][^19][^12][^23]。首先，对单帧进行检测，然后通过专门的后处理过程在时间维度上组合BBox。这一过程依赖现成的运动估计方法，例如光流法，并且用跟踪连接BBox。一般来说，这些方法的提升主要来自启发式的后处理过程，而不是学习规则。并且没有端到端的训练，我们称这些技术为box级别的方法。</p>
+<p>我们尝试从学习规则中开发时间信息改善检测质量。我们尝试通过集成时间改进pre-frame的特征学习。由于视频运动的原因，同一个物体的特征通常没有进行空间对准。只把特征简单聚合可能甚至恶化性能，如表1(b) 所示。因此，在学习时对运动建模是非常重要的。</p>
+<p>本文工作，我们提出flow-guided feature aggregation (FGFA)。如图1所示，特征提取网络对pre-frame提取特征图。为了增加reference帧的特征，使用光流光流估计nearby帧与refernce帧的运动信息。邻近帧的特征图根据flow motion 融合到 reference 帧中。</p>
+<p>相比于其他Box级别的方法，我们的方法在特征上处理，并且进行端到端的学习，与之前的其他工作具有互补性。它改进的前帧的特征，生成高质量的BBox。Box级别的方法可以进一步优化这些BBox。我们的方法在ImageNet VID数据集上验证。严格的消融实验证实了其能够有效的改进单帧检测方法。与Box级别的方法结合可以进一步提升。</p>
+<p>另外，我们对物体的运动强度做了分析。结果表面快速运动的物体更具挑战性，也是我们的方法提升最大的地方，其能够在一段快速运动物体上提取丰富的外观信息。</p>
+<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p><strong>图像目标检测</strong><br>目前先进的目标检测方法一般基于深度神经网络。R-CNN 使用多阶段流程实现基于区域推荐的目标检测。为了加速，提出了ROI pooling来共享特征图。Faster R-CNN 提出 RPN 网络与 Fast R-CNN 共享特征。最近，R-FCN [^5] 提出在最后的 score map 进行位置敏感的 ROI pooling 操作，将特征共享推向了极限。</p>
+<p>我们的方法更关注在视频上检测目标，其配合时间信息提升卷积特征图的质量。</p>
+<p><strong>视频目标检测</strong><br>最近，ImageNet 提出了一个新的挑战：视频目标检测（VID）。在这项挑战中，最近的所有方法都尽在最后的BBox后处理阶段考虑时间信息。</p>
+<ul>
+<li>T-CNN[^18][^19] 通过光流预测邻近帧的BBox，然后对高置信度的BBox应用跟踪算法得到tubelets。BBox根据tubelets的分类结果进行重新打分。</li>
+<li>Seq-NMS[^12] 在连续帧邻近的高置信 BBox 构造序列。序列中的 Box 基于平均置信分重打分，其他接近该序列的 Box 被抑制。</li>
+<li>MCMOT [^23] 将后处理过程作为一个多目标跟踪问题。其使用了一系列手工规则（置信度，颜色&#x2F;运动线索，改变检测点，前后验证）来验证一个BBox是否是跟踪的目标。不幸的是，这些方法是multi-stage pipeline，其一个结果依赖另一个。因此，很难修正前一个结果带来的错误。</li>
+</ul>
+<p>不同的是，我们的方法在特征层级考虑时序信息，整个系统实现了端到端训练。除此之外，我们的方法也可以和这些 BBox 后处理技术配合进一步改进识别精度。</p>
+<p><strong>基于流的运动估计</strong><br>时序信息需要在连续帧的像素或特征上建立相关性。光流广泛的用于视频分析和处理。传统方法采用变分方法主要面向小偏移。最近一些专注于大偏移[^3]并结合匹配的方法（DeepFlow[^44]，EpicFlow[^31]）被加入变分方法中。上述方法均采用手工特征。最近基于深度学习的方法（FlowNet [^8]，及其后续方法 [^28][^17]）开始采用光流。与我们的方法最相似的工作是 deep feature flow [^49]，其显示出视频中信息的冗余性，并尝试提高视频的检测速度。其显示了联合训练 流-子网络和 识别-子网络的可能性。</p>
+<p>本文，我们专注于使用连续帧的外观丰富信息来改进特征表示。我们延续 deep feature flow 的设计融合跨帧的特征。</p>
+<p><strong>特征集成</strong><br>特征集成广泛的用于动作识别和视频描述中。一方面，目前大部分工作使用循环神经网络聚合连续帧特征。另一方面，使用 exhaustive 时空卷积来直接提取特征[^38][^21][^41][^42]。然而，这些方法中卷积核的尺寸限制了对快速运动物体建模的能力。因此，应该考虑大尺寸的卷积核，但是这样会极大的增加模型参数，并且来带过拟合的问题（这里是不是可以用膨胀卷积做）。作为对比，我们的方法基于流引导的集成，能够适应各种不同程度的运动。</p>
+<p><strong>视觉跟踪</strong><br>最近，DCNN 也开始用于目标跟踪 [^25][^16] 并实现的不错的精度。当新跟踪一个目标，就生成一个新的网络，其共享之前的CNN层，但是具有一个新的二元分类层，并且在线更新。跟踪和视频目标检测任务显然不同，因为跟踪假设已知目标的起始位置，并且不需要预测目标类别。</p>
+<h2 id="3-Flow-Guided-Feature-Aggregation"><a href="#3-Flow-Guided-Feature-Aggregation" class="headerlink" title="3. Flow Guided Feature Aggregation"></a>3. Flow Guided Feature Aggregation</h2><h3 id="3-1-A-Baseline-and-Motivation"><a href="#3-1-A-Baseline-and-Motivation" class="headerlink" title="3.1 A Baseline and Motivation"></a>3.1 A Baseline and Motivation</h3><p>对于输入的视频，我们的目的是输出所有帧中检测到的目标的BBox。一个基准方法是采用现成的目标检测其对每一帧进行独立的检测。现在基于CNN的目标检测器都具有相似的结构。一个子网络负责将图片转换为特征图 $f &#x3D; N _ {feat}(I)$，然后在特征图上检测结果 $y &#x3D; N _ {det}(f)$。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1510037047150.png" alt="1510037047150"></p>
+<p>图2显示了目标外观剧烈变化的例子。单帧的检测结果可能由于外观的差（模糊）导致检测失败，如图1所示， $t$ 帧运动模糊。但是邻近帧具有高相应图，因此他们的特征可传递给参考帧。融合之后的特征图响应增强后实现成功检测。</p>
+<p>为了实现特征传播和增加，需要两个模块：</p>
+<ol>
+<li>运动引导的空间融合。估计帧间的运动然后响应的融合特征图。</li>
+<li>特征聚合模块。如何合适的融合多帧特征。</li>
+</ol>
+<h3 id="3-2-模型设计"><a href="#3-2-模型设计" class="headerlink" title="3.2 模型设计"></a>3.2 模型设计</h3><p><strong>流引导融合</strong><br>使用一个 flow network[^8] 来估计流场。 对于给定的参考帧 $I _ i$ 和邻近帧 $I _ j$ 则流场为 $M _ {i\rightarrow j} &#x3D; F(I _ i, I _ j)$。流场和特征图的融合基于下面的公式</p>
+<p>$$f _ {j \rightarrow i} &#x3D; W(f _ j, M _ {i \rightarrow j})$$<br>$W(\cdot)$ 是一个双线性融合函数应用于每个通道的所有位置的特征图。</p>
+<p><strong>特征融合</strong><br>特征经历过流引导融合后，然后再reference的特征上进行累加。我们在不同的空间位置使用不同的权重，所有通道共享权重。参考帧的融合特征为：<br>$$ \overline f _ i &#x3D; \sum _ {j &#x3D; i-K} ^{i+K} w _ {j \rightarrow i} f _ {j \rightarrow i}$$<br>$K$ 表示周围的邻近帧。上式与 attention 模型相似。特征融合后输入到检测网络得到结果。</p>
+<p>$$y _ i &#x3D; N _ {det}(\overline f _ i)$$<br>相比于其他baseline方法在box层面上融合，我们的方法大在最终结果得出前融合多帧信息。</p>
+<p><strong>自适应权重</strong><br>自适应权重显示了所有帧每个位置相对于参考帧的重要性。如果融合特征与参考帧特征接近，则具有大的权重。我们使用余弦相似性指标来评估warped特征与参考帧特征的相似性。除此之外，我们不直接使用卷积特征，而是使用一个小的全卷积网络对特征进行变换后计算相似性。自适应权重估计为：</p>
+<p>$$w _ {j \rightarrow i}(p) &#x3D; exp(\frac{f^e _ {j \rightarrow i}(p) \cdot f^e _ {i}(p)}{|f^e _ {j \rightarrow i}(p)||f^e _ {i}(p)|})$$<br>其中 $f^e &#x3D; \epsilon (f)$ 。权重的估计可以看成是通过SoftMax操作后的特征余弦相似性处理。</p>
+<h3 id="3-3-训练和推理"><a href="#3-3-训练和推理" class="headerlink" title="3.3 训练和推理"></a>3.3 训练和推理</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1510062087184.png" alt="1510062087184"></p>
+<p><strong>推理</strong><br>算法1总结了推理过程。输入连续的视频帧 ${I _ i}$ 然后指定聚合范围 $K$。初始化，特征网络应用于开始 K+1 帧。然后，循环的对所有视频帧进行视频目标检测，并且计算基于光流引导的特征图。然后计算嵌入特征，接着计算聚合权重。然后计算聚合后的特征，接着输入到检测网络得到检测结果。然后计算 K+1+i 帧的特征图。继续下一帧的计算。（这里感觉有很多的重复计算，例如i和i+1，可能变化不大，但是每次都要计算光流，然后计算融合特征）。</p>
+<p>对于运行时的复杂度与单帧检测的比例：<br>$$<br>r &#x3D; 1 + \frac{(2K + 1)\cdot(O(F)+O(\epsilon)+O(W))}{O(N _ {feat}) + O(N _ {det})}<br>$$<br>一般来说，$N _ {det}$, $\epsilon$, $W$ 的复杂度是可以忽略的相比于 $N _ {feat}$。因此上式变为$r &#x3D; 1 + \frac{(2K + 1)\cdot O(F)}{O(N _ {feat}) + O(N _ {det})}$ 。我们发现，其计算复杂度最大的是 $F$, 一般来说其相比 $N _ {feat}$ 是低得多的，因此是负担得起的。</p>
+<p><strong>训练</strong><br>FGFA 整体架构是可以进行端到端训练的。并且 feature warping 模块也是采用双线性差值实现，因此也是可微的。</p>
+<p><em>时间dropout</em>。 在 SGD 中 K 的取值受到内存的限制。 我们在测试时使用大 K，但是在训练时使用小 K（&#x3D;2）。在训练时，邻近帧是随机在一个大范围内采样，其等价于测试阶段。类似dropout技术，这个类似时间 dropout。从表3的效果看，这个训练策略 work well。</p>
+<h3 id="3-4-网络架构"><a href="#3-4-网络架构" class="headerlink" title="3.4 网络架构"></a>3.4 网络架构</h3><p>下面具体描述 FGFA 模型中的每个子网络。<br><strong>Flow network</strong><br>我们使用 FlowNet，在 Fly Chairs dataset 上进行预训练，应用的图像具有一般的分辨率，并且输出的 stride&#x3D;4 。由于 feature network 的输出 stride &#x3D; 16，因此对 flow field 进行降采样以此来匹配。</p>
+<p><strong>Feature network</strong><br>我们采用 ResNet 和 Inception-Resnet 作为 feature network。这两个网络本来用于图像识别，为了解决特征 misalignment 的问题，我们利用了修改后的版本 Aligned-Inception-ResNet[^6]，在 ImageNet 分类数据集上进行预训练。</p>
+<p>我们对预训练的模型进行了精细的调整使其应用于我们的 FGFA 模型中。我们调整了三个模块用于目标检测。我们移除了最后一个平均池化层和全连接层，并且重新训练了卷积层。为了增加特征分辨率，我们将最后一个模块的有效 stride 从32变为16，即在 conv5 的 stride 从2变为1。为了重新训练感受域的尺寸，最后一个 block 的卷积膨胀为2。最后，在顶层随机初始化 $3 \times 3$ 卷积，将特征维度减为 1024。</p>
+<p><strong>Embedding network</strong><br>此网络包含三层，$1\times 1\times 512$，$3\times 3\times 512$，$1\times 1\times 2048$ 三个卷积层，进行随机初始化。</p>
+<p><strong>Detection network</strong><br>我们使用 R-FCN[^5] 及其 [^49]中的设计。我们在 1024-d 的特征图上应用 RPN 子网络和 R-FCN 子网络，其分别连接开始的 512-d 特征和最后的 512-d 特征。9个 anchors（3尺度、3比例）用于RPN，每个图像产生300个 proposal。R-FCN 的位置感知得分图为 $7\times 7$ groups。</p>
+<h2 id="4-实验"><a href="#4-实验" class="headerlink" title="4. 实验"></a>4. 实验</h2><h3 id="4-1-实验设置"><a href="#4-1-实验设置" class="headerlink" title="4.1 实验设置"></a>4.1 实验设置</h3><p><strong>ImageNet VID dataset[^33]</strong><br>该数据集为流行的大尺度视频目标检测基准数据集。遵循[^18][^23]协议。模型在3862个视频上进行训练和评估，然后在555个视频上进行验证。视频帧率为25或30 fps。一共有30个目标类别，是ImageNet DET 的子集。</p>
+<p><strong>慢、中、快运动</strong><br>为了更好的分析，我们将 GT 按其运动速度分类。物体的运动速度根据其平均 IoU （±10帧）得分进行量化，我们称其为 motion IoU，其值越低说明物体运动越快。我们按照其得分，分为 slow（＞0.9），medium（[0.7,0.9]），fast（＜0.7）三组。举例如图4所示。</p>
+<p>我们在评估时，分别对三种速度进行 mAP 评估。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1510369413663.png" alt="1510369413663"></p>
+<p><strong>实现细节</strong><br>我们利用了 ImageNet DET 和 VID 训练集，使用了 two-phase 训练。在第一个 phase，在 ImageNet DET上训练 feature 和 Detection网络。SGD训练，一个图一个 mini-batch。120K迭代，在4个GPU上，每个GPU一个mini-batch。学习率开始的80K迭代为0.001，后40K为0.0001。在第二个phase，整个FGFA模型在 VID数据集上训练。60K次迭代，学习率开始的40K迭代为0.001，后20K次迭代为0.0001。训练和测试时，都将图像缩放为短边600像素用于feature网络，300像素用于flow网络。实验设备：E5 2670 v2 CPU 2.5GHz Nvidia K40 GPU。</p>
+<h3 id="4-2-消融实验"><a href="#4-2-消融实验" class="headerlink" title="4.2 消融实验"></a>4.2 消融实验</h3><p><strong>FGFA 架构设计</strong></p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1510066036034.png" alt="1510066036034"></p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1510321692279.png" alt="1510321692279"></p>
+<p>表1比较了我们的FGFA和单帧检测baseline方法。</p>
+<p>方法（a）是单帧 baseline，其精度与原文描述的相似，说明我们的实现具有可比性且可作为评估基准。注意，我们没有增加多尺度训练、测试，语义信息，模型组合等。为了能够得到清晰可比的结果。</p>
+<p>从结果可以看出，快速运动的物体检测非常具有挑战性。由于不同尺寸的物体可能有不同的运动速度，进一步分析了尺寸额定影响。表2实现了不同尺寸的检测精度，其结果显示，不同尺寸的物体快速运动时检测起来更加困难。</p>
+<p>方法（b）是一个特征集合方法。没有采用光流运动。但是采用端到端训练。其性能相比于baseline略微下降。快速运动物体的下降更明显。说明在视频目标检测中考虑运动信息是非常重要的。</p>
+<p>方法（c）增加了自适应权重模块。可以发现其对于慢、中物体的帮助较小，但是对快速运动物体的帮助更大。图5（左）看到对于快速运动物体，权重更加偏重向中间的参考帧几种。</p>
+<p>方法（d）是本文提出的FGFA，增加了光流融合模块。同样对快速运动物体提升很大。并且图5看得出，自适应权重的分布更加平均，这说明光流引导特征集合能更有效的融合临近帧的特征。图6显示了一些结果。</p>
+<p>方法（e）是d的降级版，不适用端到端训练。其使用baseline（a）的特征、检测子网络，已训练好的 FlowNet。在训练期间，这些网络都是固定的，只有embedding子网络进行学习。从结果看其性能降低，说明端到端学习的重要性。</p>
+<p>FGFA使用773ms处理一帧，比单帧检测慢（288ms），因为流网络对每帧需要处理2K+1次。为了减少评估的次数，我们采用只对邻近帧进行评估的FGFA。非邻近帧的流是通过合成中间流场获得。这样，流场的计算可以在不同参考帧上复用。计算速度减少为356ms，精度下降~1%，由于流场估计错误的累加导致。</p>
+<p><strong># 训练测试时的帧数</strong> </p>
+<p>由于内存限制，我们使用ResNet-50进行实验。我们分别采用2和5帧作为mini-batch训练，1，5，9，13，17，21，25帧进行测试。结果如表3所示。2和5帧训练的结果非常接近，这也验证了temporal dropout训练策略的有效性。在测试时，我们期望精度会随着帧数的增加而提升，我们发现改进在21帧时达到饱和。因此，我们默认采用2帧训练，21帧测试。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1510385244941.png" alt="1510385244941"></p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1510370625780.png" alt="1510370625780"></p>
+<h3 id="4-3-结合Box级别的技术"><a href="#4-3-结合Box级别的技术" class="headerlink" title="4.3 结合Box级别的技术"></a>4.3 结合Box级别的技术</h3><p>我们的方法关注改进特征质量并提升视频帧的识别精度。输出bbox可以进一步通过box级别的后处理方法改进。实际上，我们测试了三种不同的技术，运动引导传播（Motion guided propagation, MGP）[^18]，Tubelet  rescoring [^18]，Seq-NMS [^12] 。MGP和Tubelet rescoring被应用于VID比赛中，我们使用其官方的代码，然后实现了Seq-NMS。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/FGFA/1510389593609.png" alt="1510389593609"></p>
+<p>表4显示了结果。该三项技术第一次组合在单帧方法上。说明，这些后处理方法是有效的，并且可以看到Seq-NMS带来的提升最大。FGFA与那些方法配合时，只有Seq-NMS看到了提升。在使用Aligned-Inception-ResNet作为特征网络时，精度提升到80.1%，说明Seq-NMS和FGFA高度的互补。</p>
+<p><strong>比较其他先进系统</strong></p>
+<p>不像目标检测，视频目标检测缺少评估方法和比较准则。ImageNet VID 的现有方法能得到较好的结果，但是他们都是高度复杂且工程化的系统。这使得直接公平的比较不同的工作很困难。</p>
+<p>本项工作旨在规则的视频目标检测学习框架，而不是最好的系统。FGFA相比于单帧检测方法的提升说明了其有效性。最为参考，VID 2016的冠军方法是81.2%mAP。其使用了各种技术，例如模型组合，级联检测，语义信息，多尺度推测等等。而我们的方法没有使用这些技术，就达到了80.1%的 mAP。因此我们的方法相比目前最好的工程系统具有高度的竞争性。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>[^3]: T. Brox and J. Malik. Large displacement optical flow: de- scriptor matching in variational motion estimation. TPAMI, 2011.<br>[^5]: J. Dai, Y. Li, K. He, and J. Sun. R-fcn: Object detection via region-based fully convolutional networks. In NIPS, 2016.<br>[^6]: J. Dai, H. Qi, Y. Xiong, Y. Li, G. Zhang, H. Hu, and Y.Wei. Deformable convolutional networks. arXiv preprint arXiv:1703.06211, 2017.<br>[^8]: A. Dosovitskiy, P. Fischer, E. Ilg, P. Hausser, C. Hazirbas, V. Golkov, P. v.d. Smagt, D. Cremers, and T. Brox. Flownet: Learning optical flowwith convolutional networks. In ICCV, 2015.<br>[^12]: W. Han, P. Khorrami, T. Le Paine, P. Ramachandran, M. Babaeizadeh, H. Shi, J. Li, S. Yan, and T. S. Huang. Seq-nms for video object detection.<br>[^16]: N. Hyeonseob and H. Bohyung. Learning multi-domain con- volutional neural networks for visual tracking. In CVPR, 2016.<br>[^17]: E. Ilg, N. Mayer, T. Saikia, M. Keuper, A. Dosovitskiy, and T. Brox. Flownet 2.0: Evolution of optical flow estimation with deep networks. In CVPR, 2017.<br>[^18]: K. Kang, H. Li, J. Yan, X. Zeng, B. Yang, T. Xiao, C. Zhang, Z. Wang, R. Wang, X. Wang, and W. Ouyang. T-cnn: Tubelets with convolutional neural networks for object de- tection from videos. arXiv preprint arxiv:1604.02532, 2016.<br>[^19]: K. Kang,W. Ouyang, H. Li, and X.Wang. Object detection from video tubelets with convolutional neural networks. In CVPR, 2016.<br>[^21]: A. Karpathy, G. Toderici, S. Shetty, T. Leung, R. Sukthankar, and L. Fei-Fei. Large-scale video classification with convo- lutional neural networks. In CVPR, 2014.<br>[^23]: B. Lee, E. Erdenee, S. Jin, M. Y. Nam, Y. G. Jung, and P. K. Rhee. Multi-class multi-object tracking using changing point detection. In ECCV, 2016.<br>[^25]: W. Lijun, O. Wanli, W. Xiaogang, and L. Huchuan. Visual tracking with fully convolutional networks. In ICCV, 2015.<br>[^28]: A. Ranjan and M. J. Black. Optical flow estimation using a spatial pyramid network. arXiv preprint arXiv:1611.00850, 2016.<br>[^31]: J. Revaud, P. Weinzaepfel, Z. Harchaoui, and C. Schmid. Epicflow: Edge-preserving interpolation of correspondences for optical flow. In CVPR, 2015.<br>[^33]: O. Russakovsky, J. Deng, H. Su, J. Krause, S. Satheesh, S. Ma, Z. Huang, A. Karpathy, A. Khosla, M. Bernstein, A. Berg, and F.-F. Li. Imagenet large scale visual recognition challenge. In IJCV, 2015.<br>[^38]: L. Sun, K. Jia, D.-Y. Yeung, and B. E. Shi. Human action recognition using factorized spatio-temporal convolutional networks. In ICCV, 2015.<br>[^41]: D. Tran, L. Bourdev, R. Fergus, L. Torresani, and M. Paluri. Learning spatiotemporal features with 3d convolutional net- works. In ICCV, 2015.<br>[^42]: D. Tran, L. Bourdev, R. Fergus, L. Torresani, and M. Paluri. Deep end2end voxel2voxel prediction. In CVPR Workshop, 2016.<br>[^44]: P. Weinzaepfel, J. Revaud, Z. Harchaoui, and C. Schmid. Deepflow: Large displacement optical flowwith deep match- ing. In ICCV, 2013.<br>[^49]: X. Zhu, Y. Xiong, J. Dai, L. Yuan, and Y.Wei. Deep feature flow for video recognition. In CVPR, 2017.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>intellisoftx
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Flow-Guided-Feature-Aggregation-for-Video-Object-Detection/" title="论文笔记《Flow-Guided Feature Aggregation for Video Object Detection》">http://intellisoftx.com/Note-笔记/Video-Object-Detection/Note-Flow-Guided-Feature-Aggregation-for-Video-Object-Detection/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Video-Object-Detection/" rel="tag"># Video Object Detection</a>
+              <a href="/tags/ICCV2017/" rel="tag"># ICCV2017</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Soft-NMS-%E2%80%93-Improving-Object-DetectionWith-One-Line-of-Code/" rel="prev" title="论文笔记《Soft-NMS – Improving Object Detection With One Line of Code》">
+                  <i class="fa fa-chevron-left"></i> 论文笔记《Soft-NMS – Improving Object Detection With One Line of Code》
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DeNet-Scalable-Real-time-Object-Detection-with-Directed-Sparse-Sampling/" rel="next" title="论文笔记《DeNet: Scalable Real-time Object Detection with Directed Sparse Sampling》">
+                  论文笔记《DeNet: Scalable Real-time Object Detection with Directed Sparse Sampling》 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">intellisoftx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

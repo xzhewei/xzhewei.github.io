@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"intellisoftx.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Summary一篇Anchor-free方法，没有预设Box尺寸。  直接回归Box的四个点，和IoU  FPN的金字塔结构归为两个尺寸  CPRS Loss, 回归和分类的分离导致经常回归正确的框却分类错误，在loss中增加IoU门函数。但是似乎都是这么做的。  各种tirck。见表1.   正片文章虽然结果优秀但是论述没有重点，每个trick都用相同的篇幅叙述，让人抓不到重点。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Note-DuBox: No-Prior Box Objection Detection via Residual Dual Scale Detectors">
+<meta property="og:url" content="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DuBox-No-Prior-Box-Objection-Detection-via-Residual-Dual-Scale-Detectors/index.html">
+<meta property="og:site_name" content="Intelligent Software X">
+<meta property="og:description" content="Summary一篇Anchor-free方法，没有预设Box尺寸。  直接回归Box的四个点，和IoU  FPN的金字塔结构归为两个尺寸  CPRS Loss, 回归和分类的分离导致经常回归正确的框却分类错误，在loss中增加IoU门函数。但是似乎都是这么做的。  各种tirck。见表1.   正片文章虽然结果优秀但是论述没有重点，每个trick都用相同的篇幅叙述，让人抓不到重点。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-1.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-2.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-3.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-4-2.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-4-1.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-table-1.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-table-3.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-table-4.png">
+<meta property="article:published_time" content="2019-05-21T15:12:13.000Z">
+<meta property="article:modified_time" content="2023-03-30T11:43:21.443Z">
+<meta property="article:author" content="intellisoftx">
+<meta property="article:tag" content="Anchor Free">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-1.png">
+
+
+<link rel="canonical" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DuBox-No-Prior-Box-Objection-Detection-via-Residual-Dual-Scale-Detectors/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DuBox-No-Prior-Box-Objection-Detection-via-Residual-Dual-Scale-Detectors/","path":"Note-笔记/Object-Detection/Note-DuBox-No-Prior-Box-Objection-Detection-via-Residual-Dual-Scale-Detectors/","title":"Note-DuBox: No-Prior Box Objection Detection via Residual Dual Scale Detectors"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Note-DuBox: No-Prior Box Objection Detection via Residual Dual Scale Detectors | Intelligent Software X</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Intelligent Software X</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">IntelliSoftx</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">1.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Research-Objective"><span class="nav-number">2.</span> <span class="nav-text">Research Objective</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Problem-Statement"><span class="nav-number">3.</span> <span class="nav-text">Problem Statement</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Method-s"><span class="nav-number">4.</span> <span class="nav-text">Method(s)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#No-prior-Box-Detection"><span class="nav-number">4.1.</span> <span class="nav-text">No-prior Box Detection</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Residual-Dual-Scale-Detectors"><span class="nav-number">4.2.</span> <span class="nav-text">Residual Dual Scale Detectors</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Refine-module"><span class="nav-number">4.2.1.</span> <span class="nav-text">Refine module</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BBox-bridge-module"><span class="nav-number">4.2.2.</span> <span class="nav-text">BBox bridge module</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Classification-Regression-Progressive-Strapped-Loss"><span class="nav-number">4.3.</span> <span class="nav-text">Classification-Regression Progressive Strapped Loss</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Reducing-Redundancy-Strategy"><span class="nav-number">4.4.</span> <span class="nav-text">Reducing Redundancy Strategy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Data-Augment-and-Sample-Balance"><span class="nav-number">4.5.</span> <span class="nav-text">Data Augment and Sample Balance</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA"><span class="nav-number">4.5.1.</span> <span class="nav-text">数据增强</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%B9%E6%AC%A1%E5%B9%B3%E8%A1%A1"><span class="nav-number">4.5.2.</span> <span class="nav-text">批次平衡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%A3%E8%B4%9F%E6%A0%B7%E6%9C%AC%E5%B9%B3%E8%A1%A1"><span class="nav-number">4.5.3.</span> <span class="nav-text">正负样本平衡</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Evaluation"><span class="nav-number">5.</span> <span class="nav-text">Evaluation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">6.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">intellisoftx</p>
+  <div class="site-description" itemprop="description">智软X</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DuBox-No-Prior-Box-Objection-Detection-via-Residual-Dual-Scale-Detectors/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="intellisoftx">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Intelligent Software X">
+      <meta itemprop="description" content="智软X">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Note-DuBox: No-Prior Box Objection Detection via Residual Dual Scale Detectors | Intelligent Software X">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Note-DuBox: No-Prior Box Objection Detection via Residual Dual Scale Detectors
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2019-05-21 23:12:13" itemprop="dateCreated datePublished" datetime="2019-05-21T23:12:13+08:00">2019-05-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-30 19:43:21" itemprop="dateModified" datetime="2023-03-30T19:43:21+08:00">2023-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Note 笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/Object-Detection/" itemprop="url" rel="index"><span itemprop="name">Object Detection</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>一篇Anchor-free方法，没有预设Box尺寸。</p>
+<ol>
+<li><p>直接回归Box的四个点，和IoU</p>
+</li>
+<li><p>FPN的金字塔结构归为两个尺寸</p>
+</li>
+<li><p>CPRS Loss, 回归和分类的分离导致经常回归正确的框却分类错误，在loss中增加IoU门函数。但是似乎都是这么做的。</p>
+</li>
+<li><p>各种tirck。见表1.</p>
+</li>
+</ol>
+<p>正片文章虽然结果优秀但是论述没有重点，每个trick都用相同的篇幅叙述，让人抓不到重点。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-1.png"></p>
+<span id="more"></span>
+
+<h2 id="Research-Objective"><a href="#Research-Objective" class="headerlink" title="Research Objective"></a>Research Objective</h2><blockquote>
+<p>Traditional neural objection detection methods use multi-scale features that allow multiple detectors to perform detecting tasks independently and in parallel. At the same time, with the handling of the prior box, the algorithm’s ability to deal with scale invariance is enhanced. However, too many prior boxes and independent detectors will increase the computational redundancy of the detection algorithm.</p>
+</blockquote>
+<p>本文是一个anchor-free方法，但是作者是从多尺度的角度来叙述。说预设anchor和多尺度检测会增加计算开销。因此预设anchor尺寸，减少检测器提升精度和效率是目的。</p>
+<h2 id="Problem-Statement"><a href="#Problem-Statement" class="headerlink" title="Problem Statement"></a>Problem Statement</h2><p>多尺度检测器中每层都预设很多anchor box，每层都有一个检测器，造成计算冗余。例如RetinaNet中有超过100K个anchor。作者提出两个疑问：</p>
+<ol>
+<li>使用更少的尺度，实现较好的性能</li>
+<li>不使用anchor也回归精确的box</li>
+</ol>
+<h2 id="Method-s"><a href="#Method-s" class="headerlink" title="Method(s)"></a>Method(s)</h2><h3 id="No-prior-Box-Detection"><a href="#No-prior-Box-Detection" class="headerlink" title="No-prior Box Detection"></a>No-prior Box Detection</h3><p>只使用hook作为预设的位置，而不预设scale和ratio。在anchor-based方法中先生成anchor然后与gt匹配后选择正负样本。没有了anchor如何选择正样本呢？本文给出的方法是设定一个position range $\Theta$。当hook $(i,j)$ 在此范围中，则此hook应回归此目标box。每个位置回归一个box$(Pr_{\Delta w_1},Pr_{\Delta w_2},Pr_{\Delta h_1},Pr_{\Delta h_2})$ 和一个置信度得分$Pr_{cls}$。<br>$$<br>r &#x3D; \sqrt{(x_2-x_1)^2+(y_2-y_1)^2}&#x2F;p<br>$$</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-2.png"></p>
+<h3 id="Residual-Dual-Scale-Detectors"><a href="#Residual-Dual-Scale-Detectors" class="headerlink" title="Residual Dual Scale Detectors"></a>Residual Dual Scale Detectors</h3><p>残差双尺度检测器，如图3所示。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-3.png"></p>
+<p>首先原来FPN中是5层特征金字塔，作者认为太多，可以减少，因此采用p3+p4组成detector1, p5+p6组成detector2的形式，这样只有两个尺度进行预测。</p>
+<h4 id="Refine-module"><a href="#Refine-module" class="headerlink" title="Refine module"></a>Refine module</h4><p>该模块是一个简单的通道和空间注意力模块[^27]，特征图得到一个注意力的加权图后与原特征图相乘。图显示其具体结构，卷积，再反卷积，得到与原特征图相同尺寸的权重图后相乘。作者说该技术能够使得检测器考虑hook周围的特征提升精度。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-4-2.png"></p>
+<h4 id="BBox-bridge-module"><a href="#BBox-bridge-module" class="headerlink" title="BBox bridge module"></a>BBox bridge module</h4><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-4-1.png"></p>
+<p>该模块是将低级和高级检测器连接在一起，低级检测器的特征图通过两个卷积后缩小4倍后跟高级检测器特征相加。这使得高级检测器在之前的基础上训练（感觉有点像两阶段）。</p>
+<h3 id="Classification-Regression-Progressive-Strapped-Loss"><a href="#Classification-Regression-Progressive-Strapped-Loss" class="headerlink" title="Classification-Regression Progressive Strapped Loss"></a>Classification-Regression Progressive Strapped Loss</h3><p>使用IoU loss<br>$$<br>L{bbox}&#x3D;-\sum{i,j\in \Theta}ln(IoU(Pr^{i,j}{bbox},Gt^{i,j}{bbox}))<br>$$</p>
+<p>分类损失在原来的基础上增加一个IoU门函数$\sigma$<br>$$<br>L_{cls}&#x3D;-\sum_{i,j\in \Theta}CE(Pr^{i,j}<em>{cls},T^{i,j}</em>{cls})\sigma(Pr^{i,j}{bbox},Gt^{i,j}{bbox})-\sum_{i,j\notin \Theta}CE(Pr^{i,j}<em>{cls},T^{i,j}</em>{cls})<br>$$<br>当门函数大于0.5时取1，否则为0 （这里其实跟anchor-based方法中match方法一样）</p>
+<h3 id="Reducing-Redundancy-Strategy"><a href="#Reducing-Redundancy-Strategy" class="headerlink" title="Reducing Redundancy Strategy"></a>Reducing Redundancy Strategy</h3><p>一些Trick：</p>
+<ol>
+<li>detector1中p取10，detector2中p取9，且r最小为3</li>
+<li>当目标的面积&#x2F;图片面积大于0.3时，此时不统计此box的回归损失</li>
+</ol>
+<h3 id="Data-Augment-and-Sample-Balance"><a href="#Data-Augment-and-Sample-Balance" class="headerlink" title="Data Augment and Sample Balance"></a>Data Augment and Sample Balance</h3><h4 id="数据增强"><a href="#数据增强" class="headerlink" title="数据增强"></a>数据增强</h4><ul>
+<li>随机裁剪</li>
+<li>随机photo-metric distortion</li>
+<li>翻转</li>
+</ul>
+<h4 id="批次平衡"><a href="#批次平衡" class="headerlink" title="批次平衡"></a>批次平衡</h4><p>为每个类别建立一个图片列表，每次batch选择一个类别为主要类别，然后选择相关的图片进行训练，这样保证每个类别的有相同的概率被选中。</p>
+<h4 id="正负样本平衡"><a href="#正负样本平衡" class="headerlink" title="正负样本平衡"></a>正负样本平衡</h4><p>1:3的比例</p>
+<h2 id="Evaluation"><a href="#Evaluation" class="headerlink" title="Evaluation"></a>Evaluation</h2><p>实验结果如表1所示，每个模块和trick对结果的影响</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-table-1.png"></p>
+<p>在VOC数据集上的比较</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-table-3.png"></p>
+<p>在COCO数据集上的比较</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-table-4.png"></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Anchor-based目前不是唯一的选择，Dubox不预设box也能work。</p>
+<p>双尺度比多尺度启发式选择更有效，且高、低级别级联检测。</p>
+<p>一些Trick能有效减少冗余结果，提升性能。</p>
+<p>[^27]: S.Woo, J. Park, J.-Y. Lee, and I. So Kweon. Cbam: Convolutional block attention module. In The European Conference on Computer Vision (ECCV), September 2018.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>intellisoftx
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DuBox-No-Prior-Box-Objection-Detection-via-Residual-Dual-Scale-Detectors/" title="Note-DuBox: No-Prior Box Objection Detection via Residual Dual Scale Detectors">http://intellisoftx.com/Note-笔记/Object-Detection/Note-DuBox-No-Prior-Box-Objection-Detection-via-Residual-Dual-Scale-Detectors/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Anchor-Free/" rel="tag"># Anchor Free</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Tutorial-%E6%95%99%E7%A8%8B/%E4%BF%AE%E6%94%B9Matlab%E9%BB%98%E8%AE%A4%E7%BC%96%E7%A0%81%E6%A0%BC%E5%BC%8F%E4%B8%BAUTF-8/" rel="prev" title="修改Matlab默认编码格式为UTF-8">
+                  <i class="fa fa-chevron-left"></i> 修改Matlab默认编码格式为UTF-8
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">intellisoftx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

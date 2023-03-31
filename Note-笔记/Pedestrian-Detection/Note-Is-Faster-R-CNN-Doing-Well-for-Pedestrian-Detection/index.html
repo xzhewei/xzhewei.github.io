@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"intellisoftx.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Abstract 行人检测是目标检测的特例。尽管近年Fast&#x2F;Faster R-CNN在目标检测上效果显著，但是在行人检测上效果缺一般。之前的较好的行人检测算法一般是将手工特征和深度卷积特征相结合。本文，研究Faster R-CNN在行人检测上的问题。我们发现Faster R-CNN中的Region Proposal Network（RPN）区域推荐网络可以作为一个效果较好的独立的行人检">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记《Is Faster R-CNN Doing Well for Pedestrian Detection?》">
+<meta property="og:url" content="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Is-Faster-R-CNN-Doing-Well-for-Pedestrian-Detection/index.html">
+<meta property="og:site_name" content="Intelligent Software X">
+<meta property="og:description" content="Abstract 行人检测是目标检测的特例。尽管近年Fast&#x2F;Faster R-CNN在目标检测上效果显著，但是在行人检测上效果缺一般。之前的较好的行人检测算法一般是将手工特征和深度卷积特征相结合。本文，研究Faster R-CNN在行人检测上的问题。我们发现Faster R-CNN中的Region Proposal Network（RPN）区域推荐网络可以作为一个效果较好的独立的行人检">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2017-03-14T18:12:06.000Z">
+<meta property="article:modified_time" content="2023-03-30T11:43:21.422Z">
+<meta property="article:author" content="intellisoftx">
+<meta property="article:tag" content="Pedestrian Detection">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Is-Faster-R-CNN-Doing-Well-for-Pedestrian-Detection/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Is-Faster-R-CNN-Doing-Well-for-Pedestrian-Detection/","path":"Note-笔记/Pedestrian-Detection/Note-Is-Faster-R-CNN-Doing-Well-for-Pedestrian-Detection/","title":"论文笔记《Is Faster R-CNN Doing Well for Pedestrian Detection?》"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>论文笔记《Is Faster R-CNN Doing Well for Pedestrian Detection?》 | Intelligent Software X</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Intelligent Software X</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">IntelliSoftx</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">1.</span> <span class="nav-text">1 Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Related-Work"><span class="nav-number">2.</span> <span class="nav-text">2 Related Work</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Approach"><span class="nav-number">3.</span> <span class="nav-text">3 Approach</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E7%94%A8%E4%BA%8E%E8%A1%8C%E4%BA%BA%E6%A3%80%E6%B5%8B%E7%9A%84%E5%8C%BA%E5%9F%9F%E6%8E%A8%E8%8D%90%E7%BD%91%E7%BB%9C"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 用于行人检测的区域推荐网络</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E7%89%B9%E5%BE%81%E6%8F%90%E5%8F%96"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 特征提取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-Boosted-Forest"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 Boosted Forest</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 实现细节</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%AE%9E%E9%AA%8C%E5%92%8C%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">4 实验和分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 数据集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%AE%9E%E9%AA%8C"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 实验</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#RPN%E5%AF%B9%E8%A1%8C%E4%BA%BA%E6%A3%80%E6%B5%8B%E8%B6%B3%E5%A4%9F%E5%A5%BD%E4%B9%88%EF%BC%9F"><span class="nav-number">4.2.1.</span> <span class="nav-text">RPN对行人检测足够好么？</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%B9%E5%BE%81%E5%88%86%E8%BE%A8%E7%8E%87%E7%9A%84%E5%BD%B1%E5%93%8D"><span class="nav-number">4.2.2.</span> <span class="nav-text">特征分辨率的影响</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Bootstrapping%E9%87%8D%E8%A6%81%E4%B9%88%EF%BC%9F"><span class="nav-number">4.2.3.</span> <span class="nav-text">Bootstrapping重要么？</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E4%B8%8E%E7%9B%AE%E5%89%8D%E5%85%88%E8%BF%9B%E7%9A%84%E6%96%B9%E6%B3%95%E6%AF%94%E8%BE%83"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 与目前先进的方法比较</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E7%BB%93%E8%AE%BA%E5%92%8C%E8%AE%A8%E8%AE%BA"><span class="nav-number">5.</span> <span class="nav-text">5 结论和讨论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">intellisoftx</p>
+  <div class="site-description" itemprop="description">智软X</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Is-Faster-R-CNN-Doing-Well-for-Pedestrian-Detection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="intellisoftx">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Intelligent Software X">
+      <meta itemprop="description" content="智软X">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="论文笔记《Is Faster R-CNN Doing Well for Pedestrian Detection?》 | Intelligent Software X">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记《Is Faster R-CNN Doing Well for Pedestrian Detection?》
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-03-15 02:12:06" itemprop="dateCreated datePublished" datetime="2017-03-15T02:12:06+08:00">2017-03-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-30 19:43:21" itemprop="dateModified" datetime="2023-03-30T19:43:21+08:00">2023-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Note 笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/" itemprop="url" rel="index"><span itemprop="name">Pedestrian Detection</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><strong>Abstract</strong></p>
+<p>行人检测是目标检测的特例。尽管近年Fast&#x2F;Faster R-CNN在目标检测上效果显著，但是在行人检测上效果缺一般。之前的较好的行人检测算法一般是将手工特征和深度卷积特征相结合。本文，研究Faster R-CNN在行人检测上的问题。我们发现Faster R-CNN中的Region Proposal Network（RPN）区域推荐网络可以作为一个效果较好的独立的行人检测器，但是通过下游的检测器后其结果居然变差了。我们认为有两个原因：1）对于处理小目标，特征图的分辨率太小；2）缺少boostrapping策略来提取困难负样本。针对上述问题，我们提出使用RPN+boosted forests共享高分辨卷积特征图的方法。该方法的效果在多个benchmark上进行了评估（Caltech，INRIA，ETH，KITTI），其精度和速度均较好。</p>
+<span id="more"></span>
+
+<ul>
+<li>中山大学</li>
+<li>何凯明</li>
+<li>RPN-BF</li>
+<li>行人检测</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/zhangliliang/RPN_BF">code</a></li>
+<li><a target="_blank" rel="noopener" href="http://ss.sysu.edu.cn/~ll/files/ECCV2016_Pedestrian.pdf">pdf</a></li>
+</ul>
+<p><strong>理解</strong></p>
+<p>本文提出了一种RPN+BF的行人检测方法，其创新性主要体现在：</p>
+<ul>
+<li>使用卷积神经网络来进行区域推荐</li>
+<li>使用卷积神经网络的特征图作为特征进行行人分类</li>
+<li>证明了特征图的分辨率对行人检测的影响</li>
+<li>证明了困难负样本的提取对检测率的提升的重要性</li>
+</ul>
+<p>其本质上是利用了两个分类器，一个做区域推荐，其目的是高召回率，同时排除掉大部分的背景区域，另一个做精细的行人分类，把行人与非行人分类。这样做的好处是简化了两个分类器的任务，因为高检测率和低虚警是矛盾的，那么分为两个检测器后，就可以降低每个分类器的设计难度，同时使得后面那个分类器更加的专注，不用考虑特殊的背景干扰。</p>
+<p><strong>BibTex</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">@inproceedings&#123;Zhang2016a,</span><br><span class="line">author = &#123;Zhang, Liliang and Lin, Liang and Liang, Xiaodan and He, Kaiming&#125;,</span><br><span class="line">booktitle = &#123;European Conference on Computer Vision&#125;,</span><br><span class="line">mendeley-groups = &#123;Ped Detection&#125;,</span><br><span class="line">pages = &#123;443--457&#125;,</span><br><span class="line">publisher = &#123;Springer&#125;,</span><br><span class="line">title = &#123;&#123;Is Faster R-CNN Doing Well for Pedestrian Detection?&#125;&#125;,</span><br><span class="line">year = &#123;2016&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1 Introduction"></a>1 Introduction</h2><p>虽然近几年深度学习特征在计算机视觉的一些领域有重大突破，但是在行人识别中，手工特征仍然扮演着重要的角色。</p>
+<p>**Faster R-CNN[^11]**在一般目标检测任务上效果较好，基于纯CNN模型，没有手工特征，其包含两个部分:</p>
+<ul>
+<li>一个全卷机RPN，用于推荐候选区域</li>
+<li>一个Fast R-CNN分类器</li>
+</ul>
+<p>我们发现，PRN的行人检测效果，比后面加了Fast R-CNN的效果还好，可能有如下两个原因：</p>
+<p>1）Fast R-CNN用于检测小目标的特征图太小</p>
+<p>一般情况行人的尺寸是28x70 (caltech)。ROI的池化层（通常为16 pixel步长）导致低分辨率的特征图特征抹平。从而使得后面的分类器没有足够的特征进行分别。而一般手工特征得到的特征分辨率都较高。</p>
+<p>我们解决的思路是在浅层池化而不是高分辨率层，然后通过<strong>hole algorithm（“&#96; a trous”[^16] or filter rarefaction[^17] ）</strong>来增加特征图的尺寸。</p>
+<p>2）存在大量困难负样本</p>
+<p>行人检测中困难负样本对行人检测的影响很大，这与目标检测中多类分类分问题不太一样。</p>
+<p>为了解决这个问题我们采用**cascaded Boosted Forest (BF) [^18][^19]**，来提取困难负样本，然后对样本进行赋予权重。</p>
+<p>与以前的方法采用手工特征训练BF不同，我们采用RPN的卷积特征训练BF，这样不仅能够节省计算时间，而且特征比手工特征更具表现力。</p>
+<p>最后，我们的方法在多个数据集上进行了验证。特别的是，我们的方法对行人的定位更准，因为当IoU为0.7时，相比于其他方法有40%的提升。并且每个图像的处理时间是0.5s，与其他方法也较接近。</p>
+<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2 Related Work"></a>2 Related Work</h2><p>集成通道特征Integrate Channel Feature（ICF）是从Viola Jones的框架扩展。ICF中涉及了金字塔和boosted分类器。ICF的改进版，如ACF，LDCF，SCF[^9]，boosting算法仍然是行人检测中的关键基础。</p>
+<p>由于R-CNN在目标检测领域的成果，目前有一系列方法采用两步法用于行人检测。</p>
+<ul>
+<li>文献[^1]使用SCF做区域推荐+R-CNN分类器；</li>
+<li>TA-CNN使用ACF做区域推荐+R-CNN类方法，联合语义任务进行行人检测；</li>
+<li>DeepParts方法使用LDCF做区域推荐，然后使用神经网络做检测</li>
+</ul>
+<p>可以发现，上述方法都是用一个单独的手工特征+boosted分类器作为区域提取。</p>
+<ul>
+<li>CompACT方法学习了一个手工特征和深度卷积特征结合的boosted分类器</li>
+<li>CCF是与我们方法最相似的一个，它是一个boosted分类器，使用深度卷积特征金字塔，但是没有区域推荐。</li>
+<li>我们的方法没有金字塔，并且比CCF更快更精确。（用卷积特征）</li>
+</ul>
+<h2 id="3-Approach"><a href="#3-Approach" class="headerlink" title="3 Approach"></a>3 Approach</h2><p>我们的方法由两部分组成：</p>
+<ul>
+<li>RPN生成候选框和卷积特征图</li>
+<li>Boosted Forest作为分类器使用卷积特征</li>
+</ul>
+<p>![pipline](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Is">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Is</a> Faster R-CNN Doing Well for Pedestrian Detectio_Attachments&#x2F;1pipline.png)</p>
+<h3 id="3-1-用于行人检测的区域推荐网络"><a href="#3-1-用于行人检测的区域推荐网络" class="headerlink" title="3.1 用于行人检测的区域推荐网络"></a>3.1 用于行人检测的区域推荐网络</h3><p>Faster R-CNN的RPN主要是用于在多类目标检测场景中解决多类推荐问题。对于单一类别检测，RPN自然的可以只考虑一个类别。因此我们对RPN也进行了一定简化。</p>
+<p>我们采用的参考框（anchors）是单一宽高比0.41（这个caltech里有统计过）。原始的RPN的宽高比是变化的。<strong>我们采用9个不同尺度的anchors，从40pixel高开始，1.3倍递增。</strong>因此我们不需要使用特征金字塔。</p>
+<p>我们采用VGG-16预训练网络（ImageNet）作为主网络。RPN建立在Conv5_3之上，在他们之间有一个3x3卷积层和两个1x1卷积层用于分类和bounding box回归 **(more details in [11])**。 RPN的回归boxs具有16pixels的步长，分类层得到的置信度得分用于预测boxes，并且也作为Boosted Forest级联的初始化得分。</p>
+<p>我们使用”a trous”技巧来提高分辨率，减少步长，但是RPN还是使用16 pixels步长，这个策略只用来提取特征，而不是用来fine-tuning。</p>
+<h3 id="3-2-特征提取"><a href="#3-2-特征提取" class="headerlink" title="3.2 特征提取"></a>3.2 特征提取</h3><p>从RPN提取的区域，我们使用**RoI池化[^12]**提取固定长度的特征。不同于Faster R-CNN的fc层需要固定的特征纬度，BF没有这个限制。例如，面向Conv3_3，Conv4_3，提特征，虽然他们的特征图不一样，但是通过池化可以固定为7x7。不同层的特征可以简单的连接在一起，而深度分类器的特征归一化需要小心的处理。</p>
+<p>由于BF对于特征纬度没有限制，因此我们可以增加特征的分辨率。原来RPN的各层的步长是（Conv3，步长4，Conv4，步长8，Conv5，步长16），我们使用”a trous”技巧得到更高的分辨率。例如，我们设pool3的步长是1，膨胀所有Conv4卷积2，Con4步长是4。<strong>不同于之前方法中会fine-tune膨胀之后的卷积核，我们的方法只是来提特征而不进行fine-tune。</strong>(这里好像有问题，你改变了卷积操作，而不fine-tune，那如何保证其效果比不fine-tune的效果好？有可能fine-tune之后RPN的整体效果下降了，但是可能提取高分辨特征的能力提升了)</p>
+<p>我们的ROI分辨率于Faster R-CNN相同（7x7），但是特征图用的是更高的分辨率。如果输入的ROI尺寸小于7x7，池化会将特征抹平导致无法分别。</p>
+<h3 id="3-3-Boosted-Forest"><a href="#3-3-Boosted-Forest" class="headerlink" title="3.3 Boosted Forest"></a>3.3 Boosted Forest</h3><p>RPN网络产生推荐区域，置信度得分，特征，我们使用这些来训练级联Boosted Forest分类器。我们使用RealBoost算法[^18]，超参采用借鉴[^4]。</p>
+<ul>
+<li>boostrap 训练6个stage，每次有{64，128，256，512，1024，1536}个树</li>
+<li>开始训练样本包括，然后随机从推荐的区域中提取相同数量的负样本</li>
+<li>经过每个stage训练后增加困难负样本（正样本数量的10%）</li>
+<li>最后通过所有stage得到一个2048个树的森林</li>
+<li>实现是在pdollar的工具包基础上</li>
+</ul>
+<p>RPN类似一个stage-0的分类器，通过它我们可以得推荐区域的置信度得分s，我们令$f_0&#x3D;\frac{1}{2} log\frac{s}{1-s}$，后面接RealBoost分类器。其他的阶段就是标准的RealBoost。</p>
+<h3 id="3-4-实现细节"><a href="#3-4-实现细节" class="headerlink" title="3.4 实现细节"></a>3.4 实现细节</h3><ul>
+<li>我们采用单一尺度进行训练和测试</li>
+<li>检测框与GT的IoU超过0.5则认为是检测到</li>
+<li>采用image-centric训练框架[^11][^12]</li>
+<li>每个mini-batch包含1个图像和120个随机矩形框，正负样本比为1：5</li>
+<li>RPN的超参采用文献[^11]采用的</li>
+<li>我们发现[^11]在fine-tune中不使用边界交叉的矩形框，但是我们保留下来能提供精度</li>
+<li>推荐区域NMS的阈值为0.7</li>
+<li>推荐区域按得分排序，每个图片只取前1000个区域</li>
+<li>树的深度对Caltech和KITTI是5，对INRIA和ETH是2</li>
+<li>测试的时候我们RPN的前100个区域给BF进行分类</li>
+</ul>
+<h2 id="4-实验和分析"><a href="#4-实验和分析" class="headerlink" title="4 实验和分析"></a>4 实验和分析</h2><h3 id="4-1-数据集"><a href="#4-1-数据集" class="headerlink" title="4.1 数据集"></a>4.1 数据集</h3><ul>
+<li>我们在四个数据集上机械能了测试，Caltech、INRIA、ETH、KITTI。IoU设为0.5。</li>
+<li>Caltech数据集，其中有4024个图像是用于测试，测试标准为50 pixel高，65%可见。</li>
+<li>INRIA和ETH用于验证模型的泛化能力。</li>
+<li>KITTI包含立体数据，我们用左相机的7481个图像进行训练</li>
+</ul>
+<h3 id="4-2-实验"><a href="#4-2-实验" class="headerlink" title="4.2 实验"></a>4.2 实验</h3><p>这个部分主要在Caltech数据集上进行。</p>
+<h4 id="RPN对行人检测足够好么？"><a href="#RPN对行人检测足够好么？" class="headerlink" title="RPN对行人检测足够好么？"></a>RPN对行人检测足够好么？</h4><p>我们测试了RPN在不同IoU和不同区域1、4、100数量时的召回率。如图所示，可以发现RPN相比于传统特征ACF、LDCF、Checkerboards的效果较好。100个推荐区域在IoU&#x3D;0.7时的召回率大于95%。</p>
+<p>![3 recall vs IoU](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Is">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Is</a> Faster R-CNN Doing Well for Pedestrian Detectio_Attachments&#x2F;3 recall vs IoU.png)</p>
+<p>RPN单独作为行人检测器时，MR为14.9%。</p>
+<h4 id="特征分辨率的影响"><a href="#特征分辨率的影响" class="headerlink" title="特征分辨率的影响"></a>特征分辨率的影响</h4><p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Is">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Is</a> Faster R-CNN Doing Well for Pedestrian Detectio_Attachments&#x2F;t1.png)</p>
+<ul>
+<li>RPN + R-CNN的效果比RPN好，R-CNN使用的是原始的像素信息，因此特征分辨率的影响较小。</li>
+<li>RPN + Fast R-CNN的效果就变差了，但是通过a trous技巧提升分辨率后，MR就减小了</li>
+<li>RPN + BF，特征图的分辨率与MR有直接关系</li>
+</ul>
+<p>如果我们确定了RPN + BF的框架，那么应该选择哪些卷积层特征呢？作者做了比较。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Is">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Is</a> Faster R-CNN Doing Well for Pedestrian Detectio_Attachments&#x2F;t2.png)</p>
+<p>从表2可知，分辨率可以降低MR，但是卷积层的增加可以提供特征描述能力，最好发现Conv3_3和Conv4_3(a trous)的效果最好。并且计算效率也比较高。Tesla K40 GPU平台，0.5s处理一张图像。</p>
+<p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Is">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Is</a> Faster R-CNN Doing Well for Pedestrian Detectio_Attachments&#x2F;t4.png)</p>
+<h4 id="Bootstrapping重要么？"><a href="#Bootstrapping重要么？" class="headerlink" title="Bootstrapping重要么？"></a>Bootstrapping重要么？</h4><p>![](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Is">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Is</a> Faster R-CNN Doing Well for Pedestrian Detectio_Attachments&#x2F;t3.png)</p>
+<p>从上图中可以发现，使用了bootstrapping之后的效果会提升，而且采用Fast R-CNN和BF的差别不大，可以认为bootstrapping对检测率的提升很重要。</p>
+<h3 id="4-3-与目前先进的方法比较"><a href="#4-3-与目前先进的方法比较" class="headerlink" title="4.3 与目前先进的方法比较"></a>4.3 与目前先进的方法比较</h3><p>这里作者在各种数据集上和很多检测器的效果进行了比较，总之就是各种好。</p>
+<h2 id="5-结论和讨论"><a href="#5-结论和讨论" class="headerlink" title="5 结论和讨论"></a>5 结论和讨论</h2><p>我们提出了一组非常有效的的行人检测方法，基于RPN和BF。PRN用于区域推荐和计算特征，BF分类器更加灵活：1）结合不同卷积层的不同分辨率的特征。2）配合bootstrapping进行困难负样本提取。这两个特征有效克服了Faster R-CNN对行人检测的限制。</p>
+<p>我们发现有趣的是bootstrapping是一个非常关键的组件，甚至对深度神经网络也是。目前已经有人开展这方面的工作，称作**Online Hard Example Mining（OHEM）[^32]**来训练Fast R-CNN用于目标检测。比较端到端的在线挖掘方法和多阶段的级联bootstrapping方法是一个非常有趣的方向。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>[^1]: Hosang, J., Omran, M., Benenson, R., Schiele, B.: Taking a deeper look at pedestrians. In: IEEE Conference on Computer Vision and Pattern Recognition (CVPR) (2015)<br>[^4]: Cai, Z., Saberian, M., Vasconcelos, N.: Learning complexity-aware cascades for deep pedestrian detection. In: IEEE International Conference on Computer Vision (ICCV) (2015)<br>[^9]: Benenson, R., Omran, M., Hosang, J., Schiele, B.: Ten years of pedestrian detection, what have we learned? In: Agapito, L., Bronstein, M.M., Rother, C. (eds.) ECCV 2014 Workshops. LNCS, vol. 8926, pp. 613–627. Springer, Heidelberg (2015)<br>[^11]: Ren, S., He, K., Girshick, R., Sun, J.: Faster R-CNN: towards real-time object detection with region proposal networks. In: Neural Information Processing Systems (NIPS) (2015)<br>[^12]: Girshick, R.: Fast R-CNN. In: IEEE International Conference on Computer Vision (ICCV) (2015)<br>[^16]: Chen, L.-C., Papandreou, G., Kokkinos, I., Murphy, K., Yuille, A.L.: Semantic image segmentation with deep convolutional nets, fully connected CRFs (2014). arXiv :1412.7062<br>[^17]: Long, J., Shelhamer, E., Darrell, T.: Fully convolutional networks for semantic segmentation. In: IEEE Conference on Computer Vision and Pattern Recognition (CVPR) (2015)<br>[^18]: Friedman, J., Hastie, T., Tibshirani, R., et al.: Additive logistic regression: a statistical view of boosting (with discussion and a rejoinder by the authors). Ann. Stat. 28, 337–407 (2000)<br>[^19]: Appel, R., Fuchs, T., Doll´ ar, P., Perona, P.: Quickly boosting decision trees-pruning underachieving features early. In: International Conference on Machine Learning (ICML) (2013)<br>[^32]: Shrivastava, A., Gupta, A., Girshick, R.: Training region-based object detectors with online hard example mining (2016). arXiv:1604.03540 </p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>intellisoftx
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Is-Faster-R-CNN-Doing-Well-for-Pedestrian-Detection/" title="论文笔记《Is Faster R-CNN Doing Well for Pedestrian Detection?》">http://intellisoftx.com/Note-笔记/Pedestrian-Detection/Note-Is-Faster-R-CNN-Doing-Well-for-Pedestrian-Detection/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Pedestrian-Detection/" rel="tag"># Pedestrian Detection</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Faster-R-CNN-Towards-Real-Time-Object-Detection-with-Region-Proposal-Networks/" rel="next" title="论文笔记《Faster R-CNN Towards Real-Time Object Detection with Region Proposal Networks》">
+                  论文笔记《Faster R-CNN Towards Real-Time Object Detection with Region Proposal Networks》 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">intellisoftx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

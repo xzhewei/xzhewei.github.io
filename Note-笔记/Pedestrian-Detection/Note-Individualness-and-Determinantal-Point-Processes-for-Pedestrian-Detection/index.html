@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"intellisoftx.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="&lt;img src&#x3D;”http:&#x2F;&#x2F;zavix-image.oss-cn-shenzhen.aliyuncs.com&#x2F;note&#x2F;IndividualnessDPP&#x2F;1511942386442.png&quot;&#x2F; width&#x3D;”80%”&gt; Abstract本文，我们介绍了检测候选的个体性作为一个补充用于评价行人检测。个体性从目标推荐和滑窗得到的原始检测候选中分配一个检">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记《Individualness and Determinantal Point Processes for Pedestrian Detection》">
+<meta property="og:url" content="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/index.html">
+<meta property="og:site_name" content="Intelligent Software X">
+<meta property="og:description" content="&lt;img src&#x3D;”http:&#x2F;&#x2F;zavix-image.oss-cn-shenzhen.aliyuncs.com&#x2F;note&#x2F;IndividualnessDPP&#x2F;1511942386442.png&quot;&#x2F; width&#x3D;”80%”&gt; Abstract本文，我们介绍了检测候选的个体性作为一个补充用于评价行人检测。个体性从目标推荐和滑窗得到的原始检测候选中分配一个检">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512616433920.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512620048441.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512619743792.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512621004358.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512629712724.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512630353869.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512630798943.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512631315204.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512633314567.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512635866556.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636179348.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636263251.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636884079.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512637471602.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512654724175.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512654762753.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512655923604.png">
+<meta property="article:published_time" content="2018-01-03T07:54:01.000Z">
+<meta property="article:modified_time" content="2023-03-30T11:43:21.439Z">
+<meta property="article:author" content="intellisoftx">
+<meta property="article:tag" content="Pedestrian Detection">
+<meta property="article:tag" content="NMS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512616433920.png">
+
+
+<link rel="canonical" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/","path":"Note-笔记/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/","title":"论文笔记《Individualness and Determinantal Point Processes for Pedestrian Detection》"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>论文笔记《Individualness and Determinantal Point Processes for Pedestrian Detection》 | Intelligent Software X</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Intelligent Software X</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">IntelliSoftx</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstract"><span class="nav-number">1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">2.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Related-Work"><span class="nav-number">3.</span> <span class="nav-text">2. Related Work</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%96%B9%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">3. 方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E8%A1%8C%E5%88%97%E5%BC%8F%E7%82%B9%E8%BF%87%E7%A8%8B%E6%96%B9%E7%A8%8B%EF%BC%88Determinantal-Point-Process-Formulation%EF%BC%89"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 行列式点过程方程（Determinantal Point Process Formulation）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E8%B4%A8%E9%87%8F%E9%A1%B9"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 质量项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E4%B8%AA%E4%BD%93%E6%80%A7%E5%92%8C%E5%A4%9A%E6%A0%B7%E6%80%A7%E7%89%B9%E5%BE%81"><span class="nav-number">4.3.</span> <span class="nav-text">3.3 个体性和多样性特征</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-Mode-Finding"><span class="nav-number">4.4.</span> <span class="nav-text">3.4 Mode Finding</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-5-%E4%B8%8EQUBO%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">4.5.</span> <span class="nav-text">3.5 与QUBO的关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%AE%9E%E9%AA%8C"><span class="nav-number">5.</span> <span class="nav-text">4. 实验</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E7%BB%93%E8%AE%BA"><span class="nav-number">6.</span> <span class="nav-text">5 结论</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">7.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">intellisoftx</p>
+  <div class="site-description" itemprop="description">智软X</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="intellisoftx">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Intelligent Software X">
+      <meta itemprop="description" content="智软X">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="论文笔记《Individualness and Determinantal Point Processes for Pedestrian Detection》 | Intelligent Software X">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记《Individualness and Determinantal Point Processes for Pedestrian Detection》
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-01-03 15:54:01" itemprop="dateCreated datePublished" datetime="2018-01-03T15:54:01+08:00">2018-01-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-30 19:43:21" itemprop="dateModified" datetime="2023-03-30T19:43:21+08:00">2023-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Note 笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/" itemprop="url" rel="index"><span itemprop="name">Pedestrian Detection</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>&lt;img src&#x3D;”<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1511942386442.png%22/">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1511942386442.png&quot;/</a> width&#x3D;”80%”&gt;</p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>本文，我们介绍了检测候选的个体性作为一个补充用于评价行人检测。个体性从目标推荐和滑窗得到的原始检测候选中分配一个检测结果给每个物体。我们表明，传统的方法，如NMS，是次优的，因为其仅基于周围检测结果的得分来抑制。我们使用行列式点过程(determinantal point process)结合个体性优化选择最后的结果。该方法使用质量和相似性对每个检测结果建模。然后，检测结果中具有高检测得分和低相关性（通过矩阵行列式计算概率）的作为最后的结果。此矩阵由quality terms作为对角元素，其他位置是相似性元素。具体地，我们专注于行人检测问题，该问题由于其频繁的遮挡和不可预知的运动使其称为最具挑战的问题之一。实验结果显示本文提出的方法比NMS和不受约束的二次优化问题更好。</p>
+<span id="more"></span>
+
+<ul>
+<li>机构：首尔大学，加州大学</li>
+<li>行人检测后处理，个体性估计</li>
+<li>代码:<a target="_blank" rel="noopener" href="http://cpslab.snu.ac.kr/software">http://cpslab.snu.ac.kr/software</a></li>
+</ul>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>目标检测的目的是在图像中定位一个已知类别的目标。这对于许多视觉任务的基础，例如跟踪、场景识别、动作识别等。在视觉跟踪中，基于检测的跟踪是在连续图像中基于连续的检测结果定位目标，是非常有效的方法[^1]。通过定位图像中目标的位置，我们能更好理解场景中发生的事情[^2]。目标检测也应用于动作识别，通过发现一系列特定相关的动作序列[^3]。</p>
+<p>一般目标检测的框架在测试图像上进行滑窗或者通过训练的分类器推荐目标。目前已经有许多目标检测器能够将独立的目标检测好。然而，一个检测器对每个目标的检测结果周围都会产生大量的原始检测结果（raw detection responses），如图1a所示。冗余的检测结果一般通过贪心算法进行抑制得到图1b，如NMS。</p>
+<p>采用上述框架，很难检测高度被遮挡的目标。因为分类器在训练时设计为用于分辨不同的类别，而不是分别类内差异。例如图1中A、B行人外接矩形高度重叠，我们检测时需要判断是FP还是FN。基于NMS，由于A被遮挡，其检测得分会低于B，因此会被抑制。因此，NMS方法不可避免的产生一些FN，当目标相互遮挡时。另一方面，如果一些先验知识能够利用，例如不同的identities，这样的问题就能避免。事实上，false rejection能够极大影响检测精度，例如原始的检测结果召回率为90%，经过NMS之后检测结果仅为50%。因此，从原始检测结果挑选是一件重要的任务。</p>
+<p>本文，我们提出一个算法基于个体性（individualness）和行列式点过程（determinantal point process, DPP）用于精确检测，并且可以应用于任何目标检测器。该方法可以作为目标性检测的一个独立补充。物体性检测得到一组候选结果，个体性检测发现候选结果的关系，得到最终检测结果。我们定义个体性使用特征向量的相关性，其包含bbox中的外观和空间信息。具体的，我们关注人群场景中的多行人检测问题。</p>
+<p>DPP是一个随机过程，使用量子物理理论中的互斥粒子模型，其禁止高度相关的量子态同时出现。这个特性很适合排除冗余的检测结果。为了应用DPP，需要定义质量和多样性因子，通常为unary score和pair-wise correlation。基于此，我们可以选择一个更优化的子集如图1c所示。</p>
+<p>本文的贡献如下所示：</p>
+<ol>
+<li>现有检测框架中，从候选检测结果中选择最后结果的方法存在问题</li>
+<li>引入DPP增强检测精度，通过设计质量和多样性特征设计</li>
+<li>用DPP选择优化的检测结果，并在多个行人数据集上验证。</li>
+<li>在PETS 2009上，DPM基于本文方法达到41.9%的准确度和99%的精度，而NMS只达到23.2%的准确度和98.2%的精度。</li>
+<li>在30个行人的图像上处理超过300个候选结果的时间少于30ms</li>
+</ol>
+<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p>行人检测方法：HOG、SVM、DPM、Boosting-Based，Faster R-CNN</p>
+<p>融合检测结果：NMS。</p>
+<ol>
+<li>文献[^13]指出定位精确性与检测得分没有很强的相关性。因此其提出一个回归模型学习检测结果与GT的相对位置。</li>
+<li>文献[^14]将NMS框架整合到深度学习模型中，但是NMS的参数在训练时仍然是固定的。</li>
+</ol>
+<p>NMS可以看为优化问题：</p>
+<ol>
+<li>文献[^15]提出二次无约束二元优化方法（quadratic unconstrained binary optimization，QUBO）替代NMS。QUBO的目的是找到一个二元向量，其中每个元素表示对应的检测BBox是否应该被抑制。目标函数包含一元和二元项。一元项测量BBox是行人的置信度，二元项基于BBox的重叠区域进行惩罚。目标函数使用贪心算法求解。QUBO的问题在于其估计行人之间的分布使用二元目标函数。</li>
+<li>文献[^16]提出基于吸引力传播聚类（affinity propagation clustering，APC）的方法。统计BBox两辆之间的相似性，然后聚类相似性最大的。 但是APC没有显式的惩罚相互接近的物体。尽管可以增加互斥函数进行改进，但是检测精度也没用显著的增加。</li>
+</ol>
+<h2 id="3-方法"><a href="#3-方法" class="headerlink" title="3. 方法"></a>3. 方法</h2><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512616433920.png" alt="1512616433920"></p>
+<p>提出的方法包含连个阶段：物体性检测和个体性检测。本文使用DDP建模BBox之间的关系。</p>
+<h3 id="3-1-行列式点过程方程（Determinantal-Point-Process-Formulation）"><a href="#3-1-行列式点过程方程（Determinantal-Point-Process-Formulation）" class="headerlink" title="3.1 行列式点过程方程（Determinantal Point Process Formulation）"></a>3.1 行列式点过程方程（Determinantal Point Process Formulation）</h3><p>定义：</p>
+<ul>
+<li>DPP基于BBox的质量和相似性计算最终选择的BBox</li>
+<li>有个N个BBox，$y$表示所有BBox的集合，$Y$标示最终选择的子集</li>
+<li>BBox的质量为$q_i$</li>
+<li>BBox的相似性为$S_{ij}$，两个BBox向量的内积</li>
+<li>计算正-半正定核矩阵（positive-semidefinite kernel matrix）$L_Y&#x3D;[L_{ij}]_{i,j\in Y}$</li>
+<li><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512620048441.png" alt="1512620048441"></li>
+</ul>
+<p>则选择BBox的过程即为最优化问题</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512619743792.png" alt="1512619743792"></p>
+<p>通常来说这是一个NP-hard（non-deterministic polynomial）问题，需要对所以的可能进行评估，但是幸运的是该问题是log-submodular问题，可以通过简单的贪心算法估计。</p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://baike.baidu.com/item/NP-hard">百度</a><br>NP-hard，其中，NP是指非确定性多项式（non-deterministic polynomial，缩写NP）。所谓的非确定性是指，可用一定数量的运算去解决多项式时间内可解决的问题。NP-hard问题通俗来说是其解的正确性能够被“很容易检查”的问题，这里“很容易检查”指的是存在一个多项式检查算法。相应的，若NP中所有问题到某一个问题是图灵可归约的，则该问题为NP困难问题。</p>
+</blockquote>
+<p>例如图，当选择$Y&#x3D;{i,j}$时，DPP选择其的得分$P_L(Y)$为</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512621004358.png" alt="1512621004358"></p>
+<p>可以发现，当$q$增大时行列式的值增加，当$|S_{i,j}|$增大时，行列式的值减小。因此DPP过程自动的选择高质量和低相似性的组合。</p>
+<h3 id="3-2-质量项"><a href="#3-2-质量项" class="headerlink" title="3.2 质量项"></a>3.2 质量项</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512629712724.png" alt="1512629712724"></p>
+<p>一般来说质量项就是检测得分，但是原始得分是相互独立的。我们提出一个检测策略考虑周围结果的关系。一个图像中的虚警可能会抑制真正行人BBox。这种问题在BBox很大时更严重，统计一个GT中具有的检测BBox数量如图3b所示。可以发现大部分GT中包含的BBox非常少（这里有个问题，是不是本来滑窗ROI的尺寸本来就比较大，然后0也被统计进去了）。基于这个发现，提出重得分函数</p>
+<p>$$s_i^c&#x3D;s_i^oexp(-\lambda n_i)$$</p>
+<p>$\lambda$是一个常数。并且这样还可以得到更加贴紧行人的BBox，如第四节所示。（这个想法很特别，而且似乎特别适合二元检测任务，因为根据透视原理，不可能在一个大目标前面还存在多个小目标）。</p>
+<p>特别地，在相机固定的场景中，行人的高度变化不大，而且高度$h_i$与位置$(x_i,y_i)$存在函数关系，可以容易的拟合出函数的系数：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512630353869.png" alt="1512630353869"></p>
+<p>假设行人的身高成高斯分布，我们根据BBox的偏差来对其进行重打分：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512630798943.png" alt="1512630798943"></p>
+<p>最后质量项$q$表示为：</p>
+<p>$$q&#x3D;\alpha s + \beta$$</p>
+<p>权重的设置需要根据检测器来确定，比如DPM的平均得分为0.7，ACF的得分是33.2。</p>
+<h3 id="3-3-个体性和多样性特征"><a href="#3-3-个体性和多样性特征" class="headerlink" title="3.3 个体性和多样性特征"></a>3.3 个体性和多样性特征</h3><p>个体性旨在确定两个图像是否是指同一个人。类似多相机环境中的行人身份再识别问题。但是这两个问题不同且难度不一样。</p>
+<ol>
+<li>重叠区域有完全相同的信息</li>
+<li>两个图像快交叠靠的很近</li>
+<li>需要考虑被遮挡的行人，再识别问题通常不考虑</li>
+</ol>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512631315204.png" alt="1512631315204"></p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512633314567.png" alt="1512633314567"></p>
+<p>为了克服这个问题，我们考虑测量BBox特征描述的相关性。特征应该对背景、尺度不敏感。为了实现这个目的，我们采用卷积特征。总体上，相关矩阵是块对角并且个体相关性较低，因此我们决定采用CNN特征。</p>
+<p>仅只用CNN不够有效，如图4所示，对单个行人有多个聚类结果，例如图5中间男人BBox右边有个BBox，尽管两个BBox中有轮廓不一样，但是仍然是一个行人。为了解决这个问题，我们增加考虑BBox的控制位置。空间个体性设计为单个行人周围的BBox具有高相关性。则第i个检测结果的个体性表示为：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512635866556.png" alt="1512635866556"></p>
+<p>k表示像素序号，$\pi_i$表示属于检测结果i的bbox的像素集合。尽管$\varphi_i$的纬度等同于图像尺寸，但是两个BBox的空间相关性可以检测计算得到:</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636179348.png" alt="1512636179348"></p>
+<p>同时不需要存储完整的相关性向量，只需保存检测的BBox尺寸和重叠面积：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636263251.png" alt="1512636263251"></p>
+<p>（晕，这不就是IOU么）</p>
+<p>得到了BBox的物体性特征$$\phi_i$$和$$\varphi_i$$，如何融合两个特征为一个多样性特征？可以采用平均值，但是其要求特征具有相同纬度。我们提出一个更通用有效的方法设计多样性特征，并直接构造正-半正定相似性矩阵S。$S^c$，$S^s$分别为有两个特征构建，换句话说$$S_{ij}^c&#x3D;\phi_i^T\phi_j$$。然后使用一个平和权重（0.8）融合：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636884079.png" alt="1512636884079"></p>
+<h3 id="3-4-Mode-Finding"><a href="#3-4-Mode-Finding" class="headerlink" title="3.4 Mode Finding"></a>3.4 Mode Finding</h3><p>这一节描述如何求解上面的最优化函数。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512637471602.png" alt="1512637471602"></p>
+<ol>
+<li>每次选择最大的j</li>
+<li>加入到Y集合中</li>
+<li>计算P，若增加倍数超过阈值，则继续，并将j从y中删除</li>
+<li>直到P不再增加，或y为空</li>
+</ol>
+<h3 id="3-5-与QUBO的关系"><a href="#3-5-与QUBO的关系" class="headerlink" title="3.5 与QUBO的关系"></a>3.5 与QUBO的关系</h3><p>QUBO使用DPP目标函数转换为相似的形式。DPP是寻找最大化$L_Y$的行列式。QUBO有两个缺点</p>
+<ol>
+<li>QUBO cannot deal with positively correlated items. 这句话不理解</li>
+<li>QUBO 更加惩罚高度相关的BBox，可能不适合遮挡的行人。</li>
+</ol>
+<p>假设$L_y&#x3D;[2,-0.8;-0.8,1.4]$，QUBO将不选择第二个检测结果因为$-0.8-0.8+1.4&#x3D;-0.2&lt;0$，在DPP中$det(Y_L)&#x3D;2.16&gt;2$ 因此会选择第二个结果。</p>
+<h2 id="4-实验"><a href="#4-实验" class="headerlink" title="4. 实验"></a>4. 实验</h2><p>数据集</p>
+<ul>
+<li>INRIA：288个图像</li>
+<li>PETS2009：S1.L1的190帧，平均每帧33个行人，行人较密</li>
+<li>EPFL Terrace：5010帧，每25帧取1帧，平均每帧5人</li>
+</ul>
+<p>模型：DPM，ACF，Faster RCNN</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512654724175.png" alt="1512654724175"></p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512654762753.png" alt="1512654762753"></p>
+<p>表1和图7显示结果，可以看见DPP都比NMS好或一致，并且在PET2009这类数据集上有显著提升。并且RCNN这类方法在INRIA上有较好的效果，但是在PET2009上效果不好，可能是因为区域推荐的方法会生成很多重叠的框，而不是独立个体的框。上述实验不会使用先验知识。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512655923604.png" alt="1512655923604"></p>
+<p>图8a里面有贪心NMS，另一种为特殊NMS$\frac{area(d_g\bigcap d_e)}{min(area(d_g),area(d_e))}&gt;0.65$ 能够实现更好的精度。非贪心NMS不排除被抑制的BBox。QUBO的精度与非贪心NMS相似。并且DPP比其他的都显著改善。</p>
+<p>图8b表示了CNN网络层的有效性。显示，检测结果对不同的网络层不敏感。我们使用4096维向量用于计算多样性特征。</p>
+<p>图8c显示了计算速度。最多300个proposal，只统计算法1的计算时间。卷积计算时间248ms。计算平台Intel Xeon 2.3 GHz，128 RAM，TITAN X D5 12GB CPU。处理过程平均少于30ms。</p>
+<p>BBox定位精度使用$\frac{|d_e\bigcap d_g|}{|d_e|}$测量。PET2009中DPP是0.81，NMS是0.76。图9显示一些结果示例。DPP产生更贴紧的BBox，如EPFL-84帧，NMS和QUBO都漏检了中间穿白衣服的人，DPP成功检测。</p>
+<h2 id="5-结论"><a href="#5-结论" class="headerlink" title="5 结论"></a>5 结论</h2><p>我们提出一种基于个体性改进检测性能的算法。个体性评价两个检测候选的相似性，物体性基于得分生成候选框。每个BBox外观和空间信息用于考虑个体性。然后行列式点处理过程结合得分和相似性得到最后结果。实验结果表明DPP比NMS和QUBO更好。并且在平均包含30个行人的图像上处理300个候选框的速度小于30ms。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>[^13]: Liu, S., Lu, C., Jia, J.: Box aggregation for proposal decimation: last mile of object detection. In ICCV, pp. 2569–2577 (2015)<br>[^14]: Wan, L., Eigen, D., Fergus, R.: End-to-end integration of a convolution network, deformable partsmodel and non-maximum suppression. In CVPR, pp. 851–859 (2015)<br>[^15]: Rujikietgumjorn, S., Collins, R.T.: Optimized pedestrian detection for multiple and occluded people. In CVPR (2013)<br>[^16]: Rothe, R.,Guillaumin,M., Gool, L.V.: Non-maximum suppression for object detec- tion by passing messages between windows. In ACCV (2014)</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>intellisoftx
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/" title="论文笔记《Individualness and Determinantal Point Processes for Pedestrian Detection》">http://intellisoftx.com/Note-笔记/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Pedestrian-Detection/" rel="tag"># Pedestrian Detection</a>
+              <a href="/tags/NMS/" rel="tag"># NMS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DeNet-Scalable-Real-time-Object-Detection-with-Directed-Sparse-Sampling/" rel="prev" title="论文笔记《DeNet: Scalable Real-time Object Detection with Directed Sparse Sampling》">
+                  <i class="fa fa-chevron-left"></i> 论文笔记《DeNet: Scalable Real-time Object Detection with Directed Sparse Sampling》
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Tutorial-%E6%95%99%E7%A8%8B/Markdown-storage-image/" rel="next" title="解决Markdown图片存放">
+                  解决Markdown图片存放 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">intellisoftx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

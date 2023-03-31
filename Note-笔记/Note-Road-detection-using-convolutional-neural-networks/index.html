@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"intellisoftx.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="会议：European Conference on Artificial Life (ECAL) 机构：Aberystwyth University (英国)  Abstract 解决自动驾驶的问题：使用卷积神经网络预测图像中路面的位置和宽度。 实验了两种网络架构，六种色彩模型 使用机器人Pioneer 3-AT，离线测试5个不同的路段  1. Introduction 自动驾驶车辆都需要判断前">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记 Road detection using convolutional neural networks">
+<meta property="og:url" content="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Note-Road-detection-using-convolutional-neural-networks/index.html">
+<meta property="og:site_name" content="Intelligent Software X">
+<meta property="og:description" content="会议：European Conference on Artificial Life (ECAL) 机构：Aberystwyth University (英国)  Abstract 解决自动驾驶的问题：使用卷积神经网络预测图像中路面的位置和宽度。 实验了两种网络架构，六种色彩模型 使用机器人Pioneer 3-AT，离线测试5个不同的路段  1. Introduction 自动驾驶车辆都需要判断前">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017%20-%20Narayan%20et%20al.%20-%20Road%20detection%20using%20convolutional%20neural%20networks/1521976193935.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017%20-%20Narayan%20et%20al.%20-%20Road%20detection%20using%20convolutional%20neural%20networks/1521619448741.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017%20-%20Narayan%20et%20al.%20-%20Road%20detection%20using%20convolutional%20neural%20networks/1521621510078.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017%20-%20Narayan%20et%20al.%20-%20Road%20detection%20using%20convolutional%20neural%20networks/1521622327058.png">
+<meta property="og:image" content="http://www.physics.csbsju.edu/stats/complex.box.defs.gif">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017%20-%20Narayan%20et%20al.%20-%20Road%20detection%20using%20convolutional%20neural%20networks/1521644566071.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017%20-%20Narayan%20et%20al.%20-%20Road%20detection%20using%20convolutional%20neural%20networks/1521644918748.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017%20-%20Narayan%20et%20al.%20-%20Road%20detection%20using%20convolutional%20neural%20networks/1521644977589.png">
+<meta property="article:published_time" content="2018-11-10T06:56:08.000Z">
+<meta property="article:modified_time" content="2023-03-30T11:43:21.443Z">
+<meta property="article:author" content="intellisoftx">
+<meta property="article:tag" content="Road Detection">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017%20-%20Narayan%20et%20al.%20-%20Road%20detection%20using%20convolutional%20neural%20networks/1521976193935.png">
+
+
+<link rel="canonical" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Note-Road-detection-using-convolutional-neural-networks/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Note-Road-detection-using-convolutional-neural-networks/","path":"Note-笔记/Note-Road-detection-using-convolutional-neural-networks/","title":"论文笔记 Road detection using convolutional neural networks"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>论文笔记 Road detection using convolutional neural networks | Intelligent Software X</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Intelligent Software X</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">IntelliSoftx</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstract"><span class="nav-number">1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">2.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Related-Work"><span class="nav-number">3.</span> <span class="nav-text">2. Related Work</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Method"><span class="nav-number">3.1.</span> <span class="nav-text">Method</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Road-Shap"><span class="nav-number">3.1.1.</span> <span class="nav-text">Road Shap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CNN"><span class="nav-number">3.1.2.</span> <span class="nav-text">CNN</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Datasets"><span class="nav-number">3.1.3.</span> <span class="nav-text">Datasets</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%BB%E7%BA%BF%E6%A3%80%E6%B5%8B"><span class="nav-number">3.2.</span> <span class="nav-text">离线检测</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Robot-Trials"><span class="nav-number">4.</span> <span class="nav-text">Robot Trials</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Conclusion"><span class="nav-number">5.</span> <span class="nav-text">Conclusion</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">intellisoftx</p>
+  <div class="site-description" itemprop="description">智软X</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Note-Road-detection-using-convolutional-neural-networks/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="intellisoftx">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Intelligent Software X">
+      <meta itemprop="description" content="智软X">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="论文笔记 Road detection using convolutional neural networks | Intelligent Software X">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记 Road detection using convolutional neural networks
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-11-10 14:56:08" itemprop="dateCreated datePublished" datetime="2018-11-10T14:56:08+08:00">2018-11-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-30 19:43:21" itemprop="dateModified" datetime="2023-03-30T19:43:21+08:00">2023-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Note 笔记</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <ul>
+<li>会议：European Conference on Artificial Life (ECAL)</li>
+<li>机构：Aberystwyth University (英国)</li>
+</ul>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><ul>
+<li>解决自动驾驶的问题：使用卷积神经网络预测图像中路面的位置和宽度。</li>
+<li>实验了两种网络架构，六种色彩模型</li>
+<li>使用机器人Pioneer 3-AT，离线测试5个不同的路段</li>
+</ul>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><ul>
+<li>自动驾驶车辆都需要判断前方的路面和非路面区域</li>
+<li>当道路线清晰，标准的图像处理+视觉方法可以直接解决</li>
+<li>当路面不清晰时就会变得复杂</li>
+<li>图像处理应该足够鲁棒，满足动态复杂路面检测的需求</li>
+<li>如果能判断前方路面的位置的形状，能够使得问题变简单</li>
+</ul>
+<span id="more"></span>
+
+<ul>
+<li><p>Alvarez[^1]，Thrun[^2] 尝试通过路面颜色分布的差异进行分割，这种方法不依赖道路标识，但是道路的颜色分布不是一直静止的，局部和动态的变化（阴影，水坑，纹理）都可以降低精度。此外，有些颜色通道，路面和非路面的分布基本没差异。</p>
+</li>
+<li><p>Ososinski[^3] 提出 Adaptive Statistical Colour Based（ASC），在图像上投影体形来定义路面区域。评估路面检测，采用Mahalanobis距离<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Mahalanobis_distance">^wiki</a> 评估在梯形内和外的像素。在多个道路上测试，大部分情况较好，但还是存在识别案例，以及有些具有系统性偏差。依赖前一帧颜色通道，当发生突变时可能存在问题。</p>
+<blockquote>
+<p>本文主要参考这篇文章的工作框架</p>
+</blockquote>
+</li>
+</ul>
+<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><ul>
+<li>Zhou，提出支持向量机分割输入图像。其假设路面的结构路面，为了能够使用不同路面及减少分类错误，其不断加入新帧中的像素，删除旧帧中的像素。但是在复杂场景中该方法失效。</li>
+<li>Pomerleau，ALVINN项目，最早使用神经网络控制无人车在室外驾驶。三层前馈网络，输入灰度图像，输出车辆方向命令。网络的训练数据通过一个人在一个模拟道路环境中驾驶生成。之后在户外的一个运行车辆上让驾驶员假设车辆来训练网络。该网络能够在已训练过的路上进行假设，但是不能迁移到新的道路环境。</li>
+<li>为了克服上述问题，Jochem，提出MANIAC模块，其包含几个独立的NN，分别对应基准不同的道路类型，然后整合到一个模块中，基于所有NN的输出，最后得出结果。该方法无法覆盖所以道路类型，需要大量NN，而且每加入一个新NN，整个系统需要重新训练。</li>
+<li>Shinzato，提出一种多网络方法适应多种路段。首先，每个图像被分为多块，每个块10x10像素，每个块被标记为可行或不可信，然后从block提取特征输入NN，然后综合结果输出预测。NN等方法对训练过的路段较好，但是对其他路段较差。</li>
+</ul>
+<p>近几年神经网络发展迅速，在检测、识别相关的视觉问题上，卷积神经网络能实现更高的精度。神经网络能获得高层语义特征，对路面检测来说，提取高级语义能够实现更好的鲁棒性。</p>
+<ul>
+<li>Hadsell，使用CNN实现了野地自动驾驶</li>
+<li>Chen，Liu，使用赛车模拟器视频训练CNN，其效果比使用Gabor的baseline方法好。该方法还是主要限制在城市道路场景。</li>
+<li>Huval，使用CNN检测高速公路的车道线，训练数据采用大量采集的视频数据。</li>
+<li>Badrinarayanan，提出反卷积网络用于图片语义分割</li>
+<li>据作者所知，上述方法没有在非城市道路评估，我们评估了Bad等人的方法在各种不同路面上的效果，如图1所示，效果较差。</li>
+</ul>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521976193935.png" width="50%"/>
+
+<h3 id="Method"><a href="#Method" class="headerlink" title="Method"></a>Method</h3><ul>
+<li>两个网络架构</li>
+<li>10组道路序列图像，满足多样的道路环境</li>
+<li>6个色彩模型（RGB，HSV，YUV，YCbCr，lab，CbCra），看是否会影响CNN的性能</li>
+<li>评估方法类似Ososinski，结果显示最好的网络性能与ASC基本一致，在一两个环境下CNN更好</li>
+</ul>
+<h4 id="Road-Shap"><a href="#Road-Shap" class="headerlink" title="Road Shap"></a>Road Shap</h4><ul>
+<li><p>路面模型，梯形，两个可变参数，位置$x$，宽度$w$，如图2</p>
+</li>
+<li><p>增加高度$h$和角度$\theta$，能够实现更好匹配，但是会增加网络任务的复杂度。</p>
+</li>
+<li><p>对机器人来说位置x已足够让其保持在路面上，宽度w使其满足不同速度需求，使其保证行动的顺滑，不会产生突变。</p>
+<blockquote>
+<p>个人觉得这个模型太简单</p>
+</blockquote>
+</li>
+</ul>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521619448741.png" width="70%"/>
+
+<h4 id="CNN"><a href="#CNN" class="headerlink" title="CNN"></a>CNN</h4><ul>
+<li>是否更深的网络能得到更精确的结果</li>
+<li>作者设计了一个4层的网络LCNN，输入图像是50x50x3的图像，两层网络（见图3中红框），分别有1000和600个神经元，最后两个节点输出参数x和w</li>
+<li>平均位置偏差大于20个像素</li>
+</ul>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521621510078.png" width="100%"/>
+
+<ul>
+<li>另一个模型采用AlexNet</li>
+<li>参数随机初始化</li>
+<li>学习率0.0001</li>
+<li>dropout：0.2（conv）0.5（fc）</li>
+<li>Caffe</li>
+<li>使用ImageNet初始化，然后去掉最后两个全连接层，使用随机初始化两个输出节点</li>
+<li>迭代30次</li>
+</ul>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521622327058.png">
+
+<h4 id="Datasets"><a href="#Datasets" class="headerlink" title="Datasets"></a>Datasets</h4><p>自己采集标注了数据集，下载地址：<a target="_blank" rel="noopener" href="https://www.aber.ac.uk/en/cs/research/ir/dss/#road-driving">https://www.aber.ac.uk/en/cs/research/ir/dss/#road-driving</a></p>
+<h3 id="离线检测"><a href="#离线检测" class="headerlink" title="离线检测"></a>离线检测</h3><p>从6种色彩模型中选择选择每个模型最好的，好的标准是平均像素偏差。可以发现RGB不区分明度和颜色，YUV和YCbCr是相似的颜色模型，也具有相对更低的偏差。AlexNet跨颜色模型的效果更好。但是如果选择和是的色彩模型LCNN也可以与AlexNet比较。</p>
+<p>![1521642366208](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017</a> - Narayan et al. - Road detection using convolutional neural networks&#x2F;1521642366208.png)</p>
+<p>选择两个表现最好的ASC的色彩模型（HSV和lab）与LCNN和AlexNet进行比较。比较结果如下面两个图所示。</p>
+<p>![1521642885864](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017</a> - Narayan et al. - Road detection using convolutional neural networks&#x2F;1521642885864.png)</p>
+<p>![1521642902451](<a target="_blank" rel="noopener" href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017</a> - Narayan et al. - Road detection using convolutional neural networks&#x2F;1521642902451.png)</p>
+<blockquote>
+<p>Boxplots是一种统计图标，<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Box_plot">wiki</a>，其关键是理解四分位数，Q1：25%数据小于等于它，Q2：50%数据小于等于它，即中位数，Q3，75%数据小于等于它，四分卫距IQR&#x3D;Q3-Q1。Q3+1.5IQR就是外限，Q1-1.5IQR就是外限。超过外限的则显示出来。</p>
+<img src="http://www.physics.csbsju.edu/stats/complex.box.defs.gif" width="50%"/>
+</blockquote>
+<p>可以发现AlexNet的性能比ASC要好，同时也比LCNN好。Lakeside数据集，NN方法偏右，ACS在KITTI数据集的效果较差，如图7所示。</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521644566071.png"  width="70%"/>
+
+<h2 id="Robot-Trials"><a href="#Robot-Trials" class="headerlink" title="Robot Trials"></a>Robot Trials</h2><p>在室内进行多种颜色环境的训练，25条线路，5种不同道路环境。如图8所示。</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521644918748.png" width="50%"/>
+
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521644977589.png" width="50%"/>
+
+<p>25条线路，只有两个没有成功。Red-Blue路线，Robot很难保持在中间，如图8所示，会往右边的绿色区域偏离。</p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>CNN可能不容易分解为清晰的操作原则，但是它们不受人主观意见的干扰，导致系统的鲁棒性受限。我们以ASC方法为baseline，AlexNet展现了更好的效果，并且其简化版LCNN也能达到相似等级的精度。我们在室内环境验证了方法的可行性。为了我们会在更广泛的数据上测试，并将在我们的robot移动平台上嵌入一个GPU模块，使其满足运行CNN，实现实时的控制需求。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>intellisoftx
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Note-Road-detection-using-convolutional-neural-networks/" title="论文笔记 Road detection using convolutional neural networks">http://intellisoftx.com/Note-笔记/Note-Road-detection-using-convolutional-neural-networks/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Road-Detection/" rel="tag"># Road Detection</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Note-Seeing-Small-Faces-from-Robust-Anchors-Perspective/" rel="prev" title="论文笔记 Seeing Small Faces from Robust Anchors Perspective">
+                  <i class="fa fa-chevron-left"></i> 论文笔记 Seeing Small Faces from Robust Anchors Perspective
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/" rel="next" title="论文笔记 Individualness and Determinantal Point Processes for Pedestrian Detection">
+                  论文笔记 Individualness and Determinantal Point Processes for Pedestrian Detection <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">intellisoftx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"intellisoftx.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="最近跟什么大开会相关，好像大部分的VPN都失效了。蓝灯（Lantern）稳定性速度都不错但是每个月500MB的流量还是不够用。因此，还是考虑自己搭一个VPN来得稳妥。 1. 方案准备 VPS服务商：Bandwagon（搬瓦工） VPN Server：shadowsocks 和 v2ray（速度没有shadowsocks稳定） VPN 软件：showdsocks（Win，Ubuntu，android">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VPS搭建VPN（shadowsocks和v2ray）">
+<meta property="og:url" content="http://intellisoftx.com/Tutorial-%E6%95%99%E7%A8%8B/VPN-shadowsocks-and-v2ray/index.html">
+<meta property="og:site_name" content="Intelligent Software X">
+<meta property="og:description" content="最近跟什么大开会相关，好像大部分的VPN都失效了。蓝灯（Lantern）稳定性速度都不错但是每个月500MB的流量还是不够用。因此，还是考虑自己搭一个VPN来得稳妥。 1. 方案准备 VPS服务商：Bandwagon（搬瓦工） VPN Server：shadowsocks 和 v2ray（速度没有shadowsocks稳定） VPN 软件：showdsocks（Win，Ubuntu，android">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.5344765409653371.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.80205022123858.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.4624321167139738.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.7658803460564967.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.058923141948659996.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.30879515471342.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.6043703378018064.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.7973071788231076.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.036330636450951914.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.1154515450985989.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.8761737666956608.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/6af293b1-4295-499d-ae56-103a68d822c1.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/6489ec0a-470d-48f9-8b8c-67b866b0edc8.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/4f0ec3c5-245f-469c-8971-8844d8fe898a.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/6b261b23-7141-4112-9bbd-6c76a0a0583f.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/a3ad5759-4019-437a-8f55-ddd2e6e2b78a.jpg">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/cd33c834-c746-410d-8392-d97b53270302.jpg">
+<meta property="article:published_time" content="2017-10-13T10:44:21.000Z">
+<meta property="article:modified_time" content="2023-03-30T11:43:21.442Z">
+<meta property="article:author" content="intellisoftx">
+<meta property="article:tag" content="shadowsocks">
+<meta property="article:tag" content="v2ray">
+<meta property="article:tag" content="vpn">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.5344765409653371.png">
+
+
+<link rel="canonical" href="http://intellisoftx.com/Tutorial-%E6%95%99%E7%A8%8B/VPN-shadowsocks-and-v2ray/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://intellisoftx.com/Tutorial-%E6%95%99%E7%A8%8B/VPN-shadowsocks-and-v2ray/","path":"Tutorial-教程/VPN-shadowsocks-and-v2ray/","title":"VPS搭建VPN（shadowsocks和v2ray）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>VPS搭建VPN（shadowsocks和v2ray） | Intelligent Software X</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Intelligent Software X</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">IntelliSoftx</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E6%96%B9%E6%A1%88%E5%87%86%E5%A4%87"><span class="nav-number">1.</span> <span class="nav-text">1. 方案准备</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E8%B4%AD%E4%B9%B0Bandwagon%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">2.</span> <span class="nav-text">2. 购买Bandwagon服务器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%90%AD%E5%BB%BAshadowsocks"><span class="nav-number">3.</span> <span class="nav-text">3. 搭建shadowsocks</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%90%AD%E5%BB%BAv2ray%E7%94%A8shadowray-iOS"><span class="nav-number">4.</span> <span class="nav-text">4. 搭建v2ray用shadowray-iOS</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">intellisoftx</p>
+  <div class="site-description" itemprop="description">智软X</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://intellisoftx.com/Tutorial-%E6%95%99%E7%A8%8B/VPN-shadowsocks-and-v2ray/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="intellisoftx">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Intelligent Software X">
+      <meta itemprop="description" content="智软X">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="VPS搭建VPN（shadowsocks和v2ray） | Intelligent Software X">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          VPS搭建VPN（shadowsocks和v2ray）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-10-13 18:44:21" itemprop="dateCreated datePublished" datetime="2017-10-13T18:44:21+08:00">2017-10-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-30 19:43:21" itemprop="dateModified" datetime="2023-03-30T19:43:21+08:00">2023-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Tutorial-%E6%95%99%E7%A8%8B/" itemprop="url" rel="index"><span itemprop="name">Tutorial 教程</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>最近跟什么大开会相关，好像大部分的VPN都失效了。蓝灯（Lantern）稳定性速度都不错但是每个月500MB的流量还是不够用。因此，还是考虑自己搭一个VPN来得稳妥。</p>
+<h2 id="1-方案准备"><a href="#1-方案准备" class="headerlink" title="1. 方案准备"></a>1. 方案准备</h2><ul>
+<li>VPS服务商：Bandwagon（搬瓦工）</li>
+<li>VPN Server：shadowsocks 和 <del>v2ray</del>（速度没有shadowsocks稳定）</li>
+<li>VPN 软件：showdsocks（Win，Ubuntu，android） 和 <del>shadowray</del> SuperWingy（iOS）</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="2-购买Bandwagon服务器"><a href="#2-购买Bandwagon服务器" class="headerlink" title="2. 购买Bandwagon服务器"></a>2. 购买Bandwagon服务器</h2><p>我采用的是搬瓦工，其实VPS有很多，之所以选择它是因为用的人多，并且价格合适，还提供一键安装shadowsocks的傻瓜工具。其他的VPN可以去这里选：<a target="_blank" rel="noopener" href="https://www.vpser.net/ten-dollars-vps">VPS列表</a></p>
+<p>在搬瓦工上搭建shadowsocks的教程主要参考<a target="_blank" rel="noopener" href="http://blog.csdn.net/win_turn/article/details/51559867">这里</a>。</p>
+<p>首先登录官网</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">https://bandwagonhost.com/index.php</span><br><span class="line">https://bwh1.net</span><br></pre></td></tr></table></figure>
+<p>或者你愿意点下我的分享连接也很感谢</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://bandwagonhost.com/aff.php?aff=20801</span><br></pre></td></tr></table></figure>
+<p>登录网站后，点击导航栏中【VPS Hosting】按钮，如下图：<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.5344765409653371.png" alt="0.5344765409653371"></p>
+<p>因为只是用于VPN，所以选择最低配置就足够了。点击【ORDER】按钮订购，如下图：<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.80205022123858.png" alt="0.80205022123858"></p>
+<p>如果没有最低配的那就选择高一个级别，当然价格也更贵一点。注意：Bandwidth是一个月的流量，最低配是500G，不是天天看高清电影应该是够了。</p>
+<p>进入配置页面，Billing Cycle项选择【annually】，表示“年付”，Configurable Options项选择【US West Coast - Los Angeles(USCA_2)】，表示我们的服务器地址选择“美国西海岸-洛杉矶”。然后点击【Add to Cart】按钮加入购物车，如下图：<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.4624321167139738.png" alt="0.4624321167139738"></p>
+<p>进入购物车页面，如下图：<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.7658803460564967.png" alt="0.7658803460564967"></p>
+<p>优惠码可以去这个网址查看：<code>https://www.banwagong.com/youhuima</code><br>点击【Checkout】按钮结账。进入个人资料页面，如果您已经有账户，点击【Click here to login】登录您的账户；如果没有账户，那么就按照要求输入个人信息。如下图：<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.058923141948659996.png" alt="0.058923141948659996"></p>
+<p>填写完成后，点击【Update】更新个人信息。</p>
+<p>然后，在【Payment Method】付款方式项中，选择【Credit Card and AliPay (Stripe)】，表示选择信用卡或支付宝方式进行付款。然后勾选上【 I have read and agree to the Terms of Service】前面的选择框，然后点击【Complete Order】按钮，进入付款页面。如下图：<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.30879515471342.png" alt="0.30879515471342"></p>
+<p>点击【Pay now】按钮，开始付款，直接跳转到支付宝页面，这个就不截图了，中国人嘛，还能不会用支付宝？</p>
+<h2 id="3-搭建shadowsocks"><a href="#3-搭建shadowsocks" class="headerlink" title="3. 搭建shadowsocks"></a>3. 搭建shadowsocks</h2><p>点击右上角【Client Area】按钮，如下图：<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.6043703378018064.png" alt="0.6043703378018064"></p>
+<p>跳转到登录界面，输入电子邮箱地址和密码（刚才注册时输入的密码），点击【Login】按钮，如下图：<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.7973071788231076.png" alt="0.7973071788231076"></p>
+<p>登录成功后，点击【Services】服务器按钮，在弹出的下拉选项中，点击【My Services】我的服务器按钮。如下图：<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.036330636450951914.png" alt="0.036330636450951914"></p>
+<p>跳转到服务器列表页面。点击【KiwiVM Control Panel】按钮，如下图：<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.1154515450985989.png" alt="0.1154515450985989"></p>
+<p>跳转到控制面板页面，我们先来熟悉一下这里展示的服务器信息。如下图：<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/0.8761737666956608.png" alt="0.8761737666956608"></p>
+<p>左侧有直接建立shadowsocks的工具<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/6af293b1-4295-499d-ae56-103a68d822c1.png" alt="6af293b1-4295-499d-ae56-103a68d822c1"></p>
+<p>打开后自动执行，完成后跳转会这个页面即可看到：<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/6489ec0a-470d-48f9-8b8c-67b866b0edc8.png" alt="6489ec0a-470d-48f9-8b8c-67b866b0edc8"></p>
+<p>根据上面的介绍可以下载shadowsocks的客户端，填写配置，就完成了。</p>
+<h2 id="4-搭建v2ray用shadowray-iOS"><a href="#4-搭建v2ray用shadowray-iOS" class="headerlink" title="4. 搭建v2ray用shadowray-iOS"></a>4. 搭建v2ray用shadowray-iOS</h2><p><strong>我建议使用 SuperWingy 在 iOS 上使用 Shadowsocks，因为根据个人体验 shadowray+v2ray 速度和链接都不太稳定，而且两个app都要买。所以，如果你用 SuperWingy 后面就不用看了。</strong></p>
+<p>上面的搭建完成后，一个主要问题是iOS版的应用已经被下架了。但是shadowsocks的作者又发布了一个shadowray（要12块，在app store里搜索），其基于v2ray。<br>下面的教程基于：<a target="_blank" rel="noopener" href="http://www.liyonge.com/2017/10/11/v2ray/#.Wd9EJicwH0M.twitter">http://www.liyonge.com/2017/10/11/v2ray/#.Wd9EJicwH0M.twitter</a></p>
+<p>首先用一个ssh客户端登录你的vps，用root用户</p>
+<p>自动安装脚本：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash &lt;(curl -L -s https://install.direct/go.sh)</span><br></pre></td></tr></table></figure>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/4f0ec3c5-245f-469c-8971-8844d8fe898a.png" alt="4f0ec3c5-245f-469c-8971-8844d8fe898a">上面的PORT是端口号，UUID是你服务的ID，在后面shadowray的设置上需要<br>可以看到这里出现了问题，主要原因是我使用的centos 6，而v2ray的启动方式需要centos 7，但是如果你升级到centos 7，搬瓦工的一键安装shadowsocks又不支持了。还好找到了解决方法。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://github.com/v2ray/v2ray-core/issues/101#issuecomment-214670792%5D</span><br></pre></td></tr></table></figure>
+<p>将下面的脚本替换&#x2F;etc&#x2F;init.d&#x2F;v2ray，如果已经有了这个文件，那先删除。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">#</span><br><span class="line"># v2ray        Startup script for v2ray</span><br><span class="line">#</span><br><span class="line"># chkconfig: - 24 76</span><br><span class="line"># processname: v2ray</span><br><span class="line"># pidfile: /var/run/v2ray.pid</span><br><span class="line"># description: V2Ray proxy services</span><br><span class="line">#</span><br><span class="line"></span><br><span class="line">### BEGIN INIT INFO</span><br><span class="line"># Provides:          v2ray</span><br><span class="line"># Required-Start:    $network $local_fs $remote_fs</span><br><span class="line"># Required-Stop:     $remote_fs</span><br><span class="line"># Default-Start:     2 3 4 5</span><br><span class="line"># Default-Stop:      0 1 6</span><br><span class="line"># Short-Description: V2Ray proxy services</span><br><span class="line"># Description:       V2Ray proxy services</span><br><span class="line">### END INIT INFO</span><br><span class="line"></span><br><span class="line">DESC=v2ray</span><br><span class="line">NAME=v2ray</span><br><span class="line">DAEMON=/usr/bin/v2ray/v2ray</span><br><span class="line">PIDFILE=/var/run/$NAME.pid</span><br><span class="line">LOCKFILE=/var/lock/subsys/$NAME</span><br><span class="line">SCRIPTNAME=/etc/init.d/$NAME</span><br><span class="line">RETVAL=0</span><br><span class="line"></span><br><span class="line">DAEMON_OPTS=&quot;-config /etc/v2ray/config.json&quot;</span><br><span class="line"></span><br><span class="line"># Exit if the package is not installed</span><br><span class="line">[ -x $DAEMON ] || exit 0</span><br><span class="line"></span><br><span class="line"># Read configuration variable file if it is present</span><br><span class="line">[ -r /etc/default/$NAME ] &amp;&amp; . /etc/default/$NAME</span><br><span class="line"></span><br><span class="line"># Source function library.</span><br><span class="line">. /etc/rc.d/init.d/functions</span><br><span class="line"></span><br><span class="line">start() &#123;</span><br><span class="line">  local pids=$(pgrep -f $DAEMON)</span><br><span class="line">  if [ -n &quot;$pids&quot; ]; then</span><br><span class="line">    echo &quot;$NAME (pid $pids) is already running&quot;</span><br><span class="line">    RETVAL=0</span><br><span class="line">    return 0</span><br><span class="line">  fi</span><br><span class="line"></span><br><span class="line">  echo -n $&quot;Starting $NAME: &quot;</span><br><span class="line"></span><br><span class="line">  mkdir -p /var/log/v2ray</span><br><span class="line">  $DAEMON $DAEMON_OPTS 1&gt;/dev/null 2&gt;&amp;1 &amp;</span><br><span class="line">  echo $! &gt; $PIDFILE</span><br><span class="line"></span><br><span class="line">  sleep 2</span><br><span class="line">  pgrep -f $DAEMON &gt;/dev/null 2&gt;&amp;1</span><br><span class="line">  RETVAL=$?</span><br><span class="line">  if [ $RETVAL -eq 0 ]; then</span><br><span class="line">    success; echo</span><br><span class="line">    touch $LOCKFILE</span><br><span class="line">  else</span><br><span class="line">    failure; echo</span><br><span class="line">  fi</span><br><span class="line">  return $RETVAL</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">stop() &#123;</span><br><span class="line">  local pids=$(pgrep -f $DAEMON)</span><br><span class="line">  if [ -z &quot;$pids&quot; ]; then</span><br><span class="line">    echo &quot;$NAME is not running&quot;</span><br><span class="line">    RETVAL=0</span><br><span class="line">    return 0</span><br><span class="line">  fi</span><br><span class="line"></span><br><span class="line">  echo -n $&quot;Stopping $NAME: &quot;</span><br><span class="line">  killproc -p $&#123;PIDFILE&#125; $&#123;NAME&#125;</span><br><span class="line">  RETVAL=$?</span><br><span class="line">  echo</span><br><span class="line">  [ $RETVAL = 0 ] &amp;&amp; rm -f $&#123;LOCKFILE&#125; $&#123;PIDFILE&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">reload() &#123;</span><br><span class="line">  echo -n $&quot;Reloading $NAME: &quot;</span><br><span class="line">  killproc -p $&#123;PIDFILE&#125; $&#123;NAME&#125; -HUP</span><br><span class="line">  RETVAL=$?</span><br><span class="line">  echo</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">rh_status() &#123;</span><br><span class="line">  status -p $&#123;PIDFILE&#125; $&#123;DAEMON&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"># See how we were called.</span><br><span class="line">case &quot;$1&quot; in</span><br><span class="line">  start)</span><br><span class="line">    rh_status &gt;/dev/null 2&gt;&amp;1 &amp;&amp; exit 0</span><br><span class="line">    start</span><br><span class="line">    ;;</span><br><span class="line">  stop)</span><br><span class="line">    stop</span><br><span class="line">    ;;</span><br><span class="line">  status)</span><br><span class="line">    rh_status</span><br><span class="line">    RETVAL=$?</span><br><span class="line">    ;;</span><br><span class="line">  restart)</span><br><span class="line">    stop</span><br><span class="line">    start</span><br><span class="line">    ;;</span><br><span class="line">  reload)</span><br><span class="line">    reload</span><br><span class="line">  ;;</span><br><span class="line">  *)</span><br><span class="line">    echo &quot;Usage: $SCRIPTNAME &#123;start|stop|status|reload|restart&#125;&quot; &gt;&amp;2</span><br><span class="line">    RETVAL=2</span><br><span class="line">  ;;</span><br><span class="line">esac</span><br><span class="line">exit $RETVAL</span><br></pre></td></tr></table></figure>
+<p>vi的操作这里就不说了，自行百度。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo chmod +x /etc/init.d/v2ray</span><br><span class="line">$ sudo chkconfig v2ray on</span><br><span class="line">$ sudo service v2ray start</span><br></pre></td></tr></table></figure>
+<p>看到下面这个就代表v2ray启动了</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/6b261b23-7141-4112-9bbd-6c76a0a0583f.png" alt="a3ad5759-4019-437a-8f55-ddd2e6e2b78a"></p>
+<p>去app store下载shadowray<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/a3ad5759-4019-437a-8f55-ddd2e6e2b78a.jpg" alt="a3ad5759-4019-437a-8f55-ddd2e6e2b78a"></p>
+<p>在里面add server，把你的服务器的ip，v2ray的PORT，UUID填入进去。Done。<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/VPS%E6%90%AD%E5%BB%BAVPN%EF%BC%88shadowsocks%E5%92%8Cv2ray%EF%BC%89_files/cd33c834-c746-410d-8392-d97b53270302.jpg" alt="cd33c834-c746-410d-8392-d97b53270302"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>intellisoftx
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://intellisoftx.com/Tutorial-%E6%95%99%E7%A8%8B/VPN-shadowsocks-and-v2ray/" title="VPS搭建VPN（shadowsocks和v2ray）">http://intellisoftx.com/Tutorial-教程/VPN-shadowsocks-and-v2ray/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/shadowsocks/" rel="tag"># shadowsocks</a>
+              <a href="/tags/v2ray/" rel="tag"># v2ray</a>
+              <a href="/tags/vpn/" rel="tag"># vpn</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Tutorial-%E6%95%99%E7%A8%8B/Hexo-Create-personal-blog/" rel="prev" title="Hexo 搭建个人博客">
+                  <i class="fa fa-chevron-left"></i> Hexo 搭建个人博客
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-A-unified-multi-scale-deep-convolutional-neural-network-for-fast-object-detection/" rel="next" title="论文笔记《A unified multi-scale deep convolutional neural network for fast object detection》">
+                  论文笔记《A unified multi-scale deep convolutional neural network for fast object detection》 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">intellisoftx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

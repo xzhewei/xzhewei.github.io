@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"intellisoftx.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="本文设计了一种loss函数用于加强bbox的回归精度，这个特性适用于目标密集且相互遮挡较多的场景，例如行人检测问题。该文的想法与另一篇文章《Individualness and Determinantal Point Processes for Pedestrian Detection》类似，后者通过行列式处理，前者设计loss函数。 Abstract在人群中检测个体行人仍然是一个具有挑战性的问题">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记 Repulsion Loss: Detecting Pedestrians in a Crowd">
+<meta property="og:url" content="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Repulsion-Loss-Detecting-Pedestrians-in-a-Crowd/index.html">
+<meta property="og:site_name" content="Intelligent Software X">
+<meta property="og:description" content="本文设计了一种loss函数用于加强bbox的回归精度，这个特性适用于目标密集且相互遮挡较多的场景，例如行人检测问题。该文的想法与另一篇文章《Individualness and Determinantal Point Processes for Pedestrian Detection》类似，后者通过行列式处理，前者设计loss函数。 Abstract在人群中检测个体行人仍然是一个具有挑战性的问题">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/f1.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/f2.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/f3.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/f4.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/t1t2.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/f6.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/f7.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/t3.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/t4.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/t5.png">
+<meta property="article:published_time" content="2018-11-10T06:00:32.000Z">
+<meta property="article:modified_time" content="2023-03-30T11:43:21.443Z">
+<meta property="article:author" content="intellisoftx">
+<meta property="article:tag" content="Pedestrian Detection">
+<meta property="article:tag" content="NMS">
+<meta property="article:tag" content="Repulsion Loss">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/f1.png">
+
+
+<link rel="canonical" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Repulsion-Loss-Detecting-Pedestrians-in-a-Crowd/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Repulsion-Loss-Detecting-Pedestrians-in-a-Crowd/","path":"Note-笔记/Pedestrian-Detection/Note-Repulsion-Loss-Detecting-Pedestrians-in-a-Crowd/","title":"论文笔记 Repulsion Loss: Detecting Pedestrians in a Crowd"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>论文笔记 Repulsion Loss: Detecting Pedestrians in a Crowd | Intelligent Software X</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Intelligent Software X</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">IntelliSoftx</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstract"><span class="nav-number">1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">2.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Related-Work"><span class="nav-number">3.</span> <span class="nav-text">2. Related Work</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-What-is-the-Impact-of-Crowd-Occlusion"><span class="nav-number">4.</span> <span class="nav-text">3. What is the Impact of Crowd Occlusion?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Preliminaries"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 Preliminaries</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E9%9B%86%E5%92%8C%E8%AF%84%E4%BC%B0%E6%8C%87%E6%A0%87"><span class="nav-number">4.1.1.</span> <span class="nav-text">数据集和评估指标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E5%99%A8"><span class="nav-number">4.1.2.</span> <span class="nav-text">检测器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E9%94%99%E8%AF%AF%E5%88%86%E6%9E%90"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 错误分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BC%8F%E6%A3%80"><span class="nav-number">4.2.1.</span> <span class="nav-text">漏检</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%99%9A%E8%AD%A6"><span class="nav-number">4.2.2.</span> <span class="nav-text">虚警</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">4.2.3.</span> <span class="nav-text">结论</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Repulsion-Loss"><span class="nav-number">5.</span> <span class="nav-text">4. Repulsion Loss</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E8%AE%A8%E8%AE%BA"><span class="nav-number">5.1.</span> <span class="nav-text">4.1 讨论</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%AE%9E%E9%AA%8C"><span class="nav-number">6.</span> <span class="nav-text">5. 实验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E5%AE%9E%E9%AA%8C%E8%AE%BE%E7%BD%AE"><span class="nav-number">6.1.</span> <span class="nav-text">5.1 实验设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E6%B6%88%E8%9E%8D%E5%AE%9E%E9%AA%8C"><span class="nav-number">6.2.</span> <span class="nav-text">5.2 消融实验</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-3-%E6%AF%94%E8%BE%83SOTA%E6%96%B9%E6%B3%95"><span class="nav-number">6.3.</span> <span class="nav-text">5.3 比较SOTA方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E6%8B%93%E5%B1%95%EF%BC%9A%E4%B8%80%E8%88%AC%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B"><span class="nav-number">7.</span> <span class="nav-text">6. 拓展：一般目标检测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E7%BB%93%E8%AE%BA"><span class="nav-number">8.</span> <span class="nav-text">7. 结论</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">intellisoftx</p>
+  <div class="site-description" itemprop="description">智软X</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Repulsion-Loss-Detecting-Pedestrians-in-a-Crowd/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="intellisoftx">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Intelligent Software X">
+      <meta itemprop="description" content="智软X">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="论文笔记 Repulsion Loss: Detecting Pedestrians in a Crowd | Intelligent Software X">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记 Repulsion Loss: Detecting Pedestrians in a Crowd
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-11-10 14:00:32" itemprop="dateCreated datePublished" datetime="2018-11-10T14:00:32+08:00">2018-11-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-30 19:43:21" itemprop="dateModified" datetime="2023-03-30T19:43:21+08:00">2023-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Note 笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/" itemprop="url" rel="index"><span itemprop="name">Pedestrian Detection</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本文设计了一种loss函数用于加强bbox的回归精度，这个特性适用于目标密集且相互遮挡较多的场景，例如行人检测问题。该文的想法与另一篇文章《<a target="_blank" rel="noopener" href="http://www.xzhewei.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/">Individualness and Determinantal Point Processes for Pedestrian Detection</a>》类似，后者通过行列式处理，前者设计loss函数。</p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>在人群中检测个体行人仍然是一个具有挑战性的问题，由于在真实世界场景中行人通常聚集在一起并且相互遮挡。本文我们首次通过实验研究人群间的相互遮挡如何影响行人检测器的性能，对人群间遮挡的问题进行了分析。然后我们提出了一个针对人群场景设计的外接矩形回归损失函数，称为<strong>repulsion loss</strong>。该损失包含两个部分：与目标的<strong>attraction</strong>项和与周围物体的<strong>repulsion</strong>项。<strong>repulsion</strong>项避免矩形框偏移到旁边的物体上，因此对群体中的定位更加鲁棒。基于repulsion损失训练的检测器在遮挡场景下相对其它检测器有显著提升。</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/f1.png" width="70%"/>
+
+<span id="more"></span>
+
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>遮挡是目标检测领域一直需要解决的问题，这里有类间和类内两种。类内遮挡我们可以称为crowd遮挡。在行人检测中，大部分遮挡都是crowd遮挡。因子大部分行人检测场景，监控、自动驾驶，行人通常一起出现。例如在CityPerson数据集中，48.8%的行人相互遮挡的IoU大于0.1，26.4%的大于0.3。高频的crowd遮挡验证影响了行人检测的性能。</p>
+<p>crowd遮挡的问题增加了行人定位的难度。例如当行人T与B重叠时，检测器会被相似的外观特征混淆，导致本来应该检测T目标的bbox偏移到B上，导致定位错误。并且经过NMS后，偏移的bbox可能被抑制导致漏检，因此crowd遮挡使得检测率对NMS的阈值非常敏感：高NMS虚警多，低NMS漏检多。这样的问题会影响许多实例分割框架，由于其需要非常精确的检测结果。因此如何在crowd场景中对个体行人鲁棒的定位是行人检测非常重要的问题。</p>
+<p>在SOTA检测框架中，bbox回归用于目标定位，回归器能够减少proposal与gt直接的距离。然而，现有的方法仅要求proposal接近gt，而不考虑周围目标的影响。如图1所示，标准的bbox回归损失是不考虑周围的目标的。这带来一个问题：能否在检测人群中的一个目标时考虑周围目标的位置？</p>
+<p>受到磁铁的启发，本文提出一种新的定位技术，repulsion 损失。其要求目标不仅接近目标T，并且远离周围的gt和bbox。换句话说，RepLoss包含两个部分：目标的吸引，非目标的排斥。如图1所示。红色bbox偏移到B会产生惩罚。因此RepLoss能够使得检测器对crowd场景更鲁棒。我们的贡献如下：</p>
+<ul>
+<li>我们先研究了crowd遮挡对行人的影响在CityPerson进行了量化分析</li>
+<li>提出两类repulsion损失，RepGT 和 RepBox，前者避免bbox偏移到旁边的目标，后者减少NMS的影响</li>
+<li>提出一个repulsion loss，端到端的行人检测器，在CityPerson和Caltech实现SOTA的性能。</li>
+</ul>
+<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p><strong>目标定位</strong></p>
+<ul>
+<li>RPN</li>
+<li>Denbox[^15]提出一个不用anchor的全卷机网络</li>
+<li>IoU Loss[^29] 最大化gt和bbox直接的IoU</li>
+<li>Desai[^4] 也提出了不同类别吸引和对抗，但是没有从全局模型上解决目标类别问题</li>
+</ul>
+<p><strong>行人检测</strong></p>
+<ul>
+<li>ACF, LDCF, Checkerboard等ICF检测器</li>
+<li>RPN+BF，HyperNet</li>
+<li>部件模型[^23],[^27],[^34]处理遮挡问题</li>
+<li>学习非极大值抑制[^13]</li>
+</ul>
+<h2 id="3-What-is-the-Impact-of-Crowd-Occlusion"><a href="#3-What-is-the-Impact-of-Crowd-Occlusion" class="headerlink" title="3. What is the Impact of Crowd Occlusion?"></a>3. What is the Impact of Crowd Occlusion?</h2><p>为了分析人群遮挡问题，本节我们实验研究了人群遮挡对行人检测结果的影响程度。在分析之前，首先介绍使用的数据集和基准检测器。</p>
+<h3 id="3-1-Preliminaries"><a href="#3-1-Preliminaries" class="headerlink" title="3.1 Preliminaries"></a>3.1 Preliminaries</h3><h4 id="数据集和评估指标"><a href="#数据集和评估指标" class="headerlink" title="数据集和评估指标"></a>数据集和评估指标</h4><p>本文采用CityPerson数据集，包含5k张图片，35k个行人，13k个忽略区域。实验分别在reasonable train&#x2F;validation 集上训练和测试。评估指标：log miss rate in FPPI[0.01,1]</p>
+<h4 id="检测器"><a href="#检测器" class="headerlink" title="检测器"></a>检测器</h4><p>我们采用最常见的Faster R-CNN作为检测器，并按照Zhang[^31]和Mao[^21]的设置对其进行修改。除此之外，我们使用R-50替代VGG16，其速度更快且参数更少。</p>
+<p>另外，ResNet很少用于行人检测问题，其原因是卷积层的将采样比率过大而不能检测和定位小型人。为了解决这个问题，我们在最后的特征图上使用膨胀卷积，使得最后的缩放比例为1&#x2F;8。本文的ResNet方法实现了14.6 MR-2比CityPerson论文中的性能稍好。</p>
+<h3 id="3-2-错误分析"><a href="#3-2-错误分析" class="headerlink" title="3.2 错误分析"></a>3.2 错误分析</h3><h4 id="漏检"><a href="#漏检" class="headerlink" title="漏检"></a>漏检</h4><p>首先我们在基准检测器上分析由于人群遮挡导致的漏检。CityPersons数据集提供了bbox和可见区域，因此遮挡occ可按下式计算</p>
+<p>$$occ &#x3D; 1 - \frac{area(BBo{x_v})}{area(BBox)}$$</p>
+<h4 id="虚警"><a href="#虚警" class="headerlink" title="虚警"></a>虚警</h4><p>我们定义$occ\ge0.1$为遮挡，$occ\ge0.1$ &amp; $IoU\ge0.1$为人群遮挡。通过统计在reasonable validation验证集中，包含1579个行人，其中810个为遮挡案例，479个为人群遮挡案例。很明显由于行人产生的遮挡超过了遮挡案例的一半以上</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/f2.png" width="70%"/>
+
+<p>如图2所示，我们分别评估了在不同FPPI下的检测器漏检率，并统计了漏检GT分别属于三个子集的数量。</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/f3.png" width="70%"/>
+
+<p>之后我们统计了所有虚警中人群站的比例，如图3(b)红线所示，大约20%。如图4所示，我们发现人群错误通常发生在预测的bbox偏移到旁边非目标GT上，或者多个GT有重叠的情况。并且，人群错误通常具有很高的置信得分导致很高的排名。因此改进检测器人群场景的鲁棒性，回归bbox时需要更具分辨性的loss。</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/f4.png" width="70%"/>
+
+<h4 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h4><blockquote>
+<p>pedestrian detectors are surprisingly tainted by crowd occlusion, as it constitutes the majority of missed detections and results in more false positives by increasing the difficulty in localization.</p>
+</blockquote>
+<p>提出Repulsion loss用于改进人群场景的行人检测器</p>
+<h2 id="4-Repulsion-Loss"><a href="#4-Repulsion-Loss" class="headerlink" title="4. Repulsion Loss"></a>4. Repulsion Loss</h2><p>该损失受磁铁的启发，吸引和对抗包含三个部分</p>
+<p>$$L&#x3D;L_{Attr}+\alpha<em>L_{RepGT}+\beta</em>L_{RepBox}$$</p>
+<ul>
+<li>$L_{Attr}$ 是吸引项，其要求预测的bbox接近被分配的目标</li>
+<li>$L_{RepGT},L_{RepBox}$ 是对抗项，要求预测的bbox原理周围的目标和其他被分配了目标的bbox</li>
+</ul>
+<p>为了简单起见，先考虑两类检测问题，所有的GT都是同一类别，P和G分布是proposal和GT的bbox。P+是所有正proposal，至少有1个GT作为P+，其他的作为负样本。</p>
+<p><strong>吸引项</strong> 使用一些距离目标函数来减少bbox和gt的检测，如欧式距离，SmoothL1距离，IoU。为了公平期间，本文采用SmoothL1，如大部分文章选择的方式。吸引项如式2所示，$G^p_{Attr}$选择IoU最大的gt作为该$B^p$的目标。</p>
+<p>$$L_{Attr}&#x3D;\frac{\sum_{P\in P+}SmoothL1(B^p,G^p_{Attr})}{|P+|}$$</p>
+<p><strong>对抗项(RepGT)</strong> 用于对抗不属于当前bbox回归目标的bbox。</p>
+<p>首先找到与当前P有最大IoU的$G^p_{rep}$，然后基于IoG计算loss，$IoG(B,G)&#x3D;\frac{area(B\cap G)}{area(G)}$</p>
+<p>RepGT loss为：</p>
+<p>$$<br>L_{RepGT}&#x3D;\frac{\sum_{P\in P+}SmoothLn(IoG(B^p,G^p_{Attr}))}{|P+|}<br>$$</p>
+<p>$$<br>SmoothLn &#x3D; \left{ {\begin{array}{<em>{20}{c}}<br>{ - \ln (1 - x)}\<br>{\frac{x - \sigma }{1 - \sigma } - \ln (1 - \sigma )}<br>\end{array}} \right.\begin{array}{</em>{20}{c}}<br>{x \le \sigma }\<br>{x &gt; \sigma }<br>\end{array}<br>$$</p>
+<p>$\sigma$ 是平滑参数用于调整对抗的敏感性。当B与非目标GT越接近，则惩罚越大，因此RepLoss可以有效避免BBox偏移到周围的GT。</p>
+<p><strong>对抗项(RepBox)</strong>  NMS对人群中行人检测的影响大，因此提出RepBox Loss用于对抗不同gt目标的bbox。</p>
+<p>$$<br>L_{RepBox}&#x3D;\frac{\sum_{i\ne j}SmoothLn(IoU(B^p_i,B^P_j))}{\sum_{i\ne j}1[IoU(B^p_i,B^P_j)&gt;0]+\varepsilon}<br>$$</p>
+<p>上述公式可知，我们期望不同目标gt的B的IoU越小越好。RepBox Loss能够减少NMS导致的BBox被抑制的可能性。</p>
+<h3 id="4-1-讨论"><a href="#4-1-讨论" class="headerlink" title="4.1 讨论"></a>4.1 讨论</h3><p><strong>距离函数</strong> 值得注意的是，我们在Rep项中选择IoG和IoU作为距离函数，而不是smoothL1，因为IoG和IoU的大小在[0,1]，而smoothL1不是，因此如果用在RepGT中其会导致bbox离gt越远越好。IoG只要求其交集达到最小即可。这更符合我们的期望。采用IoG而不是IoU，因为采用IoU会引导回归的bbox尺寸变大。</p>
+<p><strong>平滑参数$\sigma$</strong> 不同于论文[^29]里直接采用$-ln(IoU)$的作为损失函数，我们提出平滑的ln函数smoothln。该参数的作用是调节函数对周围bbox或gt的敏感程度。由于bbox比gt密集的多，因此平滑参数在RepBox中小，在RepGT中大。</p>
+<h2 id="5-实验"><a href="#5-实验" class="headerlink" title="5. 实验"></a>5. 实验</h2><p>首先我们介绍实验设置和实现细节，在CityPerson上评估RepGT和RepLoss，</p>
+<h3 id="5-1-实验设置"><a href="#5-1-实验设置" class="headerlink" title="5.1 实验设置"></a>5.1 实验设置</h3><p><strong>数据集</strong> CityPerson，Caltech-USA。我们在Zhang提供的新的标注上进行实验。</p>
+<p><strong>训练细节</strong> 我们在自己构建的快速灵活的深度学习框架上实现</p>
+<ul>
+<li>lr : 0.016</li>
+<li>iter : 80k(CityPerson), 160k(Caltech)</li>
+<li>step : 60k(CityPerson), 120k(Caltech)</li>
+<li>GAMMA : 10</li>
+<li>weight decay : 0.0001</li>
+<li>momentum : 0.9</li>
+<li>Batch per GPU : 1</li>
+<li>GPU : 4</li>
+<li>使用 OHEM加速收敛</li>
+</ul>
+<h3 id="5-2-消融实验"><a href="#5-2-消融实验" class="headerlink" title="5.2 消融实验"></a>5.2 消融实验</h3><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/t1t2.png" width="70%"/>
+
+<p><strong>RepGT</strong> 参数$\sigma,\alpha,\beta$，当$\sigma&#x3D;1.0$时RepGT效果最好，相当于没有进行平滑处理。图3(a)显示了增加RepGT之后的MR的变化，在reasonable-crowd集上漏检显著下降，若以0.5作为阈值，那么漏检率下降了10%。如图3(b)所示，RepGT产生的虚警更少。</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/f6.png" width="70%"/>
+
+<p><strong>RepBox</strong> 当$\sigma&#x3D;0$时效果最好，即完全平滑，因为BBox比GT密集的多。NMS高导致MR高，NMS低导致FP高。图6显示，在各种NMS下RepBox更好。如图7所示，在gt之间的bbox的数量更少。</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/f7.png" width="70%"/>
+
+<p><strong>平衡RepGT和RepBox</strong> 根据表2所示，最优的参数是0.5。</p>
+<h3 id="5-3-比较SOTA方法"><a href="#5-3-比较SOTA方法" class="headerlink" title="5.3 比较SOTA方法"></a>5.3 比较SOTA方法</h3><p>为了展示在不同遮挡情况下的有效性，将数据集分为：</p>
+<ul>
+<li>reasonable，≤35%</li>
+<li>reasonable-partial，10%&lt;occ≤35%</li>
+<li>bare，occ≤10%</li>
+<li>heavy，occ&gt;35%</li>
+</ul>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/t3.png" width="70%"/>
+
+<p>表3总结了RepLoss在CityPerson上的性能，实现了13.2MR，提升了1.4%，在Heavy集上，提升了3.7%，partial集上提升1.8%，在bare上午明显提升</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/t4.png" width="70%"/>
+
+<p>RepLoss在caltech集上的表现如图8和表4所示。在IoU&#x3D;0.5时，RepLoss实现了5.0的MR，并且在高IoU时提升更多。</p>
+<h2 id="6-拓展：一般目标检测"><a href="#6-拓展：一般目标检测" class="headerlink" title="6. 拓展：一般目标检测"></a>6. 拓展：一般目标检测</h2><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Repulsion_Loss/t5.png" width="70%"/>
+
+<p>RepLoss也可用于一般目标检测。我们在PASCAL VOC数据集上进行实验，Faster R-CNN (ResNet-101) 作为基准，NSM阈值为0.3，在trainval07和train12训练，test07测试，相比于baseline mAP提升了3.4。如表5所示，RepLoss对整体的提升不大，但是对crowd subset，提升了2.1 mAP。说明本文提出的方法可以拓展到一般目标检测。</p>
+<h2 id="7-结论"><a href="#7-结论" class="headerlink" title="7. 结论"></a>7. 结论</h2><p>本文，我们设计 replusion loss 用于行人检测，其提升了人群场景的检测性能。主要的想法是基于目标吸引项的loss对于训练一个最优的检测器是不够的，增加周围的对抗项是必要的。</p>
+<p>为了实现对抗项，我们提出了两类对抗损失，在CityPerson和Caltech两个数据集上均实现了最优的性能。详细的实验证明了RepLoss的价值，并且可以用于一般目标检测，我们期望该loss能广泛用于其他目标检测任务。</p>
+<p>[^21]: J. Mao, T. Xiao, Y. Jiang, and Z. Cao. What can help pedestrian detection? In CVPR, 2017.<br>[^31]: S. Zhang, R. Benenson, M. Omran, J. Hosang, and B. Schiele. How far are we from solving pedestrian detection? In CVPR, 2016.</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>intellisoftx
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Repulsion-Loss-Detecting-Pedestrians-in-a-Crowd/" title="论文笔记 Repulsion Loss: Detecting Pedestrians in a Crowd">http://intellisoftx.com/Note-笔记/Pedestrian-Detection/Note-Repulsion-Loss-Detecting-Pedestrians-in-a-Crowd/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Pedestrian-Detection/" rel="tag"># Pedestrian Detection</a>
+              <a href="/tags/NMS/" rel="tag"># NMS</a>
+              <a href="/tags/Repulsion-Loss/" rel="tag"># Repulsion Loss</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-An-Analysis-of-Scale-Invariance-in-Object-Detection-SNIP/" rel="prev" title="论文笔记 An Analysis of Scale Invariance in Object Detection - SNIP">
+                  <i class="fa fa-chevron-left"></i> 论文笔记 An Analysis of Scale Invariance in Object Detection - SNIP
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Learning-non-maximum-suppression/" rel="next" title="论文笔记 Learning non-maximum suppression">
+                  论文笔记 Learning non-maximum suppression <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">intellisoftx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

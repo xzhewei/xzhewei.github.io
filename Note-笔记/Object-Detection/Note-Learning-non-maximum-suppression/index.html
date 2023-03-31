@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"intellisoftx.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Abstract目标检测器受益于端到端的训练范式：推荐、特征、分类器开始成为一个神经网络。另一个独立不可缺的组件是NMS，一个后处理算法将属于同一目标的bbox合并。NMS仍然是手工设计，策略简单，基于固定阈值的贪心聚类算法，导致召回率和精度之间权衡。我们提出一个新的网络架构来实现NMS，仅基于其box和得分。我们在PETS上验证行人检测和COCO上验证目标检测。结果表明该方法能够改进定位和遮挡问">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记 Learning non-maximum suppression">
+<meta property="og:url" content="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Learning-non-maximum-suppression/index.html">
+<meta property="og:site_name" content="Intelligent Software X">
+<meta property="og:description" content="Abstract目标检测器受益于端到端的训练范式：推荐、特征、分类器开始成为一个神经网络。另一个独立不可缺的组件是NMS，一个后处理算法将属于同一目标的bbox合并。NMS仍然是手工设计，策略简单，基于固定阈值的贪心聚类算法，导致召回率和精度之间权衡。我们提出一个新的网络架构来实现NMS，仅基于其box和得分。我们在PETS上验证行人检测和COCO上验证目标检测。结果表明该方法能够改进定位和遮挡问">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2017-LearningNMS/f3.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2017-LearningNMS/f2.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2017-LearningNMS/f4.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2017-LearningNMS/f5.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2017-LearningNMS/f6.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2017-LearningNMS/t1.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2017-LearningNMS/t2.png">
+<meta property="article:published_time" content="2018-11-10T06:32:44.000Z">
+<meta property="article:modified_time" content="2023-03-30T11:43:21.443Z">
+<meta property="article:author" content="intellisoftx">
+<meta property="article:tag" content="NMS">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2017-LearningNMS/f3.png">
+
+
+<link rel="canonical" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Learning-non-maximum-suppression/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Learning-non-maximum-suppression/","path":"Note-笔记/Object-Detection/Note-Learning-non-maximum-suppression/","title":"论文笔记 Learning non-maximum suppression"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>论文笔记 Learning non-maximum suppression | Intelligent Software X</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Intelligent Software X</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">IntelliSoftx</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstract"><span class="nav-number">1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">2.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Related-Work"><span class="nav-number">3.</span> <span class="nav-text">2. Related Work</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%A3%80%E6%B5%8B%E5%92%8C%E9%9D%9E%E6%9E%81%E5%A4%A7%E5%80%BC%E6%8A%91%E5%88%B6"><span class="nav-number">4.</span> <span class="nav-text">3. 检测和非极大值抑制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E4%B8%8D%E9%9C%80%E8%A6%81NMS%E7%9A%84%E6%9C%AA%E6%9D%A5"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 不需要NMS的未来</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E4%BD%BF%E7%94%A8%E7%BD%91%E7%BB%9C%E8%BF%9B%E8%A1%8CNMS"><span class="nav-number">5.</span> <span class="nav-text">4. 使用网络进行NMS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E6%8D%9F%E5%A4%B1"><span class="nav-number">5.1.</span> <span class="nav-text">4.1 损失</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E2%80%9CChatty%E2%80%9Dwindows-%E2%80%9D%E4%BA%A4%E6%B5%81%E7%AA%97%E5%8F%A3"><span class="nav-number">5.2.</span> <span class="nav-text">4.2 “Chatty”windows ”交流窗口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-Remarks"><span class="nav-number">5.3.</span> <span class="nav-text">4.3 Remarks</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%AE%9E%E9%AA%8C"><span class="nav-number">6.</span> <span class="nav-text">5. 实验</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-PET%E6%95%B0%E6%8D%AE%E9%9B%86"><span class="nav-number">6.1.</span> <span class="nav-text">5.1 PET数据集</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-2-COCO%EF%BC%9A%E8%A1%8C%E4%BA%BA%E6%A3%80%E6%B5%8B"><span class="nav-number">7.</span> <span class="nav-text">5.2 COCO：行人检测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E7%BB%93%E8%AE%BA"><span class="nav-number">8.</span> <span class="nav-text">6. 结论</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">intellisoftx</p>
+  <div class="site-description" itemprop="description">智软X</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Learning-non-maximum-suppression/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="intellisoftx">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Intelligent Software X">
+      <meta itemprop="description" content="智软X">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="论文笔记 Learning non-maximum suppression | Intelligent Software X">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记 Learning non-maximum suppression
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-11-10 14:32:44" itemprop="dateCreated datePublished" datetime="2018-11-10T14:32:44+08:00">2018-11-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-30 19:43:21" itemprop="dateModified" datetime="2023-03-30T19:43:21+08:00">2023-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Note 笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/Object-Detection/" itemprop="url" rel="index"><span itemprop="name">Object Detection</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>目标检测器受益于端到端的训练范式：推荐、特征、分类器开始成为一个神经网络。另一个独立不可缺的组件是NMS，一个后处理算法将属于同一目标的bbox合并。NMS仍然是手工设计，策略简单，基于固定阈值的贪心聚类算法，导致召回率和精度之间权衡。我们提出一个新的网络架构来实现NMS，仅基于其box和得分。我们在PETS上验证行人检测和COCO上验证目标检测。结果表明该方法能够改进定位和遮挡问题。</p>
+<span id="more"></span>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p><strong>聚类检测</strong> 贪心NMS作为标准算法从VJ一直应用于目前SOTA的算法。也有一些其他的聚类算法用于NMS，但是没有显示明显的提升：mean-shift 聚类[^6],[^35]， agglomerative 聚类[^2], affinity 聚类[^17], 启发式变体[^25]。 在[^27],[^23]中提出全局优化的原则聚类函数，尽管其还未用于贪心NMS。</p>
+<p><strong>面向像素检测</strong> Hough投票建立了检测结果和图像证据直接的关系，这能够避免过度使用图像内容。但是整体上说hough投票的效果较差。论文[^37],[^5]结合语义标签，论文[^36]将检测作为labelling问题。这些方法依赖更多的信息，但是我们的系统纯粹基于检测结果。</p>
+<p><strong>同现</strong> 有些工作提出检测目标群，而不是检测独立的个体来解决较强的遮挡问题，这个问题比NMS更复杂。论文[^22] 基于密度估计来抑制检测结果。我们的方法既不用图片信息也不用手工标记的成对目标。</p>
+<p><strong>自语义</strong> 一些方法使用局部[^30],[^4]或全局[^31]图像信息重打分。这些方法会产生一些分离的双检测结果并且改进全局的检测治理，但是仍然需要NMS。我们将NMS作为一个重打分的问题，并且取消了后处理。</p>
+<p><strong>图神经网络</strong> 一组检测结果可以被认为是一个图，具有重叠的窗口可以被认为是图中的边。论文[^18]在图上操作，但是其要求前处理过程定义节点顺序，在我们的问题中是模糊的。</p>
+<p><strong>端到端的学习</strong> 很少有工作将NMS纳入端到端学习中。一种想法是在训练时包含NMS[^32],[^12]，使其能够得到实际测试时的结果，这样做更合理，但是并没有使NMS可学习。另一个想法是直接生成稀疏的结果使得NMS没有必要，论文[^26]在图像重叠patch上生成检测结果，但是在patch边缘仍然需要NMS。论文[^13]设计一个卷积网络结合NMS和不同的iou阈值进行决策，其网络选择需要NMS的局部区域。但是上述方法都没有完全消除NMS直接生成稀疏的结果。我们的网络有能力直接进行抑制操作，而不是选择一些子集再经过最后的抑制步骤。</p>
+<h2 id="3-检测和非极大值抑制"><a href="#3-检测和非极大值抑制" class="headerlink" title="3. 检测和非极大值抑制"></a>3. 检测和非极大值抑制</h2><p>本节我们回归非极大值抑制为何必须，并且我们指出为何当前的检测器不能对一个目标输出一个结果，提出两个检测器必要的部件。</p>
+<p>目前检测器不返回所有检测结果，而是使用NMS作为后处理步骤去除冗余的结果。为了实现端到端学习的检测器，我们对没有后处理方法的检测器感兴趣。为了理解为何需要NMS，很有必要审视检测任务及其如何评估的。</p>
+<p><strong>目标检测</strong> 目标检测任务即在一张图上映射一组boxs：每个box对应一个目标并与其边缘贴紧。这意味着检测器应该对每个目标返回一个结果。由于检测过程的内在不确定性，评估时以检测结果的置信得分进行评估。得分高的错误检测比低得分的错误检测惩罚高，使得错误结果的得分低。</p>
+<p><strong>检测器不生成我们期望的结果</strong> 检测任务可以简化为分类任务，在图像中所有可能的地方进行分类。这个观点使得“假设和得分”检测器兴起，其构建一个搜索空间（滑窗，推荐）然后独立的估计每个检测是结果的类别概率。结果就是当两个重叠很大box对应相同的目标其得分均非常高，因为看起来几乎一样。一般来说，一个目标周围会生成多个高得分结果，得分跟目标的重叠率相关。</p>
+<p><strong>贪心NMS</strong> 为了实现一个目标一个结果，假设高重叠的检测属于一个目标，即选择置信分最高的结果，然后抑制与其IoU率超过阈值的结果。</p>
+<p><strong>贪心NMS不够好</strong> 该算法表现好有两个前提，1）能够抑制同一目标导致的多个检测结果；2）不会抑制接近的其他检测结果。如果目标分散条件2很容易达到，并且条件1也能工作很好。在拥挤场景，目标间具有很强的遮挡，宽抑制和窄抑制存在对抗。换句话说，一张图一个目标NMS是不重要的，但是对高遮挡问题，需要更换的NMS算法。</p>
+<h3 id="3-1-不需要NMS的未来"><a href="#3-1-不需要NMS的未来" class="headerlink" title="3.1 不需要NMS的未来"></a>3.1 不需要NMS的未来</h3><p>在没有手工算法的情况下实现真正端到端系统，我们不禁要问：为什么需要手工设计的后处理步骤？为什么检测器不能对一个目标输出一个结果？</p>
+<p>重叠高的窗口具有较高的得分是鲁棒性的要求：相似的输入得到相似的输出。因此，检测器对一个目标输出一个检测结果那么需要结合其他检测结果。冗余的结果需要合并，从而使得检测器能分辨这些是重复的结果，只输出一个高得分。一般用IoU的阈值来定义正负样本，因此位置微小偏移时检测结果仍然认为是正样本。这样的训练数据增强方法是为了增加检测器的鲁棒性。但是这样的策略不会倾向于一个目标产生一个检测结果，而且产生多个高得分的结果。</p>
+<p>因此，我们发现两个关键组件：</p>
+<ol>
+<li>一种损失函数能够惩罚冗余检测结果</li>
+<li>联合处理周围的结果，使得检测器获得足够的信息来判断该目标是否被检测多次</li>
+</ol>
+<p>本文，我们设计一个网络结合上述两个组件。为了验证我们的网络能够实现NMS，仅对检测结果和得分进行操作，而不采用图像特征。</p>
+<h2 id="4-使用网络进行NMS"><a href="#4-使用网络进行NMS" class="headerlink" title="4. 使用网络进行NMS"></a>4. 使用网络进行NMS</h2><p>我们的方法避免硬决定，并且不会抛弃一些检测结果。除此之外，我们将NMS作为重打分任务。在重打分之后，简单的阈值选择就能够减少检测结果。我们将所有重打分的结果进行评估，不进行任何后处理过程。</p>
+<h3 id="4-1-损失"><a href="#4-1-损失" class="headerlink" title="4.1 损失"></a>4.1 损失</h3><p>在计算损失的时候加入benchmark的评估中采用匹配方法。匹配上的作为正样本，否则作为负样本。<br>$$<br>L(s_i,y_i)&#x3D;\sum^N_{i&#x3D;1}w_{y_i}\cdot log(1+exp(-s_i\cdot y_i))<br>$$<br>$s_i$是检测得分，$y_i$是预测类别。权重$w_{y_i}$用于平衡检测任务的样本不平衡。面对多类别问题时，检测结果有得分和类别，在处理时我们仍然将每个类别当作二元分类问题。</p>
+<p>表征检测得分我们使用热编码：一个零向量在该类别对应的位置包含其得分。由于mAP计算是为考虑样本的数量，因此我们实际的权重也是将其当做均匀分布的。</p>
+<h3 id="4-2-“Chatty”windows-”交流窗口"><a href="#4-2-“Chatty”windows-”交流窗口" class="headerlink" title="4.2 “Chatty”windows ”交流窗口"></a>4.2 “Chatty”windows ”交流窗口</h3><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2017-LearningNMS/f3.png" width="100%" />
+
+<p>为了最小化上述loss，我们需要网络处理结果联系。为此，我们设计了一个循环结构称为block（如图3）。一个block给每个检测结果与其周围结果的表示，并更新自己的表示。堆叠多个block后意味着网络能够允许检测结果之间交流，并更新自己的特征表示。我们成其为<strong>GossipNet（Gnet）</strong>。</p>
+<p>这里有两个非标准的操作是关键。1. 构建成对检测结果的特征表示层；这导致一个关键问题：每个结果周围的结果输了是不一定的；2.因此我们后续使用池化来解决。</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2017-LearningNMS/f2.png" width="70%" />
+
+<p><strong>检测特征</strong> block的输入是检测结果的特征向量，输出是更新向量，如图2所示。特征纬度是128维。最后输出每个检测结果的更新得分。第一个block以全零向量作为输入，检测结果信息输入网络的pairwise计算步骤。</p>
+<p><strong>Pairwise 检测语义</strong> 每个mini-batch包含n个检测结果，每个结果用c维向量描述，因此数据量为$n\times c$ 。对每个检测结果 $d_i$ ，生成与其相交$(IoU&gt;0.2)$的成对结果$(d_i,d_j)$。 特征两个d的特征和g维的成对特征则特征纬度为：$l&#x3D;2c+g$ 。如果一个d周围一k个结果，那么生成的batc尺寸为$K\times l$。k的数量可能不一样，因此采用全局最大池化合并为一个结果，然后使用全连接层更新结果。</p>
+<p><strong>检测对特征</strong> 监测对的语义特征包含几个属性：1) IoU；2)-3) 归一化的x，y距离；4)-5) 宽高变化；6) 宽高比变化; 7)-8) 两个检测得分。如果是多类问题，得分是一个向量而不是标量。我们将这些特征输入3个全连接层，用于学习g检测对特征。</p>
+<p><strong>Block</strong> block的作用是让检测结果基于他们的邻居更新表示。其包含降维，成对检测语义层，2个全连接成，池化层，全连接层最后一层用于增加维度。最后提供三个fc层用于预测新得分。</p>
+<p><strong>参数</strong> 网络包含16个block，检测特征128维，在检测对时缩减为32维，最后输出又扩增为128维。若我们改变特征维度，我们帮助每层的特征比例一致。</p>
+<p><strong>信息传递</strong> 前向过程通过block可以解释为信息传递。每个检测结果传递信息给邻近结果，并降低得分，为了替代手工设计信息传递算法，我们使得网络潜在自动学习。</p>
+<h3 id="4-3-Remarks"><a href="#4-3-Remarks" class="headerlink" title="4.3 Remarks"></a>4.3 Remarks</h3><p>Gnet没有使用NMS但是效果与采用了NMS的Tnet接近。Gnet网络更大，因此采用训练样本更多的妨害。</p>
+<p>Gnet是个纯NMS功能网络，不需要图像特征，仅在检测结果上进行操作。意味着Gnet不能当做网络层加入检测器。而事实上是可以这么整合的，我们在未来会开展研究。</p>
+<p>我们的目标是联合图像上所有检测结果进行重打分。通过允许检测结果观察旁边的结果来更新自身的表示。实验表面模型对参数的鲁棒性，并且随着深度的增加性能变优。</p>
+<h2 id="5-实验"><a href="#5-实验" class="headerlink" title="5. 实验"></a>5. 实验</h2><p>数据集PETS和COCO。评估指标average precision，AP。</p>
+<h3 id="5-1-PET数据集"><a href="#5-1-PET数据集" class="headerlink" title="5.1 PET数据集"></a>5.1 PET数据集</h3><p>该数据集一般用于单一尺度行人检测，包含不同的遮挡程度。首先按照论文[^13]和论文[^28]的设置进行训练和测试。</p>
+<p>训练模型包含8个block，128维输入特征，30k迭代，学习率0.001，每10k次衰减0.1。</p>
+<p>NMS和Tnet作为baseline</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2017-LearningNMS/f4.png" width="100%" />
+
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2017-LearningNMS/f5.png" width="100%" />
+
+<p>图4显示了结果，NMS阈值高被抑制的结果多，Gnet相比于最后的NMS提升了4.8个AP。图5显示了对不同遮挡级别的结果，Gnet比Tnet稍好。在遮挡高的情况下Gnet比NMS提升7.3AP。</p>
+<h2 id="5-2-COCO：行人检测"><a href="#5-2-COCO：行人检测" class="headerlink" title="5.2 COCO：行人检测"></a>5.2 COCO：行人检测</h2><p>Faster R-CNN作为基准，Gnet使用ADAM训练2*1000K次迭代，学习率0.0001，每1000K次减少到0.00001。速度14ms&#x2F;image，评价67.3检测结果。</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2017-LearningNMS/f6.png" width="100%" />
+
+<p>图6显示了block数量和性能的关系，随着网络月神，性能鲁棒性越好。我们能够Gnet能够替代NMS，</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2017-LearningNMS/t1.png" width="100%" />
+
+<p>表1显示了Gnet和NMS的量化对比。</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2017-LearningNMS/t2.png" width="100%" />
+
+<p>图7显示了Gnet对多类别检测时的作用，大部分类别有提示，少部分降低。</p>
+<h2 id="6-结论"><a href="#6-结论" class="headerlink" title="6. 结论"></a>6. 结论</h2><p>本文提出Gnet用于替代NMS，其主要包含两个关键组件：1）惩罚同一目标生成两个结果；2）联合处理所有结果。该网络能够实现端到端训练。结果显示相比于NMS，Gnet的后处理效果更好。目前Gnet需要大量训练数据，未来会研究通过数据增强或更好的预训练初始化模型。以及配合图像特征进行处理。我们相信本文提出的想法和结果能够使得未来检测器和NMS的分离消失。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>intellisoftx
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Learning-non-maximum-suppression/" title="论文笔记 Learning non-maximum suppression">http://intellisoftx.com/Note-笔记/Object-Detection/Note-Learning-non-maximum-suppression/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/NMS/" rel="tag"># NMS</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Repulsion-Loss-Detecting-Pedestrians-in-a-Crowd/" rel="prev" title="论文笔记 Repulsion Loss: Detecting Pedestrians in a Crowd">
+                  <i class="fa fa-chevron-left"></i> 论文笔记 Repulsion Loss: Detecting Pedestrians in a Crowd
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Note-Seeing-Small-Faces-from-Robust-Anchors-Perspective/" rel="next" title="论文笔记 Seeing Small Faces from Robust Anchors Perspective">
+                  论文笔记 Seeing Small Faces from Robust Anchors Perspective <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">intellisoftx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

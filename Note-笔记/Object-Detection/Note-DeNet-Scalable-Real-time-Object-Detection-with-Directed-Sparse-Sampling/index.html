@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"intellisoftx.com","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Abstract ​ICCV2017 code ROI Sparse Sampling">
+<meta property="og:type" content="article">
+<meta property="og:title" content="论文笔记《DeNet: Scalable Real-time Object Detection with Directed Sparse Sampling》">
+<meta property="og:url" content="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DeNet-Scalable-Real-time-Object-Detection-with-Directed-Sparse-Sampling/index.html">
+<meta property="og:site_name" content="Intelligent Software X">
+<meta property="og:description" content="Abstract ​ICCV2017 code ROI Sparse Sampling">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511406384680.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511406913328.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511425311403.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511425339378.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511856085900.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511856174220.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511856195399.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511856267266.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511873270775.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511875816738.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511880881841.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511881135045.png">
+<meta property="og:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511881170641.png">
+<meta property="article:published_time" content="2018-01-03T07:39:59.000Z">
+<meta property="article:modified_time" content="2023-03-30T11:43:21.436Z">
+<meta property="article:author" content="intellisoftx">
+<meta property="article:tag" content="Object Detection">
+<meta property="article:tag" content="ROI">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511406384680.png">
+
+
+<link rel="canonical" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DeNet-Scalable-Real-time-Object-Detection-with-Directed-Sparse-Sampling/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DeNet-Scalable-Real-time-Object-Detection-with-Directed-Sparse-Sampling/","path":"Note-笔记/Object-Detection/Note-DeNet-Scalable-Real-time-Object-Detection-with-Directed-Sparse-Sampling/","title":"论文笔记《DeNet: Scalable Real-time Object Detection with Directed Sparse Sampling》"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>论文笔记《DeNet: Scalable Real-time Object Detection with Directed Sparse Sampling》 | Intelligent Software X</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Intelligent Software X</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">IntelliSoftx</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-sitemap"><a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>站点地图</a></li><li class="menu-item menu-item-commonweal"><a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益 404</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Abstract"><span class="nav-number">1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-Introduction"><span class="nav-number">2.</span> <span class="nav-text">1. Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-Probabilistic-Object-Detection"><span class="nav-number">2.1.</span> <span class="nav-text">1.2 Probabilistic Object Detection</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-Dirested-Sparse-Sampling-DSS"><span class="nav-number">3.</span> <span class="nav-text">2. Dirested Sparse Sampling (DSS)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-Corner-based-RoI-Detector"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 Corner-based RoI Detector</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E8%AE%AD%E7%BB%83"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 训练</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-Detection-Model"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 Detection Model</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-1-Skip-Layer-Variant"><span class="nav-number">3.3.1.</span> <span class="nav-text">2.3.1 Skip Layer Variant</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-3-2-Wide-Variant"><span class="nav-number">3.3.2.</span> <span class="nav-text">2.3.2 Wide Variant</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82"><span class="nav-number">4.</span> <span class="nav-text">3. 实现细节</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E8%AE%AD%E7%BB%83%E6%96%B9%E6%B3%95"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 训练方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%AE%9A%E4%B9%89%E9%87%87%E6%A0%B7BBox"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 定义采样BBox</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E7%BB%93%E6%9E%9C%E5%92%8C%E5%88%86%E6%9E%90"><span class="nav-number">5.</span> <span class="nav-text">4. 结果和分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E8%B6%85%E5%8F%82%E4%BC%98%E5%8C%96"><span class="nav-number">5.1.</span> <span class="nav-text">4.1 超参优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E6%95%88%E7%8E%87%E5%88%86%E6%9E%90"><span class="nav-number">5.2.</span> <span class="nav-text">4.2 效率分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-ROI%E5%8F%AC%E5%9B%9E%E7%8E%87%E6%AF%94%E8%BE%83"><span class="nav-number">5.3.</span> <span class="nav-text">4.3 ROI召回率比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-MSCOCO"><span class="nav-number">5.4.</span> <span class="nav-text">4.4 MSCOCO</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-Pascal-VOC-2007"><span class="nav-number">5.5.</span> <span class="nav-text">4.5 Pascal VOC 2007</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-6-Pascal-VOC-2012"><span class="nav-number">5.6.</span> <span class="nav-text">4.6 Pascal VOC 2012</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">5. 总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90"><span class="nav-number">7.</span> <span class="nav-text">分析</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">intellisoftx</p>
+  <div class="site-description" itemprop="description">智软X</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DeNet-Scalable-Real-time-Object-Detection-with-Directed-Sparse-Sampling/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="intellisoftx">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Intelligent Software X">
+      <meta itemprop="description" content="智软X">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="论文笔记《DeNet: Scalable Real-time Object Detection with Directed Sparse Sampling》 | Intelligent Software X">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          论文笔记《DeNet: Scalable Real-time Object Detection with Directed Sparse Sampling》
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-01-03 15:39:59" itemprop="dateCreated datePublished" datetime="2018-01-03T15:39:59+08:00">2018-01-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-30 19:43:21" itemprop="dateModified" datetime="2023-03-30T19:43:21+08:00">2023-03-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">Note 笔记</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Note-%E7%AC%94%E8%AE%B0/Object-Detection/" itemprop="url" rel="index"><span itemprop="name">Object Detection</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511406384680.png" alt="1511406384680"></p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><ul>
+<li>​ICCV2017</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/lachlants/denet">code</a></li>
+<li>ROI Sparse Sampling<span id="more"></span></li>
+</ul>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><h3 id="1-2-Probabilistic-Object-Detection"><a href="#1-2-Probabilistic-Object-Detection" class="headerlink" title="1.2 Probabilistic Object Detection"></a>1.2 Probabilistic Object Detection</h3><ul>
+<li>一个BBox只能对应一个类别的一个实例</li>
+<li>因为没有前置过滤，所以存在大量的候选ROI</li>
+<li>所以将采样是目前可行的方法</li>
+<li>YOLO和Faster R-CNN采样数量在$10^4$ 到$10^5$，然后通过简单的线性回归精细化BBox位置</li>
+<li>我们认为目标实例是大规模采样的一个非常小的子集</li>
+<li>基于此，我们开发端到端的CNN来估计该稀疏分布</li>
+</ul>
+<h2 id="2-Dirested-Sparse-Sampling-DSS"><a href="#2-Dirested-Sparse-Sampling-DSS" class="headerlink" title="2. Dirested Sparse Sampling (DSS)"></a>2. Dirested Sparse Sampling (DSS)</h2><ul>
+<li>DSS用于联合优化two stage CNN</li>
+</ul>
+<h3 id="2-1-Corner-based-RoI-Detector"><a href="#2-1-Corner-based-RoI-Detector" class="headerlink" title="2.1 Corner-based RoI Detector"></a>2.1 Corner-based RoI Detector</h3><ul>
+<li>提出一个概念：BBox角估计用于ROI估计</li>
+<li>估计图像上每个位置是否是BBox的一个角 $Pr(t|k,y,x)$ </li>
+<li>$k \in { top<del>left,top</del>right,bottom<del>left,bottom</del>right }$ 一个角类型</li>
+<li>一个BBox包含物体的似然估计 $Pr(s\neq null|B)\propto \prod_{k} Pt(t|k,y_k,x_k)$ 即BBox四个角的概率的乘积</li>
+</ul>
+<h3 id="2-2-训练"><a href="#2-2-训练" class="headerlink" title="2.2 训练"></a>2.2 训练</h3><ul>
+<li>先前向传播获得$B_s$</li>
+<li>并且随机采样Ground Truth增强$B_s$</li>
+<li>然后通过后续的分类网络训练</li>
+<li>为了保证端到端训练，$B_s$不变</li>
+<li>因此corner检测网络在bbox分类和估计任务中联合训练</li>
+<li>DeNet模型在corner概率分布，分类分布，bbox回归上进行联合优化</li>
+</ul>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511406913328.png" alt="1511406913328"></p>
+<ul>
+<li>$\phi$ 是ground truth corner 和 classification 分布</li>
+<li>$\phi_{B,i}&#x3D;{x_i,y_i,w_i,h_i}$ 是ground truth 与 bbox中IoU最大的box</li>
+<li>$\lambda_s,\lambda_t,\lambda_b$ 是用户定义的常数</li>
+<li>$\Lambda_s,\Lambda_t,\Lambda_b$ 是归一化常数，使得每个部件为1</li>
+<li>$\phi(t|k,y,x)$ 是遍历ground truth后得到的corner map，超出边界的corner则丢弃</li>
+<li>$\phi(s,B)$ 是预先遍历的采样bbox和ground truth的分类结果</li>
+</ul>
+<h3 id="2-3-Detection-Model"><a href="#2-3-Detection-Model" class="headerlink" title="2.3 Detection Model"></a>2.3 Detection Model</h3><ul>
+<li>Residual neural networks 比 Faster R-CNN 展现出更好的性能</li>
+<li>我们选择34层，ResNet-34作为我们的base网络，参数21M</li>
+<li>对基本模型，输入图像均归一化为512$\times$512，去除最后的平均池化和全连接层，并连接两个反卷积层和一个corner detector</li>
+<li>corner detector负责生成corner分布，并通过每个位置的特征$F_s$得到特征采样图</li>
+<li>反卷积层增加特征图的分辨率</li>
+<li>corner detector之后是sparse layer，其观察corner标识符，生成采样ROIs</li>
+<li>ROIs用于提取一组N$\times$N的特征向量，从特征采样图中</li>
+<li>至此，我们从4.2M个bbox中稀疏采样了$N^2$个bbox</li>
+<li>特征向量包括最近近邻的采样特征，一个7$\times$7的网格加上bbox的宽高。$7 \times 7\times F_s + 2$</li>
+<li>近邻采样是足够的，特征采样图具有相似，高度相关，稀疏分辨率</li>
+<li>最后特征向量通过一个相对浅全连接网络生成最后的分类结果和细调边界的ROI</li>
+</ul>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511425311403.png" alt="1511425311403"></p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511425339378.png" alt="1511425339378"></p>
+<p>表1和表2描述了增加的网络信息，相关定义如下：</p>
+<ul>
+<li><strong>Conv</strong> 参数使用正态分布，$\sigma^2&#x3D;2&#x2F;(n_fn_xn_y)$，之后是batch normalization和ReLU激活函数</li>
+<li><strong>Deconv</strong> ReLU之后是反卷积，其等价于先扩大空间分辨率再进行卷积</li>
+<li><strong>Corner</strong> 通过soft-max函数估计corner分布，并生成采样特征图</li>
+<li><strong>Sparse</strong> bbox采样标识符，从corner分布，并生成一个固定尺寸的采用特征，从采用特征图</li>
+<li><strong>Classifier</strong> 特征图到概率分布，通过softmax函数，并生成bbox</li>
+</ul>
+<p>对于DeNet-34我们使用ResNet-34作为base model，$F_s &#x3D; 96$  用于产生特征向量4706个值，32M个参数。DeNet-101模型使用ResNet-101 base model 增加的filter数量大约是1.5$\times$。</p>
+<h4 id="2-3-1-Skip-Layer-Variant"><a href="#2-3-1-Skip-Layer-Variant" class="headerlink" title="2.3.1 Skip Layer Variant"></a>2.3.1 Skip Layer Variant</h4><p>skip层连接反卷积层和最后的输出层，使其具有相同的空间维度。每一个skip layer将原特征线性投影到目标特征维度，并简单的增加激活层之前的特征图。</p>
+<h4 id="2-3-2-Wide-Variant"><a href="#2-3-2-Wide-Variant" class="headerlink" title="2.3.2 Wide Variant"></a>2.3.2 Wide Variant</h4><p>通过增加翻卷机和skip层，使得corner和feature sampling map的空间分辨率为128$\times$128。同时N增加到48，产生2304个ROI。虽然目前的版本由于增加了分类步骤使得计算开销增加，但是通过工程方法，作者相信可以减少计算开销。</p>
+<h2 id="3-实现细节"><a href="#3-实现细节" class="headerlink" title="3. 实现细节"></a>3. 实现细节</h2><p>代码基于Theano，下载地址：<a target="_blank" rel="noopener" href="https://github.com/lachlants/denet">https://github.com/lachlants/denet</a></p>
+<h3 id="3-1-训练方法"><a href="#3-1-训练方法" class="headerlink" title="3.1 训练方法"></a>3.1 训练方法</h3><p>使用Nesterov风格的SGD，初始lr&#x3D;0.1，动量&#x3D;0.9，权重衰减&#x3D;0.0001。一个batch&#x3D;128，32个样本。epoch&#x3D;30，60时，lr除以10，一共90个epoch。其他的超参与原始的residual network一样。没有使用在线困难负样本挖掘或其他梯度优化技术，增加10%的负样本在训练阶段。</p>
+<p>为了改进模型对不同尺度的泛化性，对每个样本，生成一个最小的边框得到一个方形图像。在测试时，使用双线性差值得到512$\times$512的图像，在训练时随机crop一个0.08~1.0相对大小的图像，宽高比(3&#x2F;4，4&#x2F;3)。如果该crop图像没有包含50%的GT，则再生成一个。如同测试一样所有crop都缩放到512$\times$512。并且也使用随机光度调整和镜像调整（对比、饱和、明亮）[^20]。</p>
+<h3 id="3-2-定义采样BBox"><a href="#3-2-定义采样BBox" class="headerlink" title="3.2 定义采样BBox"></a>3.2 定义采样BBox</h3><p>一个简单的方法快速搜索corner分布</p>
+<ol>
+<li>搜索$Pr(t&#x3D;1|k,y,x)&gt;\lambda$的点$C_\lambda$</li>
+<li>对每个corner类型，选择M个具有最大似然的corners $C_M \subseteq C_\lambda$</li>
+<li>生成一组唯一的bbox，通过用$C_M$中每个左上匹配每个右下corner</li>
+<li>计算每个bbox的概率</li>
+<li>重复步骤2和3用右上和左下</li>
+<li>对bbox的概率排序，保留前$N^2$产生采样bbox$B_S$</li>
+</ol>
+<p>此方法在步骤1过滤了绝大部分corner，因此相比暴力穷举能加速。</p>
+<h2 id="4-结果和分析"><a href="#4-结果和分析" class="headerlink" title="4. 结果和分析"></a>4. 结果和分析</h2><p>模型比较是困难的，因为使用了不同的base model，数据增强策略，数据集融合。特别的，我们注意到SSD使用更大的batch size，而R-CNN使用更大的输入分辨率。我们的DeNet使用一个Titan X GPU 进行训练，8x 的 batch size与SSD设置一样。为了简洁，我们只包含三种Faster R-CNN模型，RPN（VGG），ResNet-101 extension RPN+，R-FCN。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511856085900.png" alt="1511856085900"></p>
+<p>表3提供了baseline模型的总体情况。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511856174220.png" alt="1511856174220"></p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511856195399.png" alt="1511856195399"></p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511856267266.png" alt="1511856267266"></p>
+<h3 id="4-1-超参优化"><a href="#4-1-超参优化" class="headerlink" title="4.1 超参优化"></a>4.1 超参优化</h3><p>我们使用3.1节使用的训练策略，除了batch使用96。Denet-34模型在07的train和12的trainval上训练，测试在07的val上测试。</p>
+<p>表4为粗略搜索corner和bbox回归损失参数。当$\lambda_s&#x3D;1,\lambda_t&#x3D;100,\lambda_b&#x3D;1$时得到的最优的结果。之后我们研究了bbox采样数量的影响，我们设置模型训练的采样数量N&#x3D;{8,12,16,24,32}（注意：采样数量是N的平方）。在测试阶段，我们变化N的值从8到32生成图2。表5中，我们提供了采样bbox数量和检测速率、coverage覆盖率（就是召回率）的关系，如同第二节上的描述。很明显，虽则采样bbox的增加，MAP持续改进。同时，增加测试的bbox，也会改进MAP，但是会降低检测率。在之后的实验中，我们设置N&#x3D;24用于训练和测试。</p>
+<h3 id="4-2-效率分析"><a href="#4-2-效率分析" class="headerlink" title="4.2 效率分析"></a>4.2 效率分析</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511873270775.png" alt="1511873270775"></p>
+<p>表6展示了DeNet模型不同模块的消耗时间，我们将运行时间分为4个stage</p>
+<ol>
+<li>corners估计，图像上传到GPU，通过网络后生成corner分布和采样特征图，corner分布之后从GPU迁移到CPU</li>
+<li>生成ROI，根据corner分布，生成采样bbox</li>
+<li>分类ROI，最后分类CNN执行，分类分布到bbox回归输出，从GPU到CPU</li>
+<li>实例估计，在检测结果上进行NMS</li>
+</ol>
+<p>我们发现大部分时间都消耗在生成corners，cpu生成ROI也需要许多时间。但是DeNet还是比大部分其他baseline方法快。</p>
+<ul>
+<li>反卷积，通过反卷积层增加空间信息，不同于R-FCN和SSD方法。这种方法在后面进行，能极大的改进评估效率。</li>
+<li>快速ROI特征，通过简单的最近邻采样方法提取特征，限制特征的数量为每ROI有49个。有个RPN变体使用49~580</li>
+<li>输入图像纬度，DeNet将所有图像缩放到512$\times$512，而一些RPN方法会将输入变为1000$\times$600</li>
+<li>Batching，我们的模型8x采样每batch，改进GPU的利用。</li>
+</ul>
+<h3 id="4-3-ROI召回率比较"><a href="#4-3-ROI召回率比较" class="headerlink" title="4.3 ROI召回率比较"></a>4.3 ROI召回率比较</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511875816738.png" alt="1511875816738"></p>
+<p>表7显示了300个ROI的情况下的召回率。我们发现在IoU较低的时候RPN和R-FCN的召回率更好，但是增加IoU后DeNet极大的改进了召回率。</p>
+<p>我们发现RPN&#x2F;R-FCN利用了bbox回归和nms方法，在推荐网络中。DeNet的ROI召回率不意味着完整模型的MAP。</p>
+<h3 id="4-4-MSCOCO"><a href="#4-4-MSCOCO" class="headerlink" title="4.4 MSCOCO"></a>4.4 MSCOCO</h3><p>微软的COCO数据集包含82K的训练和40K的验证图像，包含80个类别。对于测试他们数据集包含80K的测试集，用户已知20K的测试test-dev2015，和未知的20K图像test2015只允许5次评估。由于数据集体积、类别的数量、目标相对大小，MSCOCO相比于Pascal VOC更具挑战性。COCO的评估方法是MAP，在IOU&#x3D;0.5到0.95。该评估策略更加注重定位性能。设置$\lambda_t&#x3D;50$是DeNet-101收敛必要的。DeNet-34训练<del>4天，2个Tesla P100 GPU；DeNet-101需要</del>6.5天，4个Tesla P100GPU。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511880881841.png" alt="1511880881841"></p>
+<p>表8显示了在COCO test-dev2015上的效果，DeNet展现出高献策速度上的优势，相比SSD300，MAP提升6.2%，比SSD512提升2.6%。DeNet-101的优势也很明显， 只是被RPN+击败。文章撰写时，DeNet在COCO上排名前10，其不考虑计算效率。skip 模型变体继续改进中小目标的性能。wide 模型变体改进小目标和定位性能。DeNet在更多的候选ROI上进行选择，相比SSD。RPN和YOLO等方法是不可能使用如此大的候选ROI。</p>
+<h3 id="4-5-Pascal-VOC-2007"><a href="#4-5-Pascal-VOC-2007" class="headerlink" title="4.5 Pascal VOC 2007"></a>4.5 Pascal VOC 2007</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511881135045.png" alt="1511881135045"></p>
+<p>表9现在了在Pascal上的测试，训练集用07+12的trainval，测试集用07。DeNet-34训练13小时，DeNet-101训练20小时。DeNet-34 skip版本比SSD300的MAP提升1.6%，速度快20Hz。DeNet-101性能匹配SSD512，速度更快。</p>
+<h3 id="4-6-Pascal-VOC-2012"><a href="#4-6-Pascal-VOC-2012" class="headerlink" title="4.6 Pascal VOC 2012"></a>4.6 Pascal VOC 2012</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/DeNet/1511881170641.png" alt="1511881170641"></p>
+<p>训练集为07的trainvaltest+12的trainval，测试集为12的testing server。我们可以发现DeNet-34性能匹配SSD300，但是不知道什么原因，DeNet-101性能低于SSD512，并且性能接近RPN+。训练时间分别为18小时，28小时。</p>
+<h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5. 总结"></a>5. 总结</h2><p>本文提供了一个基于CNN的稀疏框架，包含ROI检测器和分类模型，通过减少手工优化得到先进的性能和实时效率。通过反卷积和skip层，我们得到更高的计算效率模型通过更耦合ROI、分类、bbox回归。我们的实验表面，skip连接能改进中小目标的检测性能。wide模型表面corner图的分辨对于中小目标的重要性，其提供了未来的研究方向。</p>
+<p>通过分析发现，我们的模型定位性能更好。我们认为是由于我们的采样候选ROI更多（4.2$\times 10^6$）而SSD512和RPN是(2.5$\times 10^4$) 。这使得模型可能选择一个更加接近gt的bbox。另外，由于我们不再设定一组reference bbox，因此减少了手工调整的需要（就是anchor设置）。这样就不存在匹配各种各样目标尺寸和分辨率的问题。</p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>本文的corner map是该文章的亮点，相当于网络进行了一次bbox的位置粗略估计，其本质上跟rpn没有区别，但是却能得到更快的效率，其原因是bbox的粗略估计是非常快的，然后就马上进行了一次预筛选。而RPN等方法需要将anchor完整计算一遍因此效率更慢，corner map是一次计算得到，之后的bbox生成不再需要神经网络。而RPN需要对每个位置进行全连接网络的计算，因此速度较慢。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>intellisoftx
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://intellisoftx.com/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DeNet-Scalable-Real-time-Object-Detection-with-Directed-Sparse-Sampling/" title="论文笔记《DeNet: Scalable Real-time Object Detection with Directed Sparse Sampling》">http://intellisoftx.com/Note-笔记/Object-Detection/Note-DeNet-Scalable-Real-time-Object-Detection-with-Directed-Sparse-Sampling/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Object-Detection/" rel="tag"># Object Detection</a>
+              <a href="/tags/ROI/" rel="tag"># ROI</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Flow-Guided-Feature-Aggregation-for-Video-Object-Detection/" rel="prev" title="论文笔记《Flow-Guided Feature Aggregation for Video Object Detection》">
+                  <i class="fa fa-chevron-left"></i> 论文笔记《Flow-Guided Feature Aggregation for Video Object Detection》
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/" rel="next" title="论文笔记《Individualness and Determinantal Point Processes for Pedestrian Detection》">
+                  论文笔记《Individualness and Determinantal Point Processes for Pedestrian Detection》 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">intellisoftx</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

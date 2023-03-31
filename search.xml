@@ -127,51 +127,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Hexo 搭建个人博客</title>
-    <url>/Tutorial-%E6%95%99%E7%A8%8B/Hexo-Create-personal-blog/</url>
-    <content><![CDATA[<p>此教程基本为当前blog的搭建过程,其中遇到的主要问题记录在下面，未来不定期更新。</p>
-<span id="more"></span>
-
-<h2 id="1-按照-Next-主题的步骤搭建"><a href="#1-按照-Next-主题的步骤搭建" class="headerlink" title="1. 按照 Next 主题的步骤搭建"></a>1. 按照 Next 主题的步骤搭建</h2><p>首先安装hexo官网教程安装hexo<br><a href="https://hexo.io/docs/">https://hexo.io/docs/</a><br>然后将Next主题安装在theme文件夹内<br><a href="https://github.com/iissnan/hexo-theme-next">https://github.com/iissnan/hexo-theme-next</a></p>
-<h2 id="2-更换主题scheme，在theme-next-config中更换scheme。"><a href="#2-更换主题scheme，在theme-next-config中更换scheme。" class="headerlink" title="2. 更换主题scheme，在theme/next/_config中更换scheme。"></a>2. 更换主题<code>scheme</code>，在<code>theme/next/_config</code>中更换<code>scheme</code>。</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Schemes</span><br><span class="line">#scheme: Muse</span><br><span class="line">#scheme: Mist</span><br><span class="line">#scheme: Pisces</span><br><span class="line">scheme: Gemini</span><br></pre></td></tr></table></figure>
-<h2 id="3-新建文章"><a href="#3-新建文章" class="headerlink" title="3. 新建文章"></a>3. 新建文章</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new post &quot;title&quot;</span><br></pre></td></tr></table></figure>
-<h2 id="4-安装hexo-wordcount来显示每篇文章的字数，阅读时间等等"><a href="#4-安装hexo-wordcount来显示每篇文章的字数，阅读时间等等" class="headerlink" title="4. 安装hexo-wordcount来显示每篇文章的字数，阅读时间等等"></a>4. 安装hexo-wordcount来显示每篇文章的字数，阅读时间等等</h2><p><a href="https://github.com/willin/hexo-wordcount">https://github.com/willin/hexo-wordcount</a></p>
-<h2 id="5-更换markdown渲染工具，适配mathjax"><a href="#5-更换markdown渲染工具，适配mathjax" class="headerlink" title="5. 更换markdown渲染工具，适配mathjax"></a>5. 更换markdown渲染工具，适配mathjax</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm uninstall hexo-renderer-marked --save</span><br><span class="line">npm install hexo-renderer-kramed --save</span><br></pre></td></tr></table></figure>
-<h2 id="6-上传头像"><a href="#6-上传头像" class="headerlink" title="6. 上传头像"></a>6. 上传头像</h2><p>将头像文件放置在<code>/source/uploads/avatar.gif</code><br>在主题<code>_config</code>文件中找到<code>avatar: </code> 填上上述地址</p>
-<h2 id="7-部署git"><a href="#7-部署git" class="headerlink" title="7. 部署git"></a>7. 部署git</h2><p>首先在github上建立一个repo，其名称为yourname.github.io，注意这里yourname需要跟你的github的用户名一致。然后在hexo的_config填写配置</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">type: git</span><br><span class="line">repo: https://github.com/xzhewei/xzhewei.github.io.git</span><br><span class="line">branch: master</span><br><span class="line">message:</span><br></pre></td></tr></table></figure>
-<p>然后用hexo生成静态网页，最后提交</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
-<h2 id="8-建立sitemap"><a href="#8-建立sitemap" class="headerlink" title="8. 建立sitemap"></a>8. 建立sitemap</h2><p>安装sitemap生成工具</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-generator-sitemap --save</span><br></pre></td></tr></table></figure>
-<p>然后在_config.yml中填写配置</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># sitemap</span><br><span class="line">sitemap:</span><br><span class="line">path: sitemap.xml</span><br></pre></td></tr></table></figure>
-<p>最后用hexo生成，部署即可。</p>
-<h2 id="9-增加文章分享功能"><a href="#9-增加文章分享功能" class="headerlink" title="9. 增加文章分享功能"></a>9. 增加文章分享功能</h2><p>编辑主题配置文件，添加&#x2F;修改字段<code>jiathis</code>，值为<code>true</code></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># JiaThis 分享服务</span><br><span class="line">jiathis: true</span><br></pre></td></tr></table></figure>
-<h2 id="10-阅读次数统计-LeanCloud"><a href="#10-阅读次数统计-LeanCloud" class="headerlink" title="10. 阅读次数统计( LeanCloud )"></a>10. 阅读次数统计( LeanCloud )</h2><p><a href="https://notes.wanghao.work/2015-10-21-%E4%B8%BANexT%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB%E9%87%8F%E7%BB%9F%E8%AE%A1%E5%8A%9F%E8%83%BD.html#%E9%85%8D%E7%BD%AELeanCloud">原文</a></p>
-<ul>
-<li>LeanCloud 注册帐号</li>
-<li>创建应用，名称自拟</li>
-<li>创建<code>Class</code>，名称为<code>Counter</code>，选择无限制ACL权限</li>
-<li>设置-应用Key，复制<code>App ID</code>和<code>App Key</code>到主题配置文件</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">leancloud_visitors:</span><br><span class="line">    enable: true</span><br><span class="line">    app_id: 0CYW8yvHIgva4K5nBgVMLQaS-gzGzoHsz</span><br><span class="line">    app_key: hQM50ybVtNLAsEM3VPIHYSSk</span><br></pre></td></tr></table></figure>
-
-<h2 id="11-文章内anchor跳转"><a href="#11-文章内anchor跳转" class="headerlink" title="11. 文章内anchor跳转"></a>11. 文章内anchor跳转</h2><p>markdown语法中可以通过<code>[link](#tile name)</code>来跳转到特定的段落标题上，例如：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[link](#tile name)</span><br><span class="line">点击上面的连接会跳转到下面的标题</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">### title name</span><br><span class="line">跳转到上面的标题</span><br></pre></td></tr></table></figure>
-<p>但是在hexo中md转换为html后标题中的空格会转换为<code>-</code>因此上述连接需修改为<code>[link](#tile-name)</code></p>
-]]></content>
-      <categories>
-        <category>Tutorial 教程</category>
-      </categories>
-      <tags>
-        <tag>hexo</tag>
-        <tag>next</tag>
-        <tag>blog</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>论文笔记《Faster R-CNN Towards Real-Time Object Detection with Region Proposal Networks》</title>
     <url>/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Faster-R-CNN-Towards-Real-Time-Object-Detection-with-Region-Proposal-Networks/</url>
     <content><![CDATA[<p><strong>Abstract</strong></p>
@@ -454,6 +409,51 @@
       </tags>
   </entry>
   <entry>
+    <title>Hexo 搭建个人博客</title>
+    <url>/Tutorial-%E6%95%99%E7%A8%8B/Hexo-Create-personal-blog/</url>
+    <content><![CDATA[<p>此教程基本为当前blog的搭建过程,其中遇到的主要问题记录在下面，未来不定期更新。</p>
+<span id="more"></span>
+
+<h2 id="1-按照-Next-主题的步骤搭建"><a href="#1-按照-Next-主题的步骤搭建" class="headerlink" title="1. 按照 Next 主题的步骤搭建"></a>1. 按照 Next 主题的步骤搭建</h2><p>首先安装hexo官网教程安装hexo<br><a href="https://hexo.io/docs/">https://hexo.io/docs/</a><br>然后将Next主题安装在theme文件夹内<br><a href="https://github.com/iissnan/hexo-theme-next">https://github.com/iissnan/hexo-theme-next</a></p>
+<h2 id="2-更换主题scheme，在theme-next-config中更换scheme。"><a href="#2-更换主题scheme，在theme-next-config中更换scheme。" class="headerlink" title="2. 更换主题scheme，在theme/next/_config中更换scheme。"></a>2. 更换主题<code>scheme</code>，在<code>theme/next/_config</code>中更换<code>scheme</code>。</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Schemes</span><br><span class="line">#scheme: Muse</span><br><span class="line">#scheme: Mist</span><br><span class="line">#scheme: Pisces</span><br><span class="line">scheme: Gemini</span><br></pre></td></tr></table></figure>
+<h2 id="3-新建文章"><a href="#3-新建文章" class="headerlink" title="3. 新建文章"></a>3. 新建文章</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo new post &quot;title&quot;</span><br></pre></td></tr></table></figure>
+<h2 id="4-安装hexo-wordcount来显示每篇文章的字数，阅读时间等等"><a href="#4-安装hexo-wordcount来显示每篇文章的字数，阅读时间等等" class="headerlink" title="4. 安装hexo-wordcount来显示每篇文章的字数，阅读时间等等"></a>4. 安装hexo-wordcount来显示每篇文章的字数，阅读时间等等</h2><p><a href="https://github.com/willin/hexo-wordcount">https://github.com/willin/hexo-wordcount</a></p>
+<h2 id="5-更换markdown渲染工具，适配mathjax"><a href="#5-更换markdown渲染工具，适配mathjax" class="headerlink" title="5. 更换markdown渲染工具，适配mathjax"></a>5. 更换markdown渲染工具，适配mathjax</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm uninstall hexo-renderer-marked --save</span><br><span class="line">npm install hexo-renderer-kramed --save</span><br></pre></td></tr></table></figure>
+<h2 id="6-上传头像"><a href="#6-上传头像" class="headerlink" title="6. 上传头像"></a>6. 上传头像</h2><p>将头像文件放置在<code>/source/uploads/avatar.gif</code><br>在主题<code>_config</code>文件中找到<code>avatar: </code> 填上上述地址</p>
+<h2 id="7-部署git"><a href="#7-部署git" class="headerlink" title="7. 部署git"></a>7. 部署git</h2><p>首先在github上建立一个repo，其名称为yourname.github.io，注意这里yourname需要跟你的github的用户名一致。然后在hexo的_config填写配置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">type: git</span><br><span class="line">repo: https://github.com/xzhewei/xzhewei.github.io.git</span><br><span class="line">branch: master</span><br><span class="line">message:</span><br></pre></td></tr></table></figure>
+<p>然后用hexo生成静态网页，最后提交</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+<h2 id="8-建立sitemap"><a href="#8-建立sitemap" class="headerlink" title="8. 建立sitemap"></a>8. 建立sitemap</h2><p>安装sitemap生成工具</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">npm install hexo-generator-sitemap --save</span><br></pre></td></tr></table></figure>
+<p>然后在_config.yml中填写配置</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># sitemap</span><br><span class="line">sitemap:</span><br><span class="line">path: sitemap.xml</span><br></pre></td></tr></table></figure>
+<p>最后用hexo生成，部署即可。</p>
+<h2 id="9-增加文章分享功能"><a href="#9-增加文章分享功能" class="headerlink" title="9. 增加文章分享功能"></a>9. 增加文章分享功能</h2><p>编辑主题配置文件，添加&#x2F;修改字段<code>jiathis</code>，值为<code>true</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># JiaThis 分享服务</span><br><span class="line">jiathis: true</span><br></pre></td></tr></table></figure>
+<h2 id="10-阅读次数统计-LeanCloud"><a href="#10-阅读次数统计-LeanCloud" class="headerlink" title="10. 阅读次数统计( LeanCloud )"></a>10. 阅读次数统计( LeanCloud )</h2><p><a href="https://notes.wanghao.work/2015-10-21-%E4%B8%BANexT%E4%B8%BB%E9%A2%98%E6%B7%BB%E5%8A%A0%E6%96%87%E7%AB%A0%E9%98%85%E8%AF%BB%E9%87%8F%E7%BB%9F%E8%AE%A1%E5%8A%9F%E8%83%BD.html#%E9%85%8D%E7%BD%AELeanCloud">原文</a></p>
+<ul>
+<li>LeanCloud 注册帐号</li>
+<li>创建应用，名称自拟</li>
+<li>创建<code>Class</code>，名称为<code>Counter</code>，选择无限制ACL权限</li>
+<li>设置-应用Key，复制<code>App ID</code>和<code>App Key</code>到主题配置文件</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">leancloud_visitors:</span><br><span class="line">    enable: true</span><br><span class="line">    app_id: 0CYW8yvHIgva4K5nBgVMLQaS-gzGzoHsz</span><br><span class="line">    app_key: hQM50ybVtNLAsEM3VPIHYSSk</span><br></pre></td></tr></table></figure>
+
+<h2 id="11-文章内anchor跳转"><a href="#11-文章内anchor跳转" class="headerlink" title="11. 文章内anchor跳转"></a>11. 文章内anchor跳转</h2><p>markdown语法中可以通过<code>[link](#tile name)</code>来跳转到特定的段落标题上，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[link](#tile name)</span><br><span class="line">点击上面的连接会跳转到下面的标题</span><br><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">### title name</span><br><span class="line">跳转到上面的标题</span><br></pre></td></tr></table></figure>
+<p>但是在hexo中md转换为html后标题中的空格会转换为<code>-</code>因此上述连接需修改为<code>[link](#tile-name)</code></p>
+]]></content>
+      <categories>
+        <category>Tutorial 教程</category>
+      </categories>
+      <tags>
+        <tag>hexo</tag>
+        <tag>next</tag>
+        <tag>blog</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>VPS搭建VPN（shadowsocks和v2ray）</title>
     <url>/Tutorial-%E6%95%99%E7%A8%8B/VPN-shadowsocks-and-v2ray/</url>
     <content><![CDATA[<p>最近跟什么大开会相关，好像大部分的VPN都失效了。蓝灯（Lantern）稳定性速度都不错但是每个月500MB的流量还是不够用。因此，还是考虑自己搭一个VPN来得稳妥。</p>
@@ -594,104 +594,6 @@
       <tags>
         <tag>Atrous Convolution</tag>
         <tag>Image Segmentation</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>论文笔记《Soft-NMS – Improving Object Detection With One Line of Code》</title>
-    <url>/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Soft-NMS-%E2%80%93-Improving-Object-DetectionWith-One-Line-of-Code/</url>
-    <content><![CDATA[<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/6f066bd9-979f-4e52-b5bb-b7780a2527f4.jpg"></p>
-<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>Non-maximum suppression（NMS）是目标检测流程中重要的组成部分。首先根据得分对bbox排序，然后选择得分最高的bbox M, 将与M有较大重叠的bbox抑制掉。以前的方法中，如果一个bbox重叠率大于设定的阈值则称为漏检。所以，提出 Soft-NMS, 一个衰减得分与重叠率成函数关系。该方法在coco-style mAP评价尺度上都有提升。计算复杂度，参数都没有特别增加，很容易集成到任何目标检测框架中。</p>
-<span id="more"></span>
-
-<ul>
-<li><a href="http://bit.ly/2nJLNMu">code</a></li>
-</ul>
-<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>目标检测在各个领域都有重要作用，其各个模块都需要谨慎设计，不能称为计算瓶颈。任何需要大量计算、重新训练的模块，如果只能带来一点提升都会被忽略。但是如果一个简单不需要重新训练的模块也能带来性能提升，那么就会被广泛采纳。本文，提出一个S-NMS，作为传统NMS的替代。</p>
-<p>一般一个检测框旁边会议多个得分同样很高的检测框（增加虚警率），所以需要采用NMS进行抑制。近年来RPN等方法所产生的ROI已经大大减少，但是仍然需要NMS来减少虚警率。</p>
-<p>首先NMS的输入是 $B$ 和 $S$, 选择得分高的 $M$, 抑制掉大部分BBox得到 $D$。这个过程不断迭代剩下的 $B$。这个过程中，将 $M$ 周围的 BBox 的得分设为0，导致漏检了部分目标，如图1所示。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/921487d8-8ee5-4c41-9d33-827cc4764d92.png"></p>
-<p>因此，我们在传统的贪心NMS算法中提出一行改动，使得得分的下降随着重叠率的升高的增加，而不是直接为0。</p>
-<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p>NMS作为检测算法的一个部分已经有50年的历史。第一次是用于边缘检测中，之后逐渐用于特征点检测，人脸检测，目标检测。</p>
-<ul>
-<li>边缘检测中，NMS用于细化边缘（edge thinning）移除虚警</li>
-<li>特征点检测中，NMS通过局部阈值得到唯一的特征点</li>
-<li>人脸检测中，通过重叠率来分割BBox为不连续的子集</li>
-<li>人体检测中，Dala等人证明使用贪心NMS，可以实现性能提升</li>
-</ul>
-<p>从此之后贪心NMS称为目标检测中默认的算法。近几十年，贪心NMS仍然取得最好的性能。也有一些基于学习的方法被提出。例如：</p>
-<ul>
-<li>先进行两两重叠率计算，然后使用相似传播聚类（affinity propagation clustering）选择最后的检测结果[^26]</li>
-<li>另一个多类别版本也提出了[^21], 但是多类别检测是一个不同的问题，我们需要选择一个阈值可用于多类的目标</li>
-<li>由于不同的目标可能适合不同的NMS阈值，因此采用mAP作为评价</li>
-</ul>
-<p>在显著目标检测中，有人提出了推荐子集优化算法[^30]. 其基于MAP，联合优化检测窗口的位置和数量。<br>在行人检测中，一个二元约束的二元优化方案（a quadratic unconstrained binary optimization, QUBO）[^27]，使用检测得分作为一元潜在因子，重叠率作为成对因子用于优化后的检测BBox子集。<br>另外一些基于学习的框架中，决策处理时结合个体预测得分用于优化选择最后的结果[^15]。<br>据我们所知，对于一般目标检测，贪心NMS仍然是PASCAL VOC MS-COCO等数据集的baseline方法。</p>
-<h2 id="3-Background"><a href="#3-Background" class="headerlink" title="3. Background"></a>3. Background</h2><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/4679005e-94d2-4be0-8914-8b115a254f8d.jpg"></p>
-<p>这里描述R-CNN系列方法的流程，proposal分支，classifcation分支。proposal提出K个anchor box，然后按得分排序，进行NMS。<br>分类网络不对ROI做限制，导致可能对一个物体有多个检测框，因此需要用NMS对每个类别筛选BBox。然后在这个基础上在去除一些得分特别低的检测结果。目标检测流程如图3所示。</p>
-<h2 id="4-Soft-NMS"><a href="#4-Soft-NMS" class="headerlink" title="4. Soft-NMS"></a>4. Soft-NMS</h2><ul>
-<li>当NMS阈值取得低时，例如0.3，那么会导致高IOU评估时的平均精度降低，例如IOU&#x3D;0.7当NMS阈值取得低时，例如0.3，那么会导致高IOU评估时的平均精度降低，例如IOU&#x3D;0.7</li>
-<li>因为一个高得分的box会抑制周围的目标因为一个高得分的box会抑制周围的目标</li>
-<li>当NMS阈值取的高时 $N _ t$ 取 0.7 会增加虚警</li>
-<li>并且虚警增加的数量远多于目标（因为ROI数量远多于目标数量），因此使用高NMS也不是一个好选择</li>
-</ul>
-<p>NMS算法可以写成如下形式，即一个re-scoring函数</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/600fecc0-66a4-4aa8-8a76-627a24dc523c.png"></p>
-<p>我们的想法是降低高重叠率的box的得分，而不是一起抑制，因此NMS应该考虑以下因素：</p>
-<ul>
-<li>抑制一个box周围似然概率更低的box</li>
-<li>低NMS是次优的，会造成漏检率增加</li>
-<li>高NMS会导致平均精度下降</li>
-</ul>
-<p><strong>重新设计函数Soft-NMS</strong><br>Linear-S-NMS<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/e4682ee9-d71e-408d-b5cc-5f04721f1344.png"></p>
-<p>Gaussian-S-NMS<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/e5390b66-2484-47ee-987f-d0f7ee6af4d8.png"></p>
-<p>Soft-NMS 一次的计算复杂度是 $O(N)$, N是检测框的数量。对于所有检测框，那计算复杂度是 $O(N^2)$, 这个与贪心NMS一样。由于目前的NMS是在得分阈值之后进行，因此不是对所有检测框进行，因此计算复杂度不是高。</p>
-<p>需要指出，S-NMS也是贪心算法，但是S-NMS是一个更一般的版本，传统的NMS是其特殊情况。除了这两个函数外，其实还可以考虑有更多参数的函数，例如将重叠率，检测得分都考虑进去。例如，一般的逻辑函数Gompertz函数，但是会引入更多超参。</p>
-<h2 id="5-数据集和评估"><a href="#5-数据集和评估" class="headerlink" title="5. 数据集和评估"></a>5. 数据集和评估</h2><p>实验在PASCAL VOC 和 MS-COCO上进行。评估的方法有三个：</p>
-<ul>
-<li>Faster R-CNN[^24]</li>
-<li>R-FCN[^16]</li>
-<li>Deformable-RFCN</li>
-</ul>
-<p>采用的评估模型：</p>
-<ul>
-<li>在PASCAL上使用的model选择已经训练好的，公开的，由作者提供的模型</li>
-<li>在COCO上R-FCN没有训练好的，因此我们在Caffe上自己训练一个，从ResNet-101开始，并做了一些改动，5 scale anchor，800 pixel，16 img&#x2F;minibatch，256 ROI&#x2F;img，结果比原作者的提升1.9%</li>
-<li>同样 Deformable-R-FCN 也使用相同的设定训练。</li>
-</ul>
-<p>传统NMS效率</p>
-<ul>
-<li>上述NMS均使用0.3</li>
-<li>一张图最多400个检测结果，每个类别最多100个，将每张图最多检测结果降为100，则AP减少0.1</li>
-<li>阈值0.0001，4 CPU threads，0.01 s&#x2F;img，80 classes</li>
-<li>阈值0.01， 1 CPU core， 0.005 s&#x2F;img</li>
-</ul>
-<h2 id="6-实验"><a href="#6-实验" class="headerlink" title="6. 实验"></a>6. 实验</h2><p>我们展现了S-NMS的鲁棒性，并且进行特定实验理解为何S-NMS会比粗汉同NMS好</p>
-<h3 id="6-1-结果"><a href="#6-1-结果" class="headerlink" title="6.1 结果"></a>6.1 结果</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/b4fd5cdb-5067-4fc2-8094-f7b8b457bb8e.png"></p>
-<p>表1展示了NMS和S-NMS的有效性，我们设定线性NMS为 $N _ t &#x3D; 0.3$，高斯NMS $\sigma _ t &#x3D; 0.5$。S-NMS都在改进。我们比较了S-NMS在MS-COCO每个类别上的改进，我们发现对于动物（马，长颈鹿，羊，大象等）提升有3-6%，但是对一些物体（烤面包机，球等等）提升较少，因为前者更容易出现交叠的情况。</p>
-<h3 id="6-2-敏感度分析"><a href="#6-2-敏感度分析" class="headerlink" title="6.2 敏感度分析"></a>6.2 敏感度分析</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/3cc88fce-aba9-4a02-a6b1-2b52eaf15eb4.png"></p>
-<p>图4分析了当$N _ t$ 和 $ \sigma _ t$ 变化时对AP[0.5:0.95]。我们发现0.3到0.6之间AP相对稳定。在后面的实验，未特别说明$\sigma$取0.5。</p>
-<h3 id="6-3-什么时候S-NMS-work-better"><a href="#6-3-什么时候S-NMS-work-better" class="headerlink" title="6.3 什么时候S-NMS work better"></a>6.3 什么时候S-NMS work better</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/2260ccaa-9534-4582-a151-5f06675a3185.png"></p>
-<p><strong>定位性能</strong> 如表3所示，我们发现两个超参基本都是跟评价指标变化，但是当$N _ t$增加时，AP会降低，但是其取低值时，AP下降没那么多，因此低$N _ t$具有更好的泛化性。但是，高斯S-NMS的参数增高时可以得到更好的性能。并且相比比线性S-NMS更好，提升也更大。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/c479385e-adfc-48eb-bab3-fbf00ba48f02.png"></p>
-<p><strong>精度与召回率</strong> 图5显示了在不同$O _ t$ 下的召回率与精度的关系。我们发现当要求定位精度很高时，S-NMS也有很好的改进，因为传统的NMS是直接将得分置为0，而S-NMS是衰减得分，变相保留了一些BBox。</p>
-<h3 id="6-4-量化结果"><a href="#6-4-量化结果" class="headerlink" title="6.4 量化结果"></a>6.4 量化结果</h3><p>图7显示了一些检测结果，当IoU阈值为0.45时。</p>
-<ul>
-<li>No.8 中有一个横跨多个人人群的BBox，它与多个BBox有交集，但是NMS不足以抑制，但是S-NMS可以对其得分进行多次衰减。</li>
-<li>No.9 中也有相似的现象。</li>
-<li>No.1 中在女士手包周围的BBox被抑制了。</li>
-<li>No.4 中在晚旁边的虚警被抑制</li>
-<li>NO.2,5,6,13 中的动物有些被NMS抑制掉了，但是S-NMS只是稍微降低了得分，但是仍然保留了下来</li>
-</ul>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/1509521123325.png" alt="1509521123325"></p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>[^15]: D. Lee, G. Cha, M.-H. Yang, and S. Oh. Individualness and determinantal point processes for pedestrian detection. In European Conference on Computer Vision, pages 330–346. Springer, 2016.<br>[^16]: Y. Li, K. He, J. Sun, et al. R-fcn: Object detection via region- based fully convolutional networks. In Advances in Neural Information Processing Systems, pages 379–387, 2016.<br>[^21]: D. Mrowca, M. Rohrbach, J. Hoffman, R. Hu, K. Saenko, and T. Darrell. Spatial semantic regularisation for large scale object detection. In Proceedings of the IEEE international conference on computer vision, pages 2003–2011, 2015.<br>[^24]: S. Ren, K. He, R. Girshick, and J. Sun. Faster r-cnn: Towards real-time object detection with region proposal networks. In Advances in neural information processing systems, pages 91–99, 2015.<br>[^26]: R. Rothe, M. Guillaumin, and L. Van Gool. Non-maximum suppression for object detection by passing messages be- tween windows. In Asian Conference on Computer Vision, pages 290–306. Springer, 2014.<br>[^27]: S. Rujikietgumjorn and R. T. Collins. Optimized pedestrian detection for multiple and occluded people. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pages 3690–3697, 2013.<br>[^30]: J. Zhang, S. Sclaroff, Z. Lin, X. Shen, B. Price, and R. Mech. Unconstrained salient object detection via proposal sub- set optimization. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pages 5733– 5742, 2016.</p>
-]]></content>
-      <categories>
-        <category>Note 笔记</category>
-        <category>Object Detection</category>
-      </categories>
-      <tags>
-        <tag>Object Detection</tag>
-        <tag>NMS</tag>
-        <tag>ICCV2017</tag>
       </tags>
   </entry>
   <entry>
@@ -952,7 +854,325 @@
         <category>Video Object Detection</category>
       </categories>
       <tags>
+        <tag>Video Object Detection</tag>
         <tag>ICCV2017</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>论文笔记《Soft-NMS – Improving Object Detection With One Line of Code》</title>
+    <url>/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Soft-NMS-%E2%80%93-Improving-Object-DetectionWith-One-Line-of-Code/</url>
+    <content><![CDATA[<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/6f066bd9-979f-4e52-b5bb-b7780a2527f4.jpg"></p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>Non-maximum suppression（NMS）是目标检测流程中重要的组成部分。首先根据得分对bbox排序，然后选择得分最高的bbox M, 将与M有较大重叠的bbox抑制掉。以前的方法中，如果一个bbox重叠率大于设定的阈值则称为漏检。所以，提出 Soft-NMS, 一个衰减得分与重叠率成函数关系。该方法在coco-style mAP评价尺度上都有提升。计算复杂度，参数都没有特别增加，很容易集成到任何目标检测框架中。</p>
+<span id="more"></span>
+
+<ul>
+<li><a href="http://bit.ly/2nJLNMu">code</a></li>
+</ul>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>目标检测在各个领域都有重要作用，其各个模块都需要谨慎设计，不能称为计算瓶颈。任何需要大量计算、重新训练的模块，如果只能带来一点提升都会被忽略。但是如果一个简单不需要重新训练的模块也能带来性能提升，那么就会被广泛采纳。本文，提出一个S-NMS，作为传统NMS的替代。</p>
+<p>一般一个检测框旁边会议多个得分同样很高的检测框（增加虚警率），所以需要采用NMS进行抑制。近年来RPN等方法所产生的ROI已经大大减少，但是仍然需要NMS来减少虚警率。</p>
+<p>首先NMS的输入是 $B$ 和 $S$, 选择得分高的 $M$, 抑制掉大部分BBox得到 $D$。这个过程不断迭代剩下的 $B$。这个过程中，将 $M$ 周围的 BBox 的得分设为0，导致漏检了部分目标，如图1所示。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/921487d8-8ee5-4c41-9d33-827cc4764d92.png"></p>
+<p>因此，我们在传统的贪心NMS算法中提出一行改动，使得得分的下降随着重叠率的升高的增加，而不是直接为0。</p>
+<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p>NMS作为检测算法的一个部分已经有50年的历史。第一次是用于边缘检测中，之后逐渐用于特征点检测，人脸检测，目标检测。</p>
+<ul>
+<li>边缘检测中，NMS用于细化边缘（edge thinning）移除虚警</li>
+<li>特征点检测中，NMS通过局部阈值得到唯一的特征点</li>
+<li>人脸检测中，通过重叠率来分割BBox为不连续的子集</li>
+<li>人体检测中，Dala等人证明使用贪心NMS，可以实现性能提升</li>
+</ul>
+<p>从此之后贪心NMS称为目标检测中默认的算法。近几十年，贪心NMS仍然取得最好的性能。也有一些基于学习的方法被提出。例如：</p>
+<ul>
+<li>先进行两两重叠率计算，然后使用相似传播聚类（affinity propagation clustering）选择最后的检测结果[^26]</li>
+<li>另一个多类别版本也提出了[^21], 但是多类别检测是一个不同的问题，我们需要选择一个阈值可用于多类的目标</li>
+<li>由于不同的目标可能适合不同的NMS阈值，因此采用mAP作为评价</li>
+</ul>
+<p>在显著目标检测中，有人提出了推荐子集优化算法[^30]. 其基于MAP，联合优化检测窗口的位置和数量。<br>在行人检测中，一个二元约束的二元优化方案（a quadratic unconstrained binary optimization, QUBO）[^27]，使用检测得分作为一元潜在因子，重叠率作为成对因子用于优化后的检测BBox子集。<br>另外一些基于学习的框架中，决策处理时结合个体预测得分用于优化选择最后的结果[^15]。<br>据我们所知，对于一般目标检测，贪心NMS仍然是PASCAL VOC MS-COCO等数据集的baseline方法。</p>
+<h2 id="3-Background"><a href="#3-Background" class="headerlink" title="3. Background"></a>3. Background</h2><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/4679005e-94d2-4be0-8914-8b115a254f8d.jpg"></p>
+<p>这里描述R-CNN系列方法的流程，proposal分支，classifcation分支。proposal提出K个anchor box，然后按得分排序，进行NMS。<br>分类网络不对ROI做限制，导致可能对一个物体有多个检测框，因此需要用NMS对每个类别筛选BBox。然后在这个基础上在去除一些得分特别低的检测结果。目标检测流程如图3所示。</p>
+<h2 id="4-Soft-NMS"><a href="#4-Soft-NMS" class="headerlink" title="4. Soft-NMS"></a>4. Soft-NMS</h2><ul>
+<li>当NMS阈值取得低时，例如0.3，那么会导致高IOU评估时的平均精度降低，例如IOU&#x3D;0.7当NMS阈值取得低时，例如0.3，那么会导致高IOU评估时的平均精度降低，例如IOU&#x3D;0.7</li>
+<li>因为一个高得分的box会抑制周围的目标因为一个高得分的box会抑制周围的目标</li>
+<li>当NMS阈值取的高时 $N _ t$ 取 0.7 会增加虚警</li>
+<li>并且虚警增加的数量远多于目标（因为ROI数量远多于目标数量），因此使用高NMS也不是一个好选择</li>
+</ul>
+<p>NMS算法可以写成如下形式，即一个re-scoring函数</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/600fecc0-66a4-4aa8-8a76-627a24dc523c.png"></p>
+<p>我们的想法是降低高重叠率的box的得分，而不是一起抑制，因此NMS应该考虑以下因素：</p>
+<ul>
+<li>抑制一个box周围似然概率更低的box</li>
+<li>低NMS是次优的，会造成漏检率增加</li>
+<li>高NMS会导致平均精度下降</li>
+</ul>
+<p><strong>重新设计函数Soft-NMS</strong><br>Linear-S-NMS<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/e4682ee9-d71e-408d-b5cc-5f04721f1344.png"></p>
+<p>Gaussian-S-NMS<br><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/e5390b66-2484-47ee-987f-d0f7ee6af4d8.png"></p>
+<p>Soft-NMS 一次的计算复杂度是 $O(N)$, N是检测框的数量。对于所有检测框，那计算复杂度是 $O(N^2)$, 这个与贪心NMS一样。由于目前的NMS是在得分阈值之后进行，因此不是对所有检测框进行，因此计算复杂度不是高。</p>
+<p>需要指出，S-NMS也是贪心算法，但是S-NMS是一个更一般的版本，传统的NMS是其特殊情况。除了这两个函数外，其实还可以考虑有更多参数的函数，例如将重叠率，检测得分都考虑进去。例如，一般的逻辑函数Gompertz函数，但是会引入更多超参。</p>
+<h2 id="5-数据集和评估"><a href="#5-数据集和评估" class="headerlink" title="5. 数据集和评估"></a>5. 数据集和评估</h2><p>实验在PASCAL VOC 和 MS-COCO上进行。评估的方法有三个：</p>
+<ul>
+<li>Faster R-CNN[^24]</li>
+<li>R-FCN[^16]</li>
+<li>Deformable-RFCN</li>
+</ul>
+<p>采用的评估模型：</p>
+<ul>
+<li>在PASCAL上使用的model选择已经训练好的，公开的，由作者提供的模型</li>
+<li>在COCO上R-FCN没有训练好的，因此我们在Caffe上自己训练一个，从ResNet-101开始，并做了一些改动，5 scale anchor，800 pixel，16 img&#x2F;minibatch，256 ROI&#x2F;img，结果比原作者的提升1.9%</li>
+<li>同样 Deformable-R-FCN 也使用相同的设定训练。</li>
+</ul>
+<p>传统NMS效率</p>
+<ul>
+<li>上述NMS均使用0.3</li>
+<li>一张图最多400个检测结果，每个类别最多100个，将每张图最多检测结果降为100，则AP减少0.1</li>
+<li>阈值0.0001，4 CPU threads，0.01 s&#x2F;img，80 classes</li>
+<li>阈值0.01， 1 CPU core， 0.005 s&#x2F;img</li>
+</ul>
+<h2 id="6-实验"><a href="#6-实验" class="headerlink" title="6. 实验"></a>6. 实验</h2><p>我们展现了S-NMS的鲁棒性，并且进行特定实验理解为何S-NMS会比粗汉同NMS好</p>
+<h3 id="6-1-结果"><a href="#6-1-结果" class="headerlink" title="6.1 结果"></a>6.1 结果</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/b4fd5cdb-5067-4fc2-8094-f7b8b457bb8e.png"></p>
+<p>表1展示了NMS和S-NMS的有效性，我们设定线性NMS为 $N _ t &#x3D; 0.3$，高斯NMS $\sigma _ t &#x3D; 0.5$。S-NMS都在改进。我们比较了S-NMS在MS-COCO每个类别上的改进，我们发现对于动物（马，长颈鹿，羊，大象等）提升有3-6%，但是对一些物体（烤面包机，球等等）提升较少，因为前者更容易出现交叠的情况。</p>
+<h3 id="6-2-敏感度分析"><a href="#6-2-敏感度分析" class="headerlink" title="6.2 敏感度分析"></a>6.2 敏感度分析</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/3cc88fce-aba9-4a02-a6b1-2b52eaf15eb4.png"></p>
+<p>图4分析了当$N _ t$ 和 $ \sigma _ t$ 变化时对AP[0.5:0.95]。我们发现0.3到0.6之间AP相对稳定。在后面的实验，未特别说明$\sigma$取0.5。</p>
+<h3 id="6-3-什么时候S-NMS-work-better"><a href="#6-3-什么时候S-NMS-work-better" class="headerlink" title="6.3 什么时候S-NMS work better"></a>6.3 什么时候S-NMS work better</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/2260ccaa-9534-4582-a151-5f06675a3185.png"></p>
+<p><strong>定位性能</strong> 如表3所示，我们发现两个超参基本都是跟评价指标变化，但是当$N _ t$增加时，AP会降低，但是其取低值时，AP下降没那么多，因此低$N _ t$具有更好的泛化性。但是，高斯S-NMS的参数增高时可以得到更好的性能。并且相比比线性S-NMS更好，提升也更大。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/c479385e-adfc-48eb-bab3-fbf00ba48f02.png"></p>
+<p><strong>精度与召回率</strong> 图5显示了在不同$O _ t$ 下的召回率与精度的关系。我们发现当要求定位精度很高时，S-NMS也有很好的改进，因为传统的NMS是直接将得分置为0，而S-NMS是衰减得分，变相保留了一些BBox。</p>
+<h3 id="6-4-量化结果"><a href="#6-4-量化结果" class="headerlink" title="6.4 量化结果"></a>6.4 量化结果</h3><p>图7显示了一些检测结果，当IoU阈值为0.45时。</p>
+<ul>
+<li>No.8 中有一个横跨多个人人群的BBox，它与多个BBox有交集，但是NMS不足以抑制，但是S-NMS可以对其得分进行多次衰减。</li>
+<li>No.9 中也有相似的现象。</li>
+<li>No.1 中在女士手包周围的BBox被抑制了。</li>
+<li>No.4 中在晚旁边的虚警被抑制</li>
+<li>NO.2,5,6,13 中的动物有些被NMS抑制掉了，但是S-NMS只是稍微降低了得分，但是仍然保留了下来</li>
+</ul>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Soft-NMS/1509521123325.png" alt="1509521123325"></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>[^15]: D. Lee, G. Cha, M.-H. Yang, and S. Oh. Individualness and determinantal point processes for pedestrian detection. In European Conference on Computer Vision, pages 330–346. Springer, 2016.<br>[^16]: Y. Li, K. He, J. Sun, et al. R-fcn: Object detection via region- based fully convolutional networks. In Advances in Neural Information Processing Systems, pages 379–387, 2016.<br>[^21]: D. Mrowca, M. Rohrbach, J. Hoffman, R. Hu, K. Saenko, and T. Darrell. Spatial semantic regularisation for large scale object detection. In Proceedings of the IEEE international conference on computer vision, pages 2003–2011, 2015.<br>[^24]: S. Ren, K. He, R. Girshick, and J. Sun. Faster r-cnn: Towards real-time object detection with region proposal networks. In Advances in neural information processing systems, pages 91–99, 2015.<br>[^26]: R. Rothe, M. Guillaumin, and L. Van Gool. Non-maximum suppression for object detection by passing messages be- tween windows. In Asian Conference on Computer Vision, pages 290–306. Springer, 2014.<br>[^27]: S. Rujikietgumjorn and R. T. Collins. Optimized pedestrian detection for multiple and occluded people. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pages 3690–3697, 2013.<br>[^30]: J. Zhang, S. Sclaroff, Z. Lin, X. Shen, B. Price, and R. Mech. Unconstrained salient object detection via proposal sub- set optimization. In Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, pages 5733– 5742, 2016.</p>
+]]></content>
+      <categories>
+        <category>Note 笔记</category>
+        <category>Object Detection</category>
+      </categories>
+      <tags>
+        <tag>Object Detection</tag>
+        <tag>ICCV2017</tag>
+        <tag>NMS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>论文笔记《Individualness and Determinantal Point Processes for Pedestrian Detection》</title>
+    <url>/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/</url>
+    <content><![CDATA[<p>&lt;img src&#x3D;”<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1511942386442.png%22/">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1511942386442.png&quot;/</a> width&#x3D;”80%”&gt;</p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>本文，我们介绍了检测候选的个体性作为一个补充用于评价行人检测。个体性从目标推荐和滑窗得到的原始检测候选中分配一个检测结果给每个物体。我们表明，传统的方法，如NMS，是次优的，因为其仅基于周围检测结果的得分来抑制。我们使用行列式点过程(determinantal point process)结合个体性优化选择最后的结果。该方法使用质量和相似性对每个检测结果建模。然后，检测结果中具有高检测得分和低相关性（通过矩阵行列式计算概率）的作为最后的结果。此矩阵由quality terms作为对角元素，其他位置是相似性元素。具体地，我们专注于行人检测问题，该问题由于其频繁的遮挡和不可预知的运动使其称为最具挑战的问题之一。实验结果显示本文提出的方法比NMS和不受约束的二次优化问题更好。</p>
+<span id="more"></span>
+
+<ul>
+<li>机构：首尔大学，加州大学</li>
+<li>行人检测后处理，个体性估计</li>
+<li>代码:<a href="http://cpslab.snu.ac.kr/software">http://cpslab.snu.ac.kr/software</a></li>
+</ul>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>目标检测的目的是在图像中定位一个已知类别的目标。这对于许多视觉任务的基础，例如跟踪、场景识别、动作识别等。在视觉跟踪中，基于检测的跟踪是在连续图像中基于连续的检测结果定位目标，是非常有效的方法[^1]。通过定位图像中目标的位置，我们能更好理解场景中发生的事情[^2]。目标检测也应用于动作识别，通过发现一系列特定相关的动作序列[^3]。</p>
+<p>一般目标检测的框架在测试图像上进行滑窗或者通过训练的分类器推荐目标。目前已经有许多目标检测器能够将独立的目标检测好。然而，一个检测器对每个目标的检测结果周围都会产生大量的原始检测结果（raw detection responses），如图1a所示。冗余的检测结果一般通过贪心算法进行抑制得到图1b，如NMS。</p>
+<p>采用上述框架，很难检测高度被遮挡的目标。因为分类器在训练时设计为用于分辨不同的类别，而不是分别类内差异。例如图1中A、B行人外接矩形高度重叠，我们检测时需要判断是FP还是FN。基于NMS，由于A被遮挡，其检测得分会低于B，因此会被抑制。因此，NMS方法不可避免的产生一些FN，当目标相互遮挡时。另一方面，如果一些先验知识能够利用，例如不同的identities，这样的问题就能避免。事实上，false rejection能够极大影响检测精度，例如原始的检测结果召回率为90%，经过NMS之后检测结果仅为50%。因此，从原始检测结果挑选是一件重要的任务。</p>
+<p>本文，我们提出一个算法基于个体性（individualness）和行列式点过程（determinantal point process, DPP）用于精确检测，并且可以应用于任何目标检测器。该方法可以作为目标性检测的一个独立补充。物体性检测得到一组候选结果，个体性检测发现候选结果的关系，得到最终检测结果。我们定义个体性使用特征向量的相关性，其包含bbox中的外观和空间信息。具体的，我们关注人群场景中的多行人检测问题。</p>
+<p>DPP是一个随机过程，使用量子物理理论中的互斥粒子模型，其禁止高度相关的量子态同时出现。这个特性很适合排除冗余的检测结果。为了应用DPP，需要定义质量和多样性因子，通常为unary score和pair-wise correlation。基于此，我们可以选择一个更优化的子集如图1c所示。</p>
+<p>本文的贡献如下所示：</p>
+<ol>
+<li>现有检测框架中，从候选检测结果中选择最后结果的方法存在问题</li>
+<li>引入DPP增强检测精度，通过设计质量和多样性特征设计</li>
+<li>用DPP选择优化的检测结果，并在多个行人数据集上验证。</li>
+<li>在PETS 2009上，DPM基于本文方法达到41.9%的准确度和99%的精度，而NMS只达到23.2%的准确度和98.2%的精度。</li>
+<li>在30个行人的图像上处理超过300个候选结果的时间少于30ms</li>
+</ol>
+<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p>行人检测方法：HOG、SVM、DPM、Boosting-Based，Faster R-CNN</p>
+<p>融合检测结果：NMS。</p>
+<ol>
+<li>文献[^13]指出定位精确性与检测得分没有很强的相关性。因此其提出一个回归模型学习检测结果与GT的相对位置。</li>
+<li>文献[^14]将NMS框架整合到深度学习模型中，但是NMS的参数在训练时仍然是固定的。</li>
+</ol>
+<p>NMS可以看为优化问题：</p>
+<ol>
+<li>文献[^15]提出二次无约束二元优化方法（quadratic unconstrained binary optimization，QUBO）替代NMS。QUBO的目的是找到一个二元向量，其中每个元素表示对应的检测BBox是否应该被抑制。目标函数包含一元和二元项。一元项测量BBox是行人的置信度，二元项基于BBox的重叠区域进行惩罚。目标函数使用贪心算法求解。QUBO的问题在于其估计行人之间的分布使用二元目标函数。</li>
+<li>文献[^16]提出基于吸引力传播聚类（affinity propagation clustering，APC）的方法。统计BBox两辆之间的相似性，然后聚类相似性最大的。 但是APC没有显式的惩罚相互接近的物体。尽管可以增加互斥函数进行改进，但是检测精度也没用显著的增加。</li>
+</ol>
+<h2 id="3-方法"><a href="#3-方法" class="headerlink" title="3. 方法"></a>3. 方法</h2><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512616433920.png" alt="1512616433920"></p>
+<p>提出的方法包含连个阶段：物体性检测和个体性检测。本文使用DDP建模BBox之间的关系。</p>
+<h3 id="3-1-行列式点过程方程（Determinantal-Point-Process-Formulation）"><a href="#3-1-行列式点过程方程（Determinantal-Point-Process-Formulation）" class="headerlink" title="3.1 行列式点过程方程（Determinantal Point Process Formulation）"></a>3.1 行列式点过程方程（Determinantal Point Process Formulation）</h3><p>定义：</p>
+<ul>
+<li>DPP基于BBox的质量和相似性计算最终选择的BBox</li>
+<li>有个N个BBox，$y$表示所有BBox的集合，$Y$标示最终选择的子集</li>
+<li>BBox的质量为$q_i$</li>
+<li>BBox的相似性为$S_{ij}$，两个BBox向量的内积</li>
+<li>计算正-半正定核矩阵（positive-semidefinite kernel matrix）$L_Y&#x3D;[L_{ij}]_{i,j\in Y}$</li>
+<li><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512620048441.png" alt="1512620048441"></li>
+</ul>
+<p>则选择BBox的过程即为最优化问题</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512619743792.png" alt="1512619743792"></p>
+<p>通常来说这是一个NP-hard（non-deterministic polynomial）问题，需要对所以的可能进行评估，但是幸运的是该问题是log-submodular问题，可以通过简单的贪心算法估计。</p>
+<blockquote>
+<p><a href="https://baike.baidu.com/item/NP-hard">百度</a><br>NP-hard，其中，NP是指非确定性多项式（non-deterministic polynomial，缩写NP）。所谓的非确定性是指，可用一定数量的运算去解决多项式时间内可解决的问题。NP-hard问题通俗来说是其解的正确性能够被“很容易检查”的问题，这里“很容易检查”指的是存在一个多项式检查算法。相应的，若NP中所有问题到某一个问题是图灵可归约的，则该问题为NP困难问题。</p>
+</blockquote>
+<p>例如图，当选择$Y&#x3D;{i,j}$时，DPP选择其的得分$P_L(Y)$为</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512621004358.png" alt="1512621004358"></p>
+<p>可以发现，当$q$增大时行列式的值增加，当$|S_{i,j}|$增大时，行列式的值减小。因此DPP过程自动的选择高质量和低相似性的组合。</p>
+<h3 id="3-2-质量项"><a href="#3-2-质量项" class="headerlink" title="3.2 质量项"></a>3.2 质量项</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512629712724.png" alt="1512629712724"></p>
+<p>一般来说质量项就是检测得分，但是原始得分是相互独立的。我们提出一个检测策略考虑周围结果的关系。一个图像中的虚警可能会抑制真正行人BBox。这种问题在BBox很大时更严重，统计一个GT中具有的检测BBox数量如图3b所示。可以发现大部分GT中包含的BBox非常少（这里有个问题，是不是本来滑窗ROI的尺寸本来就比较大，然后0也被统计进去了）。基于这个发现，提出重得分函数</p>
+<p>$$s_i^c&#x3D;s_i^oexp(-\lambda n_i)$$</p>
+<p>$\lambda$是一个常数。并且这样还可以得到更加贴紧行人的BBox，如第四节所示。（这个想法很特别，而且似乎特别适合二元检测任务，因为根据透视原理，不可能在一个大目标前面还存在多个小目标）。</p>
+<p>特别地，在相机固定的场景中，行人的高度变化不大，而且高度$h_i$与位置$(x_i,y_i)$存在函数关系，可以容易的拟合出函数的系数：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512630353869.png" alt="1512630353869"></p>
+<p>假设行人的身高成高斯分布，我们根据BBox的偏差来对其进行重打分：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512630798943.png" alt="1512630798943"></p>
+<p>最后质量项$q$表示为：</p>
+<p>$$q&#x3D;\alpha s + \beta$$</p>
+<p>权重的设置需要根据检测器来确定，比如DPM的平均得分为0.7，ACF的得分是33.2。</p>
+<h3 id="3-3-个体性和多样性特征"><a href="#3-3-个体性和多样性特征" class="headerlink" title="3.3 个体性和多样性特征"></a>3.3 个体性和多样性特征</h3><p>个体性旨在确定两个图像是否是指同一个人。类似多相机环境中的行人身份再识别问题。但是这两个问题不同且难度不一样。</p>
+<ol>
+<li>重叠区域有完全相同的信息</li>
+<li>两个图像快交叠靠的很近</li>
+<li>需要考虑被遮挡的行人，再识别问题通常不考虑</li>
+</ol>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512631315204.png" alt="1512631315204"></p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512633314567.png" alt="1512633314567"></p>
+<p>为了克服这个问题，我们考虑测量BBox特征描述的相关性。特征应该对背景、尺度不敏感。为了实现这个目的，我们采用卷积特征。总体上，相关矩阵是块对角并且个体相关性较低，因此我们决定采用CNN特征。</p>
+<p>仅只用CNN不够有效，如图4所示，对单个行人有多个聚类结果，例如图5中间男人BBox右边有个BBox，尽管两个BBox中有轮廓不一样，但是仍然是一个行人。为了解决这个问题，我们增加考虑BBox的控制位置。空间个体性设计为单个行人周围的BBox具有高相关性。则第i个检测结果的个体性表示为：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512635866556.png" alt="1512635866556"></p>
+<p>k表示像素序号，$\pi_i$表示属于检测结果i的bbox的像素集合。尽管$\varphi_i$的纬度等同于图像尺寸，但是两个BBox的空间相关性可以检测计算得到:</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636179348.png" alt="1512636179348"></p>
+<p>同时不需要存储完整的相关性向量，只需保存检测的BBox尺寸和重叠面积：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636263251.png" alt="1512636263251"></p>
+<p>（晕，这不就是IOU么）</p>
+<p>得到了BBox的物体性特征$$\phi_i$$和$$\varphi_i$$，如何融合两个特征为一个多样性特征？可以采用平均值，但是其要求特征具有相同纬度。我们提出一个更通用有效的方法设计多样性特征，并直接构造正-半正定相似性矩阵S。$S^c$，$S^s$分别为有两个特征构建，换句话说$$S_{ij}^c&#x3D;\phi_i^T\phi_j$$。然后使用一个平和权重（0.8）融合：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636884079.png" alt="1512636884079"></p>
+<h3 id="3-4-Mode-Finding"><a href="#3-4-Mode-Finding" class="headerlink" title="3.4 Mode Finding"></a>3.4 Mode Finding</h3><p>这一节描述如何求解上面的最优化函数。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512637471602.png" alt="1512637471602"></p>
+<ol>
+<li>每次选择最大的j</li>
+<li>加入到Y集合中</li>
+<li>计算P，若增加倍数超过阈值，则继续，并将j从y中删除</li>
+<li>直到P不再增加，或y为空</li>
+</ol>
+<h3 id="3-5-与QUBO的关系"><a href="#3-5-与QUBO的关系" class="headerlink" title="3.5 与QUBO的关系"></a>3.5 与QUBO的关系</h3><p>QUBO使用DPP目标函数转换为相似的形式。DPP是寻找最大化$L_Y$的行列式。QUBO有两个缺点</p>
+<ol>
+<li>QUBO cannot deal with positively correlated items. 这句话不理解</li>
+<li>QUBO 更加惩罚高度相关的BBox，可能不适合遮挡的行人。</li>
+</ol>
+<p>假设$L_y&#x3D;[2,-0.8;-0.8,1.4]$，QUBO将不选择第二个检测结果因为$-0.8-0.8+1.4&#x3D;-0.2&lt;0$，在DPP中$det(Y_L)&#x3D;2.16&gt;2$ 因此会选择第二个结果。</p>
+<h2 id="4-实验"><a href="#4-实验" class="headerlink" title="4. 实验"></a>4. 实验</h2><p>数据集</p>
+<ul>
+<li>INRIA：288个图像</li>
+<li>PETS2009：S1.L1的190帧，平均每帧33个行人，行人较密</li>
+<li>EPFL Terrace：5010帧，每25帧取1帧，平均每帧5人</li>
+</ul>
+<p>模型：DPM，ACF，Faster RCNN</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512654724175.png" alt="1512654724175"></p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512654762753.png" alt="1512654762753"></p>
+<p>表1和图7显示结果，可以看见DPP都比NMS好或一致，并且在PET2009这类数据集上有显著提升。并且RCNN这类方法在INRIA上有较好的效果，但是在PET2009上效果不好，可能是因为区域推荐的方法会生成很多重叠的框，而不是独立个体的框。上述实验不会使用先验知识。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512655923604.png" alt="1512655923604"></p>
+<p>图8a里面有贪心NMS，另一种为特殊NMS$\frac{area(d_g\bigcap d_e)}{min(area(d_g),area(d_e))}&gt;0.65$ 能够实现更好的精度。非贪心NMS不排除被抑制的BBox。QUBO的精度与非贪心NMS相似。并且DPP比其他的都显著改善。</p>
+<p>图8b表示了CNN网络层的有效性。显示，检测结果对不同的网络层不敏感。我们使用4096维向量用于计算多样性特征。</p>
+<p>图8c显示了计算速度。最多300个proposal，只统计算法1的计算时间。卷积计算时间248ms。计算平台Intel Xeon 2.3 GHz，128 RAM，TITAN X D5 12GB CPU。处理过程平均少于30ms。</p>
+<p>BBox定位精度使用$\frac{|d_e\bigcap d_g|}{|d_e|}$测量。PET2009中DPP是0.81，NMS是0.76。图9显示一些结果示例。DPP产生更贴紧的BBox，如EPFL-84帧，NMS和QUBO都漏检了中间穿白衣服的人，DPP成功检测。</p>
+<h2 id="5-结论"><a href="#5-结论" class="headerlink" title="5 结论"></a>5 结论</h2><p>我们提出一种基于个体性改进检测性能的算法。个体性评价两个检测候选的相似性，物体性基于得分生成候选框。每个BBox外观和空间信息用于考虑个体性。然后行列式点处理过程结合得分和相似性得到最后结果。实验结果表明DPP比NMS和QUBO更好。并且在平均包含30个行人的图像上处理300个候选框的速度小于30ms。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>[^13]: Liu, S., Lu, C., Jia, J.: Box aggregation for proposal decimation: last mile of object detection. In ICCV, pp. 2569–2577 (2015)<br>[^14]: Wan, L., Eigen, D., Fergus, R.: End-to-end integration of a convolution network, deformable partsmodel and non-maximum suppression. In CVPR, pp. 851–859 (2015)<br>[^15]: Rujikietgumjorn, S., Collins, R.T.: Optimized pedestrian detection for multiple and occluded people. In CVPR (2013)<br>[^16]: Rothe, R.,Guillaumin,M., Gool, L.V.: Non-maximum suppression for object detec- tion by passing messages between windows. In ACCV (2014)</p>
+]]></content>
+      <categories>
+        <category>Note 笔记</category>
+        <category>Pedestrian Detection</category>
+      </categories>
+      <tags>
+        <tag>Pedestrian Detection</tag>
+        <tag>NMS</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>解决Markdown图片存放</title>
+    <url>/Tutorial-%E6%95%99%E7%A8%8B/Markdown-storage-image/</url>
+    <content><![CDATA[<p>使用对象存储保存markdown图片</p>
+<span id="more"></span>
+
+<p>markdown的优势是简洁，纯文本。但是当需要插入图片时就很烦人。需要截图，放到一个文件夹里，然后写相对路径。当我把笔记给另外一个人时，要连着图片文件夹一起给，很麻烦。</p>
+<p>那有没有什么办法可以解决呢？那是肯定有的。markdown的图片路径可以是一个url，因此如果你将图片放置在一个服务器上，那么只要是联网的电脑，md文件上的图片就可以直接查看了。</p>
+<p>那要怎么才能有个存图片的服务器呢？</p>
+<ol>
+<li>自己搭一个服务器</li>
+<li>租一个虚拟服务器，安装一个apache或nginx</li>
+<li>租一个对象存储 OSS</li>
+</ol>
+<p>第三种是我目前所想到的最简单的方法。</p>
+<p>那需要怎么做？</p>
+<ol>
+<li>选择一个云存储服务商，七牛或阿里云，我选择的是阿里云，学生优惠，40G，1年9.5块，用来存图片绰绰有余了。</li>
+<li>进入阿里云的管理控制台就可看到对象存储OSS，买一个资源包，包月包年那种</li>
+<li>新建一个bucket，自己定一个名称例如：<code>zavix-image</code></li>
+<li>上传文件</li>
+<li>设置续写权限，公共读（否则你的图片连接在浏览器和md中是打不开的）。</li>
+<li>然后你可以看到一个外网访问域名：<code>zavix-image.oss-cn-shenzhen.aliyuncs.com</code></li>
+<li>然后你就可以在md里显示你的图片了，例如你上传了一个图片<code>snow_ball.png</code>，在md里就<code>![](http://zavix-image.oss-cn-shenzhen.aliyuncs.com/snow_ball.jpg)</code> 这样就可以了！</li>
+</ol>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/snow_ball.jpg" width=50%/>
+
+<p>另外OSS还要写其他功能，例如：</p>
+<ol>
+<li>绑定域名：就是把前面那段长的域名<code>http://zavix-image.oss-cn-shenzhen.aliyuncs.com</code>换成你自己的域名，例如<code>zavix-image.oss-cn-shenzhen.aliyuncs.com</code>，但是前提是域名进行了备案，目前我的域名正在备案中。这样能防止出现你之后修改了OSS的服务商或名称后，所有图片链接都要修改的问题。但是这个难度不亚于第2种方法，因此动手能力强的，直接搜linux，ubuntu，nginx，自己建服务器就好了。</li>
+<li>图片处理，建立样式，这部分我不太会</li>
+<li>计算处理，貌似能出发一些函数计算。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Tutorial 教程</category>
+      </categories>
+      <tags>
+        <tag>markdown</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>论文笔记《Seq-nms for video object detection》</title>
+    <url>/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Seq-nms-for-video-object-detection/</url>
+    <content><![CDATA[<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515727263191.png" alt="1515727263191"></p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>用于视频目标检测的NMS方法</p>
+<span id="more"></span>
+
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>视频目标检测困难的原因：</p>
+<ul>
+<li>较大的尺度变化</li>
+<li>遮挡</li>
+<li>运动模糊</li>
+</ul>
+<p>本文，我们提出单帧检测的一个简单拓展来帮助解决上述问题。</p>
+<p>单帧检测完全忽略了时间维度，本文，我们在后处理阶段融合时序信息，以此优化每帧的检测结果。对于给定的时间序列上的ROI和类别得分，我们使用简单的重叠标准来连接邻近帧的BBox，使得序列的得分最大化。之后抑制附近的BBox，然后对BBox重打分。</p>
+<p>贡献：</p>
+<ul>
+<li>提出Seq-NMS改进用于视频视频数据的物体检测流程。特别地，我们改进了后处理阶段，使用前后帧的高分物体结果增强弱检测结果。</li>
+<li>Seq-NMS在ImageNet VID上的表现超过先进的单帧检测结果。</li>
+<li>方法在ILSVRC2015上排名第3</li>
+</ul>
+<h2 id="2-我们的方法"><a href="#2-我们的方法" class="headerlink" title="2. 我们的方法"></a>2. 我们的方法</h2><h3 id="2-1-Seq-NMS"><a href="#2-1-Seq-NMS" class="headerlink" title="2.1 Seq-NMS"></a>2.1 Seq-NMS</h3><p>NMS经常会选错BBox，选择的BBox通常较大，且与GT与较小的IOU。大BBox经常有较高的物体得分，可能是在ROI pooling时大BBox能提取更多的信息。为了解决这个问题，我们尝试使用时序信息对bbox重排序。我们假设邻近帧有相同的物体具有相似的位置和尺寸。</p>
+<p>我们提出一些经验性的方法：1）序列选择，2）序列重打分，3）抑制。重复此步骤直到没有剩余序列为止。图1显示了此过程。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515729313541.png" alt="1515729313541"></p>
+<h4 id="序列选择"><a href="#序列选择" class="headerlink" title="序列选择"></a>序列选择</h4><p>当IoU超过一定阈值后，第一帧的一个BBox与第二帧的BBox连接，我们首先选择潜在的可能的所有连接。然后尝试找到得分最大的序列。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515729999290.png" alt="1515729999290"></p>
+<p>可以通过简单的动态规划算法求解。</p>
+<h4 id="序列重打分"><a href="#序列重打分" class="headerlink" title="序列重打分"></a>序列重打分</h4><p>尝试使用average或max函数对序列打分</p>
+<h4 id="抑制"><a href="#抑制" class="headerlink" title="抑制"></a>抑制</h4><p>选择后的BBox重候选BBox中移除，并且对IoU超过阈值的BBox抑制。</p>
+<h2 id="3-数据集"><a href="#3-数据集" class="headerlink" title="3. 数据集"></a>3. 数据集</h2><p>ImageNet VID数据集，30个类别</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515730390416.png" alt="1515730390416"></p>
+<h2 id="4-结果"><a href="#4-结果" class="headerlink" title="4. 结果"></a>4. 结果</h2><h3 id="4-1-RPN和分类器训练细节"><a href="#4-1-RPN和分类器训练细节" class="headerlink" title="4.1 RPN和分类器训练细节"></a>4.1 RPN和分类器训练细节</h3><p>首先，在VID训练集上迭代400K次，Fast R-CNN训练迭代200K次。最后固定卷积层，训练400K次，发现RPN在VID验证集上实现90%的召回率。</p>
+<p>对于分类器，我们考虑ZF和VGG16两个网络，ZF在VID的训练集上训练，VGG16在2015DET的训练和验证集上预训练。然后VGG在VID上训练，去掉多余的类别单元，然后固定其他层。</p>
+<h3 id="4-2-定量结果"><a href="#4-2-定量结果" class="headerlink" title="4.2 定量结果"></a>4.2 定量结果</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515731237073.png" alt="1515731237073"></p>
+<p>NMS表示单帧检测，best是表示每个类别选择其最优的策略，然后求其平均。表2显示检测结果。</p>
+<p>图3显示了每个类别的mAP的提升，图4显示了每个类别的提升。可以发现，摩托车、海龟、小熊猫、斑马、羊的提升较大。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515731407526.png" alt="1515731407526"></p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515731433180.png" alt="1515731433180"></p>
+<p>表3显示了VID比赛的结果，我们提交的最好结果是48.7%。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515731904233.png" alt="1515731904233"></p>
+<p>T-CNN的方法包含以下技术：1）很强的单帧检测器；2）bbox抑制和传播；3）轨迹&#x2F;tubelet 重打分；4）模型组合。其单帧检测器的mAP可达到67.7%如果仅考虑后面两个技术的提升，我们的方法提升更大（7.3% vs. 6.7%）。</p>
+<h3 id="4-3-定性分析"><a href="#4-3-定性分析" class="headerlink" title="4.3 定性分析"></a>4.3 定性分析</h3><p>Seq-NMS可以把一些低得分的物体重新找回，但是也可能带入一些虚警。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515732534734.png" alt="1515732534734"></p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515732575950.png" alt="1515732575950"></p>
+]]></content>
+      <categories>
+        <category>Note 笔记</category>
+        <category>Video Object Detection</category>
+      </categories>
+      <tags>
         <tag>Video Object Detection</tag>
       </tags>
   </entry>
@@ -1085,216 +1305,129 @@
       </tags>
   </entry>
   <entry>
-    <title>解决Markdown图片存放</title>
-    <url>/Tutorial-%E6%95%99%E7%A8%8B/Markdown-storage-image/</url>
-    <content><![CDATA[<p>使用对象存储保存markdown图片</p>
+    <title>Detectron: caffemodel转pkl</title>
+    <url>/Deep-Learning-Dev/Detectron-caffemodel2pkl/</url>
+    <content><![CDATA[<p>Detectron 利用caffe2的模型转换功能，将caffemodel转换为pkl，以VGG16为例。</p>
 <span id="more"></span>
 
-<p>markdown的优势是简洁，纯文本。但是当需要插入图片时就很烦人。需要截图，放到一个文件夹里，然后写相对路径。当我把笔记给另外一个人时，要连着图片文件夹一起给，很麻烦。</p>
-<p>那有没有什么办法可以解决呢？那是肯定有的。markdown的图片路径可以是一个url，因此如果你将图片放置在一个服务器上，那么只要是联网的电脑，md文件上的图片就可以直接查看了。</p>
-<p>那要怎么才能有个存图片的服务器呢？</p>
-<ol>
-<li>自己搭一个服务器</li>
-<li>租一个虚拟服务器，安装一个apache或nginx</li>
-<li>租一个对象存储 OSS</li>
-</ol>
-<p>第三种是我目前所想到的最简单的方法。</p>
-<p>那需要怎么做？</p>
-<ol>
-<li>选择一个云存储服务商，七牛或阿里云，我选择的是阿里云，学生优惠，40G，1年9.5块，用来存图片绰绰有余了。</li>
-<li>进入阿里云的管理控制台就可看到对象存储OSS，买一个资源包，包月包年那种</li>
-<li>新建一个bucket，自己定一个名称例如：<code>zavix-image</code></li>
-<li>上传文件</li>
-<li>设置续写权限，公共读（否则你的图片连接在浏览器和md中是打不开的）。</li>
-<li>然后你可以看到一个外网访问域名：<code>zavix-image.oss-cn-shenzhen.aliyuncs.com</code></li>
-<li>然后你就可以在md里显示你的图片了，例如你上传了一个图片<code>snow_ball.png</code>，在md里就<code>![](http://zavix-image.oss-cn-shenzhen.aliyuncs.com/snow_ball.jpg)</code> 这样就可以了！</li>
-</ol>
-<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/snow_ball.jpg" width=50%/>
+<p>首先去VGG官网下载pretrained的caffemodel和prototxt，<a href="http://www.robots.ox.ac.uk/~vgg/research/very_deep/">http://www.robots.ox.ac.uk/~vgg/research/very_deep/</a><br>然后运行如下代码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python2 tools/pickle_caffe_blobs.py \</span><br><span class="line">    --prototxt /home/all/models/VGG_ILSVRC_16_layers_deploy.prototxt \</span><br><span class="line">    --caffemodel /home/all/models/VGG_ILSVRC_16_layers.caffemodel \</span><br><span class="line">    --output output/vgg16.pkl</span><br></pre></td></tr></table></figure>
+<p>这时会出现问题</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;tools/pickle_caffe_blobs.py&quot;, line 223, in &lt;module&gt;</span><br><span class="line">    args.prototxt_file_name, args.caffemodel_file_name</span><br><span class="line">  File &quot;tools/pickle_caffe_blobs.py&quot;, line 210, in load_and_convert_caffe_model</span><br><span class="line">    caffenet, caffenet_weights</span><br><span class="line">  File &quot;/home/all/lib/anaconda2/envs/caffe2/lib/python2.7/site-packages/caffe2/python/caffe_translator.py&quot;, line 299, in TranslateModel</span><br><span class="line">    return TranslatorRegistry.TranslateModel(*args, **kwargs)</span><br><span class="line">  File &quot;/home/all/lib/anaconda2/envs/caffe2/lib/python2.7/site-packages/caffe2/python/caffe_translator.py&quot;, line 254, in TranslateModel</span><br><span class="line">    &#x27;I think something is wrong. This translation script &#x27;</span><br><span class="line">ValueError: I think something is wrong. This translation script only accepts new style layers that are stored in the layer field.</span><br></pre></td></tr></table></figure>
+<p>查询<a href="https://github.com/caffe2/caffe2/issues/823">issue&#x2F;823</a>可知，这是因为caffe2转换工具使用的是caffe V1版的proto和caffemodel，而早期的caffemodel如vgg16是老版本，因此需要进行升级。<br>升级工具在caffe&#x2F;tools里，因此先下载caffe然后编译，编译前需要修改Makefile.config来设置环境变量</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/BVLC/caffe.git</span><br><span class="line">cd caffe</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
+<p>然后使用工具升级prototxt和caffemodel</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd build/tools</span><br><span class="line">xuzhewei@LabServer000:~/lib/caffe-1.0/build/tools$ ./upgrade_net_proto_text /home/all/models/VGG_ILSVRC_16_layers_deploy.prototxt /home/all/models/VGG_ILSVRC_16_layers_deploy_V1.prototxt</span><br><span class="line">I0419 14:14:13.562763 23401 upgrade_proto.cpp:53] Attempting to upgrade input file specified using deprecated V1LayerParameter: /home/all/models/VGG_ILSVRC_16_layers_deploy.prototxt</span><br><span class="line">I0419 14:14:13.563534 23401 upgrade_proto.cpp:61] Successfully upgraded file specified using deprecated V1LayerParameter</span><br><span class="line">I0419 14:14:13.563611 23401 upgrade_proto.cpp:67] Attempting to upgrade input file specified using deprecated input fields: /home/all/models/VGG_ILSVRC_16_layers_deploy.prototxt</span><br><span class="line">I0419 14:14:13.563650 23401 upgrade_proto.cpp:70] Successfully upgraded file specified using deprecated input fields.</span><br><span class="line">W0419 14:14:13.563665 23401 upgrade_proto.cpp:72] Note that future Caffe releases will only support input layers and not input fields.</span><br><span class="line">I0419 14:14:13.564394 23401 upgrade_net_proto_text.cpp:49] Wrote upgraded NetParameter text proto to /home/all/models/VGG_ILSVRC_16_layers_deploy_V1.prototxt</span><br><span class="line">xuzhewei@LabServer000:~/lib/caffe-1.0/build/tools$ ./upgrade_net_proto_binary /home/all/models/VGG_ILSVRC_16_layers.caffemodel /home/all/models/VGG_ILSVRC_16_layers_V1.caffemodel</span><br><span class="line">I0419 14:15:38.643944 24177 upgrade_proto.cpp:53] Attempting to upgrade input file specified using deprecated V1LayerParameter: /home/all/models/VGG_ILSVRC_16_layers.caffemodel</span><br><span class="line">I0419 14:15:40.964524 24177 upgrade_proto.cpp:61] Successfully upgraded file specified using deprecated V1LayerParameter</span><br><span class="line">I0419 14:15:40.993201 24177 upgrade_proto.cpp:67] Attempting to upgrade input file specified using deprecated input fields: /home/all/models/VGG_ILSVRC_16_layers.caffemodel</span><br><span class="line">I0419 14:15:40.993227 24177 upgrade_proto.cpp:70] Successfully upgraded file specified using deprecated input fields.</span><br><span class="line">W0419 14:15:40.993252 24177 upgrade_proto.cpp:72] Note that future Caffe releases will only support input layers and not input fields.</span><br><span class="line">I0419 14:15:41.512004 24177 upgrade_net_proto_binary.cpp:48] Wrote upgraded NetParameter binary proto to /home/all/models/VGG_ILSVRC_16_layers_V1.caffemodel</span><br></pre></td></tr></table></figure>
+<p>最后再运行detectron的转换代码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python2 tools/pickle_caffe_blobs.py \</span><br><span class="line">    --prototxt /home/all/models/VGG_ILSVRC_16_layers_deploy_V1.prototxt \</span><br><span class="line">    --caffemodel /home/all/models/VGG_ILSVRC_16_layers_V1.caffemodel \</span><br><span class="line">    --output output/vgg16.pkl</span><br></pre></td></tr></table></figure>
 
-<p>另外OSS还要写其他功能，例如：</p>
-<ol>
-<li>绑定域名：就是把前面那段长的域名<code>http://zavix-image.oss-cn-shenzhen.aliyuncs.com</code>换成你自己的域名，例如<code>zavix-image.oss-cn-shenzhen.aliyuncs.com</code>，但是前提是域名进行了备案，目前我的域名正在备案中。这样能防止出现你之后修改了OSS的服务商或名称后，所有图片链接都要修改的问题。但是这个难度不亚于第2种方法，因此动手能力强的，直接搜linux，ubuntu，nginx，自己建服务器就好了。</li>
-<li>图片处理，建立样式，这部分我不太会</li>
-<li>计算处理，貌似能出发一些函数计算。</li>
-</ol>
 ]]></content>
       <categories>
-        <category>Tutorial 教程</category>
+        <category>Deep Learning Dev</category>
       </categories>
       <tags>
-        <tag>markdown</tag>
+        <tag>Detectron</tag>
       </tags>
   </entry>
   <entry>
-    <title>论文笔记《Individualness and Determinantal Point Processes for Pedestrian Detection》</title>
-    <url>/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/</url>
-    <content><![CDATA[<p>&lt;img src&#x3D;”<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1511942386442.png%22/">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1511942386442.png&quot;/</a> width&#x3D;”80%”&gt;</p>
-<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>本文，我们介绍了检测候选的个体性作为一个补充用于评价行人检测。个体性从目标推荐和滑窗得到的原始检测候选中分配一个检测结果给每个物体。我们表明，传统的方法，如NMS，是次优的，因为其仅基于周围检测结果的得分来抑制。我们使用行列式点过程(determinantal point process)结合个体性优化选择最后的结果。该方法使用质量和相似性对每个检测结果建模。然后，检测结果中具有高检测得分和低相关性（通过矩阵行列式计算概率）的作为最后的结果。此矩阵由quality terms作为对角元素，其他位置是相似性元素。具体地，我们专注于行人检测问题，该问题由于其频繁的遮挡和不可预知的运动使其称为最具挑战的问题之一。实验结果显示本文提出的方法比NMS和不受约束的二次优化问题更好。</p>
+    <title>论文笔记《Deep Feature Flow for Video Recognition》</title>
+    <url>/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Deep-Feature-Flow-for-Video-Recognition/</url>
+    <content><![CDATA[<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515674206560.png" alt="1515674206560"></p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>深度卷积网络在许多特性识别任务上取得成果，然而在视频任务上单帧检测太慢，因此将先进的图像识别网络迁移到视频任务上意义重大。我们提出深度特征流（Deep Feature Flow）框架用于快速精确的视频识别。该框架仅在稀疏关键帧上运行卷积网络的子网络，并通过流场将特征传递到其他帧，由于流场计算相对较快因此速度得到显著提升。端到端训练整体框架，识别精度显著提升。深度特征流框架灵活且通用，该方法在两个视频数据集上验证。</p>
+<ul>
+<li>MSA</li>
+<li>视频识别</li>
+<li>Deep Feature Flow</li>
+</ul>
 <span id="more"></span>
 
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>随着深度神经网络在图像识别任务上的成功，识别任务也从图像拓展到了视频，例如语义分割Cityspaces数据集和物体检测ImageNet VID数据集。对于重要场景，快速精确的视频识别非常重要，例如自动驾驶、视频监控。然后采用当前图像识别网络对视频单帧进行识别，对于大部分应用计算量都无法承担。</p>
+<p>一般认为图像内容在视频上的变化是缓慢的，尤其是高级语义[^45][^51][^21]。因此在特征学习时采用means of regularization，认为视频是一种无监督的数据源。并且，数据冗余和连续性也可以用于减少计算开销。但是相关的研究在视频识别的CNN上却较少。</p>
+<p>现代CNN具有相同的架构，大部分层为卷积计算，卷积特征与原图具有空间对应性，因此有机会通过空间扭曲将特征传播到邻近帧。</p>
+<p>本文的工作中，我们提出深度特征流（Deep Feature Flow）框架用于快速精确的视频识别，通过流场将关键帧的深度特征传播到其他帧。如图1，特征图对汽车和行人有响应，且邻近两帧相似，通过传播后特征也与原始的特征相似。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515485794145.png" alt="1515485794145"></p>
+<p>一般，流场估计和特征传播比卷积特征计算快得多。因此能够避免计算瓶颈，速度得到显著提升。整个系统通过端到端训练，显著提升识别精度。</p>
+<p>总结，深度特征流是一个用于视频识别的快速、精确、同样的端到端框架。其采目前先进的图像识别网络。据我们所知，这是第一次在深度学习框架中联合训练流和视频识别任务。后续的实验证实了该框架在视频物体检测和语义分割任务上的有效性。与单帧方法比，实现了巨大的提升（10X），精度稍有损失。</p>
+<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p>据我们所知，我们的工作很特别没有相似的工作进行直接比较。但是，在部分内容有一些相关工作如下所示。</p>
 <ul>
-<li>机构：首尔大学，加州大学</li>
-<li>行人检测后处理，个体性估计</li>
-<li>代码:<a href="http://cpslab.snu.ac.kr/software">http://cpslab.snu.ac.kr/software</a></li>
+<li>图像识别：目标检测领域代表方法是基于区域方法（R-CNN, Fast R-CNN, SPP-Net, Faster R-CNN, R-FCN），语义分割领域代表方法是全卷积神经网络（FCN，[^4], [^50] ）。</li>
+<li>网络加速：矩阵分解，量化权重。</li>
+<li>光流：相关方法研究主要进行了10多年，且光流主要针对小偏移。目前一些针对大偏移并组合匹配的方法（DeepFlow和EpicFlow），但是都是手工设计。最近，深度学校和语义信息用于光流。FlowNet第一次使用CNN估计运动。在文献[^32]网络结构简化为空间金字塔网络。另一些工作尝试开发语义分割信息帮助光流估计[^37][^1][^19] ，即根据区域的类别对运动流程进行特定的约束。光流信息可用于如姿势估计等视觉任务。本工作开发光流用于加快一般视频识别任务。</li>
+<li>开发时序信息：T-CNN在视频的tubelets中融合时序和上下文信息。密集3D CRF提出大范围的时空归一化进行语义视频分割。STFCN[^10]考虑时空FCN，用于视频语义分割。这些工作能够提升精度但是也极大的增加计算开销。然而，我们的方法旨视频上通过时序信息减少计算量。</li>
+<li>缓慢特征分析：高级语义特征一般比低级语义特征的变化更慢，因此在连续视频帧上，深度特征变化非常缓慢且连续。这个发现已经被用于视频特征学习的调整中[^45][^21][^51][^49][^40] 。我们推测，我们的方法也能从这个特性上受益。</li>
+<li>Clockwork卷积网络[^38] 该工作与我们的工作最接近，其对于特征视频帧抑制某些网络层，并实验之前的特征。但是我们的方法更简单且有效。从速度上该方法仅减少了一些帧的一些层的计算（1&#x2F;3 or 2&#x2F;3）。而我们工作是节省大部分帧的大部分层的计算。<br>对于准确性，Clockwork没有考虑多帧和简单复制特征的关系，并且仅对一个现成的网络进行计算编排，没有fine-tuning或再训练。其一点速度的提升都带来较大的精度下降。我们的工作重新端到端训练了一个考虑运动的两帧网络，并且在速度提升3倍的情况下仅带来很小的精度下降。<br>Clockwork仅应用于FCN的语义分割，我们的工作将一般的图像识别网络迁移到视频领域。</li>
 </ul>
-<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>目标检测的目的是在图像中定位一个已知类别的目标。这对于许多视觉任务的基础，例如跟踪、场景识别、动作识别等。在视觉跟踪中，基于检测的跟踪是在连续图像中基于连续的检测结果定位目标，是非常有效的方法[^1]。通过定位图像中目标的位置，我们能更好理解场景中发生的事情[^2]。目标检测也应用于动作识别，通过发现一系列特定相关的动作序列[^3]。</p>
-<p>一般目标检测的框架在测试图像上进行滑窗或者通过训练的分类器推荐目标。目前已经有许多目标检测器能够将独立的目标检测好。然而，一个检测器对每个目标的检测结果周围都会产生大量的原始检测结果（raw detection responses），如图1a所示。冗余的检测结果一般通过贪心算法进行抑制得到图1b，如NMS。</p>
-<p>采用上述框架，很难检测高度被遮挡的目标。因为分类器在训练时设计为用于分辨不同的类别，而不是分别类内差异。例如图1中A、B行人外接矩形高度重叠，我们检测时需要判断是FP还是FN。基于NMS，由于A被遮挡，其检测得分会低于B，因此会被抑制。因此，NMS方法不可避免的产生一些FN，当目标相互遮挡时。另一方面，如果一些先验知识能够利用，例如不同的identities，这样的问题就能避免。事实上，false rejection能够极大影响检测精度，例如原始的检测结果召回率为90%，经过NMS之后检测结果仅为50%。因此，从原始检测结果挑选是一件重要的任务。</p>
-<p>本文，我们提出一个算法基于个体性（individualness）和行列式点过程（determinantal point process, DPP）用于精确检测，并且可以应用于任何目标检测器。该方法可以作为目标性检测的一个独立补充。物体性检测得到一组候选结果，个体性检测发现候选结果的关系，得到最终检测结果。我们定义个体性使用特征向量的相关性，其包含bbox中的外观和空间信息。具体的，我们关注人群场景中的多行人检测问题。</p>
-<p>DPP是一个随机过程，使用量子物理理论中的互斥粒子模型，其禁止高度相关的量子态同时出现。这个特性很适合排除冗余的检测结果。为了应用DPP，需要定义质量和多样性因子，通常为unary score和pair-wise correlation。基于此，我们可以选择一个更优化的子集如图1c所示。</p>
-<p>本文的贡献如下所示：</p>
-<ol>
-<li>现有检测框架中，从候选检测结果中选择最后结果的方法存在问题</li>
-<li>引入DPP增强检测精度，通过设计质量和多样性特征设计</li>
-<li>用DPP选择优化的检测结果，并在多个行人数据集上验证。</li>
-<li>在PETS 2009上，DPM基于本文方法达到41.9%的准确度和99%的精度，而NMS只达到23.2%的准确度和98.2%的精度。</li>
-<li>在30个行人的图像上处理超过300个候选结果的时间少于30ms</li>
-</ol>
-<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p>行人检测方法：HOG、SVM、DPM、Boosting-Based，Faster R-CNN</p>
-<p>融合检测结果：NMS。</p>
-<ol>
-<li>文献[^13]指出定位精确性与检测得分没有很强的相关性。因此其提出一个回归模型学习检测结果与GT的相对位置。</li>
-<li>文献[^14]将NMS框架整合到深度学习模型中，但是NMS的参数在训练时仍然是固定的。</li>
-</ol>
-<p>NMS可以看为优化问题：</p>
-<ol>
-<li>文献[^15]提出二次无约束二元优化方法（quadratic unconstrained binary optimization，QUBO）替代NMS。QUBO的目的是找到一个二元向量，其中每个元素表示对应的检测BBox是否应该被抑制。目标函数包含一元和二元项。一元项测量BBox是行人的置信度，二元项基于BBox的重叠区域进行惩罚。目标函数使用贪心算法求解。QUBO的问题在于其估计行人之间的分布使用二元目标函数。</li>
-<li>文献[^16]提出基于吸引力传播聚类（affinity propagation clustering，APC）的方法。统计BBox两辆之间的相似性，然后聚类相似性最大的。 但是APC没有显式的惩罚相互接近的物体。尽管可以增加互斥函数进行改进，但是检测精度也没用显著的增加。</li>
-</ol>
-<h2 id="3-方法"><a href="#3-方法" class="headerlink" title="3. 方法"></a>3. 方法</h2><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512616433920.png" alt="1512616433920"></p>
-<p>提出的方法包含连个阶段：物体性检测和个体性检测。本文使用DDP建模BBox之间的关系。</p>
-<h3 id="3-1-行列式点过程方程（Determinantal-Point-Process-Formulation）"><a href="#3-1-行列式点过程方程（Determinantal-Point-Process-Formulation）" class="headerlink" title="3.1 行列式点过程方程（Determinantal Point Process Formulation）"></a>3.1 行列式点过程方程（Determinantal Point Process Formulation）</h3><p>定义：</p>
+<h2 id="3-Deep-Feature-Flow"><a href="#3-Deep-Feature-Flow" class="headerlink" title="3. Deep Feature Flow"></a>3. Deep Feature Flow</h2><p>表1总结了本文的符号，图2为方法示意图。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515659482706.png" alt="1515659482706"></p>
+<h3 id="深度特征流DFF推理（Deep-Feature-Flow-Inference）"><a href="#深度特征流DFF推理（Deep-Feature-Flow-Inference）" class="headerlink" title="深度特征流DFF推理（Deep Feature Flow Inference）"></a>深度特征流DFF推理（Deep Feature Flow Inference）</h3><p>对于给定的前馈神经网络$N$ ，$I$为图像输入，结果$y&#x3D;N(I)$，我们将$N$分解为两个连续的子网络。第一个子网络为$N_{feat}$特征子网络，该网络是全卷积且输出一些中间特征图$f&#x3D;N_{feat}(I)$。第二个子网络为任务网络，对于特定任务有特征的结构，并基于上述特征图$y&#x3D;N_{task}(f)$。</p>
+<p>连续的视频帧具有高度的相似性，且越深的特征层相似性越高，我们通过该相似性减少计算开销。具体的，$N_{feat}$仅在特定稀疏关键帧上计算，非关键帧$I_i$的特征通过其之前的关键帧传播得到。</p>
+<p>$M _ {i \rightarrow k}$ 是一个二维的流场，其通过一个流估计算法 $F$ 得到。然后通过双线性缩放到与特征图相同的大小，用于传播。当前帧i的位置p通过流场得到其与关键帧k的位置偏差 $\delta p&#x3D;M _ {i \rightarrow k}(p)$ 。</p>
+<p>因此特征扭曲可以通过双线性差值得到：</p>
+<p>$$ f_i^c(p) &#x3D; \sum_q G(q,p+\delta p)f_k^c(q) $$</p>
+<p>c表示特征通道，q是特征图的所有空间位置，$G(·,·)$为双线性差值核，其为二维，因此将其分解为两个一维核：</p>
+<p>$$ G(q,p+\delta p)&#x3D;g(q_x,p_x+\delta p_x)\cdot g(q_y, p_y+\delta p_y) $$</p>
+<p>$g(a,b)&#x3D;max(0,1-|a-b|)$。</p>
+<p>空间扭曲可能由于流估计错误导致不准确。为了更好估计特征，其强度通过尺度场（scale field）进行调节。尺度场通过尺度函数$S$得到$S_{i\rightarrow k}&#x3D;S(I_k,I_i)$。最后，特征传播方程定义为：</p>
+<p>$f_i&#x3D;W(f_k,M_{i\rightarrow k},S_{i \rightarrow k}) （3）$</p>
+<p>该函数对所有位置、所有通道的特征进行处理，并对特征乘以尺度因子。</p>
+<p>该视频识别算法被称为深度特征流，如算法1所示。$F$流场函数是手工设计的低级别流，如SIFT-Flow，不需要训练，马上可用。尺度函数S的每个位置为1。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515663944929.png" alt="1515663944929"></p>
+<h3 id="DFF训练"><a href="#DFF训练" class="headerlink" title="DFF训练"></a>DFF训练</h3><p>流函数一般用于低级图像像素的相关性，计算快，但是对于识别任务不够准确，并且高级特征的改变比像素小。因此为了对此建模，我们也使用一个CNN来估计流场和尺度场，所有的组件都能够端到端训练。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515674206560.png" alt="1515674206560"></p>
+<p>架构如图2（b）所示。使用SGD训练，在每个mini-batch，随机选择一对邻近帧，${I _ k,I _ i},0\le i-k \le 9$。前向传播时，特征网络$N _ {feat}$对关键帧图像$I _ k$计算特征图$f _ k$，之后流网络$F$计算流场和尺度场。当$i&gt;k$时，根据式（3）计算特征$f _ i$，否则不传播。最后，任务网络$N _ {task}$基于特征图生成结果，并产生损失值。反向传播损失到所以组件。可以发现，当$i&#x3D;k$时即退化为每帧训练。</p>
+<p>流网络比特征网络快，在Fly Chair dataset[^9]上进行预训练。通过最后一层卷积适当的增加通道数，我们在网络最后增加了一个尺度函数输出。尺度函数都使用（权重0，偏置1进行初始化）。流网络然后按照图2（b）fine-tuned。</p>
+<p>特征传播函数是无参且可微的，我们计算特征$f _ i$的导数，对应于$f_k$，尺度场$S _ {i\rightarrow j}$，流场$M _ {i\rightarrow j}$。前两个使用链式法则容易计算。对于后一个，导数为：</p>
+<p>$$\frac{\partial f _ i^c(p)}{\partial M _ {i\rightarrow j}}&#x3D;S _ {i\rightarrow j}\sum _ q \frac{\partial G(q,p+\delta p)}{\partial \delta p}f _ k^c(q) ~ (4)$$</p>
+<p>然后通过公式2即可计算导数，由于M是二维的，因此$\partial \delta p$可分为$\partial \delta p_x$ $\partial \delta p_y$ 。</p>
+<p>本方法可以在稀疏标记的帧上进行训练，并利用所有的数据（这里不理解）。</p>
+<h3 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a>复杂度分析</h3><p>非关键帧计算开销与每帧计算开销的比例：</p>
+<p>$$r&#x3D;\frac{O(F)+O(S)+O(W)+O(N _ {task})}{O(N _ {feat})+O(N _ {task})}~(5)$$</p>
+<p>由于复杂度相差较大，可简化为：</p>
+<p>$$r\approx \frac{O(F)}{O(N_{feat})}~(6)$$</p>
+<p>因此复杂度比例由流网络和特征网络决定，可以通过每秒浮点操作FLOPs评估，表2显示了我们实现的典型值。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515676597477.png" alt="1515676597477"></p>
+<p>另外，速度还跟关键帧的稀疏程度相关，我们定义每$l$连续帧选一个关键帧，则加速因子为：</p>
+<p>$$s&#x3D;\frac{l}{1+(l-1)*r}~(7)$$</p>
+<h3 id="关键帧安排"><a href="#关键帧安排" class="headerlink" title="关键帧安排"></a>关键帧安排</h3><p>在本文工作中，我们简单的固定关键帧的安排，关键帧的应用区间$l$固定。然而根据图像内容的变化可能变化的$l$能够实现更好的精度和速度的权衡。一般，关键帧应该是图像内容具有显著变化时。</p>
+<p>如何设计高效和调整关键真的安排是我们之后改进工作。不同的视频任务可能有不同的行为和需求。从数据调整关键帧的安排是一个有趣的选择。</p>
+<h2 id="4-网络架构"><a href="#4-网络架构" class="headerlink" title="4. 网络架构"></a>4. 网络架构</h2><p>本方法拟用于不同的网络和识别任务，因此我们采用先进的架构和重要的视觉任务。</p>
+<h3 id="Flow-Network"><a href="#Flow-Network" class="headerlink" title="Flow Network"></a>Flow Network</h3><p>我们采用基于CNN的FlowNet[^9] 作为默认方法，并设计了两个低复杂度变体 FlowNet Half，每层减少一半的卷积核，复杂度为1&#x2F;4，另一个采用Inception 结构[^42] 的FlowNet Inception，复杂度减少为1&#x2F;8。</p>
+<p>三个网络都在相同的数据集上训练，输出的stride为4。输入图像为1&#x2F;2，因此流网络的输出是原图的1&#x2F;8。特征图的stride是16，使用双线性差值将流场降采样，双线性差值为网络的中的非参数层，且可微。</p>
+<h3 id="特征网络"><a href="#特征网络" class="headerlink" title="特征网络"></a>特征网络</h3><p>我们使用ResNet作为特征网络，最后一层1000路分类层去掉，特征stride从32减少为16得到分辨率更高的特征图，后面接DeepLab用于语义分割和R-FCN用于物体检测。跳着第一个block的conv5，其stride从2变为1，使用holing算法，保证感知域的情况下。另外我们增加了（dilation&#x3D;6）的3x3卷积核，减少特征通道维度减少为1024。该1024维的特征图作为后续任务的中间特征图。</p>
+<p>表2显示了复杂度的比例。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515678762441.png" alt="1515678762441"></p>
+<h3 id="语义分割"><a href="#语义分割" class="headerlink" title="语义分割"></a>语义分割</h3><p>随机初始化1x1的卷积核得到（C+1）得分图，C是类别数。之后跟一个softmax层输出每个像素的概率。因此任务网络仅有一个可学习的网络层，整体的网络结果与DeepLab类似。</p>
+<h3 id="物体检测"><a href="#物体检测" class="headerlink" title="物体检测"></a>物体检测</h3><p>我们采用先进的R-FCN，对于中间特征图，两个全卷积网络分别应用于前512维特征和后512维特征，分别用于区域推荐任务和检测任务。</p>
+<p>区域推荐分支，使用RPN，我们设定9个anchors，两个并排的1x1的卷积层得到2n维的物体得分和4n的回归值。通过NMS（0.7）后得到300个ROI。</p>
+<p>检测分支，两个并排的1x1卷积层输出位置敏感的得分图和bbox回归图。他们的维度是$(C+1)k^2$和$4k^2$。k是检测器&#x2F;回归器数量，细节见[^8] 。最后使用NMS（0.3）得到最后的结果。</p>
+<h2 id="5-实验"><a href="#5-实验" class="headerlink" title="5. 实验"></a>5. 实验</h2><p>Cityscapes用于语义分割，ImageNet VID用于物体检测。</p>
+<h3 id="5-1-实验设置"><a href="#5-1-实验设置" class="headerlink" title="5.1 实验设置"></a>5.1 实验设置</h3><h4 id="Cityscapes"><a href="#Cityscapes" class="headerlink" title="Cityscapes"></a>Cityscapes</h4><p>50个不同城市，帧率17fps，训练集2975，验证500，测试1525个snippets。每个snippet有30帧，第20帧一像素级的标注，可用于语义分割，30个语义类别。遵守[^5]的规则，训练集上训练，验证集上测试，语义分割的精确度使用像素级的平均交并比得分评估。</p>
+<p>对于训练，图像都缩放为短边1024pixels用于特征网络，512pixels用于流网络。使用SGD训练，20K迭代，在8GPU上，每个GPU一个mini-batch，学习率前15K迭代0.001，后5K迭代0.0001。</p>
+<h4 id="ImageNet-VID"><a href="#ImageNet-VID" class="headerlink" title="ImageNet VID"></a>ImageNet VID</h4><p>训练集3862，验证集555，测试集937，全标注的视频段，帧率25或30，30个类别，使用mAP作为评价。</p>
+<p>训练图像短边分别为600和300pixels，60K迭代，40K学习率0.001，20K学习率0.0001。</p>
+<p>训练时，不仅使用VID训练集，还使用DET训练集，每个mini-batch提取图像的比例VID:DET &#x3D; 2:1。</p>
+<h3 id="5-2-评估方法和结果"><a href="#5-2-评估方法和结果" class="headerlink" title="5.2 评估方法和结果"></a>5.2 评估方法和结果</h3><p>由于DFF灵活且有多种设计选择，我们为了评估，设定一些默认设置，特征网络ResNet-101，流网络使用FlowNet，关键帧$l$为5用于C的语义分割，10用于I的物体检测。对于每个snippet我们评估l个图像对，k&#x3D;i-l+1,…,i，每个帧i有gt标注。</p>
+<h4 id="验证DFF架构"><a href="#验证DFF架构" class="headerlink" title="验证DFF架构"></a>验证DFF架构</h4><p>如表3所示。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515682224218.png" alt="1515682224218"></p>
 <ul>
-<li>DPP基于BBox的质量和相似性计算最终选择的BBox</li>
-<li>有个N个BBox，$y$表示所有BBox的集合，$Y$标示最终选择的子集</li>
-<li>BBox的质量为$q_i$</li>
-<li>BBox的相似性为$S_{ij}$，两个BBox向量的内积</li>
-<li>计算正-半正定核矩阵（positive-semidefinite kernel matrix）$L_Y&#x3D;[L_{ij}]_{i,j\in Y}$</li>
-<li><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512620048441.png" alt="1512620048441"></li>
+<li>Frame：在单帧上训练N</li>
+<li>SFF：使用预先计算大偏移flow，SFF-fast和SFF-slow采用不同的参数。</li>
+<li>DFF：N和F使用端到端训练，固定N训练，固定F训练，分别训练</li>
 </ul>
-<p>则选择BBox的过程即为最优化问题</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512619743792.png" alt="1512619743792"></p>
-<p>通常来说这是一个NP-hard（non-deterministic polynomial）问题，需要对所以的可能进行评估，但是幸运的是该问题是log-submodular问题，可以通过简单的贪心算法估计。</p>
-<blockquote>
-<p><a href="https://baike.baidu.com/item/NP-hard">百度</a><br>NP-hard，其中，NP是指非确定性多项式（non-deterministic polynomial，缩写NP）。所谓的非确定性是指，可用一定数量的运算去解决多项式时间内可解决的问题。NP-hard问题通俗来说是其解的正确性能够被“很容易检查”的问题，这里“很容易检查”指的是存在一个多项式检查算法。相应的，若NP中所有问题到某一个问题是图灵可归约的，则该问题为NP困难问题。</p>
-</blockquote>
-<p>例如图，当选择$Y&#x3D;{i,j}$时，DPP选择其的得分$P_L(Y)$为</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512621004358.png" alt="1512621004358"></p>
-<p>可以发现，当$q$增大时行列式的值增加，当$|S_{i,j}|$增大时，行列式的值减小。因此DPP过程自动的选择高质量和低相似性的组合。</p>
-<h3 id="3-2-质量项"><a href="#3-2-质量项" class="headerlink" title="3.2 质量项"></a>3.2 质量项</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512629712724.png" alt="1512629712724"></p>
-<p>一般来说质量项就是检测得分，但是原始得分是相互独立的。我们提出一个检测策略考虑周围结果的关系。一个图像中的虚警可能会抑制真正行人BBox。这种问题在BBox很大时更严重，统计一个GT中具有的检测BBox数量如图3b所示。可以发现大部分GT中包含的BBox非常少（这里有个问题，是不是本来滑窗ROI的尺寸本来就比较大，然后0也被统计进去了）。基于这个发现，提出重得分函数</p>
-<p>$$s_i^c&#x3D;s_i^oexp(-\lambda n_i)$$</p>
-<p>$\lambda$是一个常数。并且这样还可以得到更加贴紧行人的BBox，如第四节所示。（这个想法很特别，而且似乎特别适合二元检测任务，因为根据透视原理，不可能在一个大目标前面还存在多个小目标）。</p>
-<p>特别地，在相机固定的场景中，行人的高度变化不大，而且高度$h_i$与位置$(x_i,y_i)$存在函数关系，可以容易的拟合出函数的系数：</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512630353869.png" alt="1512630353869"></p>
-<p>假设行人的身高成高斯分布，我们根据BBox的偏差来对其进行重打分：</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512630798943.png" alt="1512630798943"></p>
-<p>最后质量项$q$表示为：</p>
-<p>$$q&#x3D;\alpha s + \beta$$</p>
-<p>权重的设置需要根据检测器来确定，比如DPM的平均得分为0.7，ACF的得分是33.2。</p>
-<h3 id="3-3-个体性和多样性特征"><a href="#3-3-个体性和多样性特征" class="headerlink" title="3.3 个体性和多样性特征"></a>3.3 个体性和多样性特征</h3><p>个体性旨在确定两个图像是否是指同一个人。类似多相机环境中的行人身份再识别问题。但是这两个问题不同且难度不一样。</p>
-<ol>
-<li>重叠区域有完全相同的信息</li>
-<li>两个图像快交叠靠的很近</li>
-<li>需要考虑被遮挡的行人，再识别问题通常不考虑</li>
-</ol>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512631315204.png" alt="1512631315204"></p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512633314567.png" alt="1512633314567"></p>
-<p>为了克服这个问题，我们考虑测量BBox特征描述的相关性。特征应该对背景、尺度不敏感。为了实现这个目的，我们采用卷积特征。总体上，相关矩阵是块对角并且个体相关性较低，因此我们决定采用CNN特征。</p>
-<p>仅只用CNN不够有效，如图4所示，对单个行人有多个聚类结果，例如图5中间男人BBox右边有个BBox，尽管两个BBox中有轮廓不一样，但是仍然是一个行人。为了解决这个问题，我们增加考虑BBox的控制位置。空间个体性设计为单个行人周围的BBox具有高相关性。则第i个检测结果的个体性表示为：</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512635866556.png" alt="1512635866556"></p>
-<p>k表示像素序号，$\pi_i$表示属于检测结果i的bbox的像素集合。尽管$\varphi_i$的纬度等同于图像尺寸，但是两个BBox的空间相关性可以检测计算得到:</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636179348.png" alt="1512636179348"></p>
-<p>同时不需要存储完整的相关性向量，只需保存检测的BBox尺寸和重叠面积：</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636263251.png" alt="1512636263251"></p>
-<p>（晕，这不就是IOU么）</p>
-<p>得到了BBox的物体性特征$$\phi_i$$和$$\varphi_i$$，如何融合两个特征为一个多样性特征？可以采用平均值，但是其要求特征具有相同纬度。我们提出一个更通用有效的方法设计多样性特征，并直接构造正-半正定相似性矩阵S。$S^c$，$S^s$分别为有两个特征构建，换句话说$$S_{ij}^c&#x3D;\phi_i^T\phi_j$$。然后使用一个平和权重（0.8）融合：</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636884079.png" alt="1512636884079"></p>
-<h3 id="3-4-Mode-Finding"><a href="#3-4-Mode-Finding" class="headerlink" title="3.4 Mode Finding"></a>3.4 Mode Finding</h3><p>这一节描述如何求解上面的最优化函数。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512637471602.png" alt="1512637471602"></p>
-<ol>
-<li>每次选择最大的j</li>
-<li>加入到Y集合中</li>
-<li>计算P，若增加倍数超过阈值，则继续，并将j从y中删除</li>
-<li>直到P不再增加，或y为空</li>
-</ol>
-<h3 id="3-5-与QUBO的关系"><a href="#3-5-与QUBO的关系" class="headerlink" title="3.5 与QUBO的关系"></a>3.5 与QUBO的关系</h3><p>QUBO使用DPP目标函数转换为相似的形式。DPP是寻找最大化$L_Y$的行列式。QUBO有两个缺点</p>
-<ol>
-<li>QUBO cannot deal with positively correlated items. 这句话不理解</li>
-<li>QUBO 更加惩罚高度相关的BBox，可能不适合遮挡的行人。</li>
-</ol>
-<p>假设$L_y&#x3D;[2,-0.8;-0.8,1.4]$，QUBO将不选择第二个检测结果因为$-0.8-0.8+1.4&#x3D;-0.2&lt;0$，在DPP中$det(Y_L)&#x3D;2.16&gt;2$ 因此会选择第二个结果。</p>
-<h2 id="4-实验"><a href="#4-实验" class="headerlink" title="4. 实验"></a>4. 实验</h2><p>数据集</p>
-<ul>
-<li>INRIA：288个图像</li>
-<li>PETS2009：S1.L1的190帧，平均每帧33个行人，行人较密</li>
-<li>EPFL Terrace：5010帧，每25帧取1帧，平均每帧5人</li>
-</ul>
-<p>模型：DPM，ACF，Faster RCNN</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512654724175.png" alt="1512654724175"></p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512654762753.png" alt="1512654762753"></p>
-<p>表1和图7显示结果，可以看见DPP都比NMS好或一致，并且在PET2009这类数据集上有显著提升。并且RCNN这类方法在INRIA上有较好的效果，但是在PET2009上效果不好，可能是因为区域推荐的方法会生成很多重叠的框，而不是独立个体的框。上述实验不会使用先验知识。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512655923604.png" alt="1512655923604"></p>
-<p>图8a里面有贪心NMS，另一种为特殊NMS$\frac{area(d_g\bigcap d_e)}{min(area(d_g),area(d_e))}&gt;0.65$ 能够实现更好的精度。非贪心NMS不排除被抑制的BBox。QUBO的精度与非贪心NMS相似。并且DPP比其他的都显著改善。</p>
-<p>图8b表示了CNN网络层的有效性。显示，检测结果对不同的网络层不敏感。我们使用4096维向量用于计算多样性特征。</p>
-<p>图8c显示了计算速度。最多300个proposal，只统计算法1的计算时间。卷积计算时间248ms。计算平台Intel Xeon 2.3 GHz，128 RAM，TITAN X D5 12GB CPU。处理过程平均少于30ms。</p>
-<p>BBox定位精度使用$\frac{|d_e\bigcap d_g|}{|d_e|}$测量。PET2009中DPP是0.81，NMS是0.76。图9显示一些结果示例。DPP产生更贴紧的BBox，如EPFL-84帧，NMS和QUBO都漏检了中间穿白衣服的人，DPP成功检测。</p>
-<h2 id="5-结论"><a href="#5-结论" class="headerlink" title="5 结论"></a>5 结论</h2><p>我们提出一种基于个体性改进检测性能的算法。个体性评价两个检测候选的相似性，物体性基于得分生成候选框。每个BBox外观和空间信息用于考虑个体性。然后行列式点处理过程结合得分和相似性得到最后结果。实验结果表明DPP比NMS和QUBO更好。并且在平均包含30个行人的图像上处理300个候选框的速度小于30ms。</p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>[^13]: Liu, S., Lu, C., Jia, J.: Box aggregation for proposal decimation: last mile of object detection. In ICCV, pp. 2569–2577 (2015)<br>[^14]: Wan, L., Eigen, D., Fergus, R.: End-to-end integration of a convolution network, deformable partsmodel and non-maximum suppression. In CVPR, pp. 851–859 (2015)<br>[^15]: Rujikietgumjorn, S., Collins, R.T.: Optimized pedestrian detection for multiple and occluded people. In CVPR (2013)<br>[^16]: Rothe, R.,Guillaumin,M., Gool, L.V.: Non-maximum suppression for object detec- tion by passing messages between windows. In ACCV (2014)</p>
-]]></content>
-      <categories>
-        <category>Note 笔记</category>
-        <category>Pedestrian Detection</category>
-      </categories>
-      <tags>
-        <tag>Pedestrian Detection</tag>
-        <tag>NMS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>论文笔记《Seq-nms for video object detection》</title>
-    <url>/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Seq-nms-for-video-object-detection/</url>
-    <content><![CDATA[<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515727263191.png" alt="1515727263191"></p>
-<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>用于视频目标检测的NMS方法</p>
-<span id="more"></span>
-
-<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>视频目标检测困难的原因：</p>
-<ul>
-<li>较大的尺度变化</li>
-<li>遮挡</li>
-<li>运动模糊</li>
-</ul>
-<p>本文，我们提出单帧检测的一个简单拓展来帮助解决上述问题。</p>
-<p>单帧检测完全忽略了时间维度，本文，我们在后处理阶段融合时序信息，以此优化每帧的检测结果。对于给定的时间序列上的ROI和类别得分，我们使用简单的重叠标准来连接邻近帧的BBox，使得序列的得分最大化。之后抑制附近的BBox，然后对BBox重打分。</p>
-<p>贡献：</p>
-<ul>
-<li>提出Seq-NMS改进用于视频视频数据的物体检测流程。特别地，我们改进了后处理阶段，使用前后帧的高分物体结果增强弱检测结果。</li>
-<li>Seq-NMS在ImageNet VID上的表现超过先进的单帧检测结果。</li>
-<li>方法在ILSVRC2015上排名第3</li>
-</ul>
-<h2 id="2-我们的方法"><a href="#2-我们的方法" class="headerlink" title="2. 我们的方法"></a>2. 我们的方法</h2><h3 id="2-1-Seq-NMS"><a href="#2-1-Seq-NMS" class="headerlink" title="2.1 Seq-NMS"></a>2.1 Seq-NMS</h3><p>NMS经常会选错BBox，选择的BBox通常较大，且与GT与较小的IOU。大BBox经常有较高的物体得分，可能是在ROI pooling时大BBox能提取更多的信息。为了解决这个问题，我们尝试使用时序信息对bbox重排序。我们假设邻近帧有相同的物体具有相似的位置和尺寸。</p>
-<p>我们提出一些经验性的方法：1）序列选择，2）序列重打分，3）抑制。重复此步骤直到没有剩余序列为止。图1显示了此过程。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515729313541.png" alt="1515729313541"></p>
-<h4 id="序列选择"><a href="#序列选择" class="headerlink" title="序列选择"></a>序列选择</h4><p>当IoU超过一定阈值后，第一帧的一个BBox与第二帧的BBox连接，我们首先选择潜在的可能的所有连接。然后尝试找到得分最大的序列。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515729999290.png" alt="1515729999290"></p>
-<p>可以通过简单的动态规划算法求解。</p>
-<h4 id="序列重打分"><a href="#序列重打分" class="headerlink" title="序列重打分"></a>序列重打分</h4><p>尝试使用average或max函数对序列打分</p>
-<h4 id="抑制"><a href="#抑制" class="headerlink" title="抑制"></a>抑制</h4><p>选择后的BBox重候选BBox中移除，并且对IoU超过阈值的BBox抑制。</p>
-<h2 id="3-数据集"><a href="#3-数据集" class="headerlink" title="3. 数据集"></a>3. 数据集</h2><p>ImageNet VID数据集，30个类别</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515730390416.png" alt="1515730390416"></p>
-<h2 id="4-结果"><a href="#4-结果" class="headerlink" title="4. 结果"></a>4. 结果</h2><h3 id="4-1-RPN和分类器训练细节"><a href="#4-1-RPN和分类器训练细节" class="headerlink" title="4.1 RPN和分类器训练细节"></a>4.1 RPN和分类器训练细节</h3><p>首先，在VID训练集上迭代400K次，Fast R-CNN训练迭代200K次。最后固定卷积层，训练400K次，发现RPN在VID验证集上实现90%的召回率。</p>
-<p>对于分类器，我们考虑ZF和VGG16两个网络，ZF在VID的训练集上训练，VGG16在2015DET的训练和验证集上预训练。然后VGG在VID上训练，去掉多余的类别单元，然后固定其他层。</p>
-<h3 id="4-2-定量结果"><a href="#4-2-定量结果" class="headerlink" title="4.2 定量结果"></a>4.2 定量结果</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515731237073.png" alt="1515731237073"></p>
-<p>NMS表示单帧检测，best是表示每个类别选择其最优的策略，然后求其平均。表2显示检测结果。</p>
-<p>图3显示了每个类别的mAP的提升，图4显示了每个类别的提升。可以发现，摩托车、海龟、小熊猫、斑马、羊的提升较大。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515731407526.png" alt="1515731407526"></p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515731433180.png" alt="1515731433180"></p>
-<p>表3显示了VID比赛的结果，我们提交的最好结果是48.7%。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515731904233.png" alt="1515731904233"></p>
-<p>T-CNN的方法包含以下技术：1）很强的单帧检测器；2）bbox抑制和传播；3）轨迹&#x2F;tubelet 重打分；4）模型组合。其单帧检测器的mAP可达到67.7%如果仅考虑后面两个技术的提升，我们的方法提升更大（7.3% vs. 6.7%）。</p>
-<h3 id="4-3-定性分析"><a href="#4-3-定性分析" class="headerlink" title="4.3 定性分析"></a>4.3 定性分析</h3><p>Seq-NMS可以把一些低得分的物体重新找回，但是也可能带入一些虚警。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515732534734.png" alt="1515732534734"></p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Seq-NMS/1515732575950.png" alt="1515732575950"></p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515682632317.png" alt="1515682632317"></p>
+<p>图4整理各种方法的精度和速度。我们发现单帧方法具有很强性能可以作为参考方法。我们使用DeepLab和R-FCN作为参考。SFF方法的精度不够好，虽然采用了最优的参数，提升有限，速度下降很大。</p>
+<p>DFF得到了最后的结果，速度相同。但是发现固定N或F，或者分别训练精度下降很大，说明联合序列的重要性。</p>
+<h4 id="精度与速度的平衡"><a href="#精度与速度的平衡" class="headerlink" title="精度与速度的平衡"></a>精度与速度的平衡</h4><p>我们设定了不同的关键帧区间l，看对与精度和速度的影响。结果如图3所示，DFF得到了极大的速度提升，速度和精度的变化是平滑的，因此可针对特定应用调整，例如对于检测任务ResNet-101从4.05fps增加到41.26fps，10倍的速度提升，精度仅从73.9%下降到69.5%。对于分割任务，ResNet-50的速度从2.24fps提升到17.48 fps，精度从69.7%下降到62.4%。</p>
+<p>图3也显示我们应用使用那个流场网络，发现最小的FlowNet Inception优势最大，在相同精度下比另外两个网络更快。</p>
+<p>应该用什么特征网络呢，在高精度区域，明显ResNet-101更好，在高速度区域，对于检测ResNet-101更好，对分割ResNet-50更好。这个差别可能与视频帧率有关，对于数据集C，其帧率更低，变化更大，因此很难采用长时间的传播，而为了获得较快的速度，ResNet-101要采用比ResNet-50更大的l才行。</p>
+<p>上面的发现对于实际应用具有一定推荐意义，然而收到数据和任务限制，为了我们开发更多的设计得到更多的经验。</p>
+<h4 id="分类网络的分割点"><a href="#分类网络的分割点" class="headerlink" title="分类网络的分割点"></a>分类网络的分割点</h4><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515683850796.png" alt="1515683850796"></p>
+<p>我们应该在网络的什么位置对特征和任务网络进行分割，默认只保留一层网络。分割点分别为5，12，21层。5层是增加了一个维度约减层（1层）和一个瓶颈单元（conv5c，3层），21层是增加了两个单元（conv5a和conv5b），21层是增加了三个单元（conv4）。0层是把任务网络加入到特征网络中，等同于直接输出最后的结果进行传播。</p>
+<p>表5展示了不同的结果，可以发现精度的变化可以忽略，而随着任务网络层的增加，速度降低。任务层使用1层和0基本抑制，我们设定为1是为了给特征融合后提供以小额可调的参数，使其更具一般性。</p>
+<p>由于版面限制，更多的结果和细节请看本的在线版。</p>
+<h2 id="6-未来工作"><a href="#6-未来工作" class="headerlink" title="6. 未来工作"></a>6. 未来工作</h2><p>有几个研究重点用于之后的研究。首先就是联合学习对于流场质量的影响，我们无法评估由于缺少gt数据。目前的光流工作受限于合成数据或小数据，对与深度学习不足。</p>
+<p>我们的工作在流场估计和关键帧安排上有改进空间，本文我们采用FlowNet主要是能选择的方法很少。设计更快更精确的流场网络在未来值得研究。对于关键帧的安排，好的方法能够同时显著提升精度和速度。</p>
+<p>我们详细该项研究打开了许多新的研究问题，并希望激发更多的研究工作。</p>
 ]]></content>
       <categories>
         <category>Note 笔记</category>
@@ -1492,240 +1625,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Detectron: caffemodel转pkl</title>
-    <url>/Deep-Learning-Dev/Detectron-caffemodel2pkl/</url>
-    <content><![CDATA[<p>Detectron 利用caffe2的模型转换功能，将caffemodel转换为pkl，以VGG16为例。</p>
-<span id="more"></span>
-
-<p>首先去VGG官网下载pretrained的caffemodel和prototxt，<a href="http://www.robots.ox.ac.uk/~vgg/research/very_deep/">http://www.robots.ox.ac.uk/~vgg/research/very_deep/</a><br>然后运行如下代码</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python2 tools/pickle_caffe_blobs.py \</span><br><span class="line">    --prototxt /home/all/models/VGG_ILSVRC_16_layers_deploy.prototxt \</span><br><span class="line">    --caffemodel /home/all/models/VGG_ILSVRC_16_layers.caffemodel \</span><br><span class="line">    --output output/vgg16.pkl</span><br></pre></td></tr></table></figure>
-<p>这时会出现问题</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;tools/pickle_caffe_blobs.py&quot;, line 223, in &lt;module&gt;</span><br><span class="line">    args.prototxt_file_name, args.caffemodel_file_name</span><br><span class="line">  File &quot;tools/pickle_caffe_blobs.py&quot;, line 210, in load_and_convert_caffe_model</span><br><span class="line">    caffenet, caffenet_weights</span><br><span class="line">  File &quot;/home/all/lib/anaconda2/envs/caffe2/lib/python2.7/site-packages/caffe2/python/caffe_translator.py&quot;, line 299, in TranslateModel</span><br><span class="line">    return TranslatorRegistry.TranslateModel(*args, **kwargs)</span><br><span class="line">  File &quot;/home/all/lib/anaconda2/envs/caffe2/lib/python2.7/site-packages/caffe2/python/caffe_translator.py&quot;, line 254, in TranslateModel</span><br><span class="line">    &#x27;I think something is wrong. This translation script &#x27;</span><br><span class="line">ValueError: I think something is wrong. This translation script only accepts new style layers that are stored in the layer field.</span><br></pre></td></tr></table></figure>
-<p>查询<a href="https://github.com/caffe2/caffe2/issues/823">issue&#x2F;823</a>可知，这是因为caffe2转换工具使用的是caffe V1版的proto和caffemodel，而早期的caffemodel如vgg16是老版本，因此需要进行升级。<br>升级工具在caffe&#x2F;tools里，因此先下载caffe然后编译，编译前需要修改Makefile.config来设置环境变量</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">git clone https://github.com/BVLC/caffe.git</span><br><span class="line">cd caffe</span><br><span class="line">make</span><br></pre></td></tr></table></figure>
-<p>然后使用工具升级prototxt和caffemodel</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd build/tools</span><br><span class="line">xuzhewei@LabServer000:~/lib/caffe-1.0/build/tools$ ./upgrade_net_proto_text /home/all/models/VGG_ILSVRC_16_layers_deploy.prototxt /home/all/models/VGG_ILSVRC_16_layers_deploy_V1.prototxt</span><br><span class="line">I0419 14:14:13.562763 23401 upgrade_proto.cpp:53] Attempting to upgrade input file specified using deprecated V1LayerParameter: /home/all/models/VGG_ILSVRC_16_layers_deploy.prototxt</span><br><span class="line">I0419 14:14:13.563534 23401 upgrade_proto.cpp:61] Successfully upgraded file specified using deprecated V1LayerParameter</span><br><span class="line">I0419 14:14:13.563611 23401 upgrade_proto.cpp:67] Attempting to upgrade input file specified using deprecated input fields: /home/all/models/VGG_ILSVRC_16_layers_deploy.prototxt</span><br><span class="line">I0419 14:14:13.563650 23401 upgrade_proto.cpp:70] Successfully upgraded file specified using deprecated input fields.</span><br><span class="line">W0419 14:14:13.563665 23401 upgrade_proto.cpp:72] Note that future Caffe releases will only support input layers and not input fields.</span><br><span class="line">I0419 14:14:13.564394 23401 upgrade_net_proto_text.cpp:49] Wrote upgraded NetParameter text proto to /home/all/models/VGG_ILSVRC_16_layers_deploy_V1.prototxt</span><br><span class="line">xuzhewei@LabServer000:~/lib/caffe-1.0/build/tools$ ./upgrade_net_proto_binary /home/all/models/VGG_ILSVRC_16_layers.caffemodel /home/all/models/VGG_ILSVRC_16_layers_V1.caffemodel</span><br><span class="line">I0419 14:15:38.643944 24177 upgrade_proto.cpp:53] Attempting to upgrade input file specified using deprecated V1LayerParameter: /home/all/models/VGG_ILSVRC_16_layers.caffemodel</span><br><span class="line">I0419 14:15:40.964524 24177 upgrade_proto.cpp:61] Successfully upgraded file specified using deprecated V1LayerParameter</span><br><span class="line">I0419 14:15:40.993201 24177 upgrade_proto.cpp:67] Attempting to upgrade input file specified using deprecated input fields: /home/all/models/VGG_ILSVRC_16_layers.caffemodel</span><br><span class="line">I0419 14:15:40.993227 24177 upgrade_proto.cpp:70] Successfully upgraded file specified using deprecated input fields.</span><br><span class="line">W0419 14:15:40.993252 24177 upgrade_proto.cpp:72] Note that future Caffe releases will only support input layers and not input fields.</span><br><span class="line">I0419 14:15:41.512004 24177 upgrade_net_proto_binary.cpp:48] Wrote upgraded NetParameter binary proto to /home/all/models/VGG_ILSVRC_16_layers_V1.caffemodel</span><br></pre></td></tr></table></figure>
-<p>最后再运行detectron的转换代码</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">python2 tools/pickle_caffe_blobs.py \</span><br><span class="line">    --prototxt /home/all/models/VGG_ILSVRC_16_layers_deploy_V1.prototxt \</span><br><span class="line">    --caffemodel /home/all/models/VGG_ILSVRC_16_layers_V1.caffemodel \</span><br><span class="line">    --output output/vgg16.pkl</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <categories>
-        <category>Deep Learning Dev</category>
-      </categories>
-      <tags>
-        <tag>Detectron</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>论文笔记《Deep Feature Flow for Video Recognition》</title>
-    <url>/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Deep-Feature-Flow-for-Video-Recognition/</url>
-    <content><![CDATA[<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515674206560.png" alt="1515674206560"></p>
-<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>深度卷积网络在许多特性识别任务上取得成果，然而在视频任务上单帧检测太慢，因此将先进的图像识别网络迁移到视频任务上意义重大。我们提出深度特征流（Deep Feature Flow）框架用于快速精确的视频识别。该框架仅在稀疏关键帧上运行卷积网络的子网络，并通过流场将特征传递到其他帧，由于流场计算相对较快因此速度得到显著提升。端到端训练整体框架，识别精度显著提升。深度特征流框架灵活且通用，该方法在两个视频数据集上验证。</p>
-<ul>
-<li>MSA</li>
-<li>视频识别</li>
-<li>Deep Feature Flow</li>
-</ul>
-<span id="more"></span>
-
-<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>随着深度神经网络在图像识别任务上的成功，识别任务也从图像拓展到了视频，例如语义分割Cityspaces数据集和物体检测ImageNet VID数据集。对于重要场景，快速精确的视频识别非常重要，例如自动驾驶、视频监控。然后采用当前图像识别网络对视频单帧进行识别，对于大部分应用计算量都无法承担。</p>
-<p>一般认为图像内容在视频上的变化是缓慢的，尤其是高级语义[^45][^51][^21]。因此在特征学习时采用means of regularization，认为视频是一种无监督的数据源。并且，数据冗余和连续性也可以用于减少计算开销。但是相关的研究在视频识别的CNN上却较少。</p>
-<p>现代CNN具有相同的架构，大部分层为卷积计算，卷积特征与原图具有空间对应性，因此有机会通过空间扭曲将特征传播到邻近帧。</p>
-<p>本文的工作中，我们提出深度特征流（Deep Feature Flow）框架用于快速精确的视频识别，通过流场将关键帧的深度特征传播到其他帧。如图1，特征图对汽车和行人有响应，且邻近两帧相似，通过传播后特征也与原始的特征相似。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515485794145.png" alt="1515485794145"></p>
-<p>一般，流场估计和特征传播比卷积特征计算快得多。因此能够避免计算瓶颈，速度得到显著提升。整个系统通过端到端训练，显著提升识别精度。</p>
-<p>总结，深度特征流是一个用于视频识别的快速、精确、同样的端到端框架。其采目前先进的图像识别网络。据我们所知，这是第一次在深度学习框架中联合训练流和视频识别任务。后续的实验证实了该框架在视频物体检测和语义分割任务上的有效性。与单帧方法比，实现了巨大的提升（10X），精度稍有损失。</p>
-<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p>据我们所知，我们的工作很特别没有相似的工作进行直接比较。但是，在部分内容有一些相关工作如下所示。</p>
-<ul>
-<li>图像识别：目标检测领域代表方法是基于区域方法（R-CNN, Fast R-CNN, SPP-Net, Faster R-CNN, R-FCN），语义分割领域代表方法是全卷积神经网络（FCN，[^4], [^50] ）。</li>
-<li>网络加速：矩阵分解，量化权重。</li>
-<li>光流：相关方法研究主要进行了10多年，且光流主要针对小偏移。目前一些针对大偏移并组合匹配的方法（DeepFlow和EpicFlow），但是都是手工设计。最近，深度学校和语义信息用于光流。FlowNet第一次使用CNN估计运动。在文献[^32]网络结构简化为空间金字塔网络。另一些工作尝试开发语义分割信息帮助光流估计[^37][^1][^19] ，即根据区域的类别对运动流程进行特定的约束。光流信息可用于如姿势估计等视觉任务。本工作开发光流用于加快一般视频识别任务。</li>
-<li>开发时序信息：T-CNN在视频的tubelets中融合时序和上下文信息。密集3D CRF提出大范围的时空归一化进行语义视频分割。STFCN[^10]考虑时空FCN，用于视频语义分割。这些工作能够提升精度但是也极大的增加计算开销。然而，我们的方法旨视频上通过时序信息减少计算量。</li>
-<li>缓慢特征分析：高级语义特征一般比低级语义特征的变化更慢，因此在连续视频帧上，深度特征变化非常缓慢且连续。这个发现已经被用于视频特征学习的调整中[^45][^21][^51][^49][^40] 。我们推测，我们的方法也能从这个特性上受益。</li>
-<li>Clockwork卷积网络[^38] 该工作与我们的工作最接近，其对于特征视频帧抑制某些网络层，并实验之前的特征。但是我们的方法更简单且有效。从速度上该方法仅减少了一些帧的一些层的计算（1&#x2F;3 or 2&#x2F;3）。而我们工作是节省大部分帧的大部分层的计算。<br>对于准确性，Clockwork没有考虑多帧和简单复制特征的关系，并且仅对一个现成的网络进行计算编排，没有fine-tuning或再训练。其一点速度的提升都带来较大的精度下降。我们的工作重新端到端训练了一个考虑运动的两帧网络，并且在速度提升3倍的情况下仅带来很小的精度下降。<br>Clockwork仅应用于FCN的语义分割，我们的工作将一般的图像识别网络迁移到视频领域。</li>
-</ul>
-<h2 id="3-Deep-Feature-Flow"><a href="#3-Deep-Feature-Flow" class="headerlink" title="3. Deep Feature Flow"></a>3. Deep Feature Flow</h2><p>表1总结了本文的符号，图2为方法示意图。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515659482706.png" alt="1515659482706"></p>
-<h3 id="深度特征流DFF推理（Deep-Feature-Flow-Inference）"><a href="#深度特征流DFF推理（Deep-Feature-Flow-Inference）" class="headerlink" title="深度特征流DFF推理（Deep Feature Flow Inference）"></a>深度特征流DFF推理（Deep Feature Flow Inference）</h3><p>对于给定的前馈神经网络$N$ ，$I$为图像输入，结果$y&#x3D;N(I)$，我们将$N$分解为两个连续的子网络。第一个子网络为$N_{feat}$特征子网络，该网络是全卷积且输出一些中间特征图$f&#x3D;N_{feat}(I)$。第二个子网络为任务网络，对于特定任务有特征的结构，并基于上述特征图$y&#x3D;N_{task}(f)$。</p>
-<p>连续的视频帧具有高度的相似性，且越深的特征层相似性越高，我们通过该相似性减少计算开销。具体的，$N_{feat}$仅在特定稀疏关键帧上计算，非关键帧$I_i$的特征通过其之前的关键帧传播得到。</p>
-<p>$M _ {i \rightarrow k}$ 是一个二维的流场，其通过一个流估计算法 $F$ 得到。然后通过双线性缩放到与特征图相同的大小，用于传播。当前帧i的位置p通过流场得到其与关键帧k的位置偏差 $\delta p&#x3D;M _ {i \rightarrow k}(p)$ 。</p>
-<p>因此特征扭曲可以通过双线性差值得到：</p>
-<p>$$ f_i^c(p) &#x3D; \sum_q G(q,p+\delta p)f_k^c(q) $$</p>
-<p>c表示特征通道，q是特征图的所有空间位置，$G(·,·)$为双线性差值核，其为二维，因此将其分解为两个一维核：</p>
-<p>$$ G(q,p+\delta p)&#x3D;g(q_x,p_x+\delta p_x)\cdot g(q_y, p_y+\delta p_y) $$</p>
-<p>$g(a,b)&#x3D;max(0,1-|a-b|)$。</p>
-<p>空间扭曲可能由于流估计错误导致不准确。为了更好估计特征，其强度通过尺度场（scale field）进行调节。尺度场通过尺度函数$S$得到$S_{i\rightarrow k}&#x3D;S(I_k,I_i)$。最后，特征传播方程定义为：</p>
-<p>$f_i&#x3D;W(f_k,M_{i\rightarrow k},S_{i \rightarrow k}) （3）$</p>
-<p>该函数对所有位置、所有通道的特征进行处理，并对特征乘以尺度因子。</p>
-<p>该视频识别算法被称为深度特征流，如算法1所示。$F$流场函数是手工设计的低级别流，如SIFT-Flow，不需要训练，马上可用。尺度函数S的每个位置为1。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515663944929.png" alt="1515663944929"></p>
-<h3 id="DFF训练"><a href="#DFF训练" class="headerlink" title="DFF训练"></a>DFF训练</h3><p>流函数一般用于低级图像像素的相关性，计算快，但是对于识别任务不够准确，并且高级特征的改变比像素小。因此为了对此建模，我们也使用一个CNN来估计流场和尺度场，所有的组件都能够端到端训练。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515674206560.png" alt="1515674206560"></p>
-<p>架构如图2（b）所示。使用SGD训练，在每个mini-batch，随机选择一对邻近帧，${I _ k,I _ i},0\le i-k \le 9$。前向传播时，特征网络$N _ {feat}$对关键帧图像$I _ k$计算特征图$f _ k$，之后流网络$F$计算流场和尺度场。当$i&gt;k$时，根据式（3）计算特征$f _ i$，否则不传播。最后，任务网络$N _ {task}$基于特征图生成结果，并产生损失值。反向传播损失到所以组件。可以发现，当$i&#x3D;k$时即退化为每帧训练。</p>
-<p>流网络比特征网络快，在Fly Chair dataset[^9]上进行预训练。通过最后一层卷积适当的增加通道数，我们在网络最后增加了一个尺度函数输出。尺度函数都使用（权重0，偏置1进行初始化）。流网络然后按照图2（b）fine-tuned。</p>
-<p>特征传播函数是无参且可微的，我们计算特征$f _ i$的导数，对应于$f_k$，尺度场$S _ {i\rightarrow j}$，流场$M _ {i\rightarrow j}$。前两个使用链式法则容易计算。对于后一个，导数为：</p>
-<p>$$\frac{\partial f _ i^c(p)}{\partial M _ {i\rightarrow j}}&#x3D;S _ {i\rightarrow j}\sum _ q \frac{\partial G(q,p+\delta p)}{\partial \delta p}f _ k^c(q) ~ (4)$$</p>
-<p>然后通过公式2即可计算导数，由于M是二维的，因此$\partial \delta p$可分为$\partial \delta p_x$ $\partial \delta p_y$ 。</p>
-<p>本方法可以在稀疏标记的帧上进行训练，并利用所有的数据（这里不理解）。</p>
-<h3 id="复杂度分析"><a href="#复杂度分析" class="headerlink" title="复杂度分析"></a>复杂度分析</h3><p>非关键帧计算开销与每帧计算开销的比例：</p>
-<p>$$r&#x3D;\frac{O(F)+O(S)+O(W)+O(N _ {task})}{O(N _ {feat})+O(N _ {task})}~(5)$$</p>
-<p>由于复杂度相差较大，可简化为：</p>
-<p>$$r\approx \frac{O(F)}{O(N_{feat})}~(6)$$</p>
-<p>因此复杂度比例由流网络和特征网络决定，可以通过每秒浮点操作FLOPs评估，表2显示了我们实现的典型值。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515676597477.png" alt="1515676597477"></p>
-<p>另外，速度还跟关键帧的稀疏程度相关，我们定义每$l$连续帧选一个关键帧，则加速因子为：</p>
-<p>$$s&#x3D;\frac{l}{1+(l-1)*r}~(7)$$</p>
-<h3 id="关键帧安排"><a href="#关键帧安排" class="headerlink" title="关键帧安排"></a>关键帧安排</h3><p>在本文工作中，我们简单的固定关键帧的安排，关键帧的应用区间$l$固定。然而根据图像内容的变化可能变化的$l$能够实现更好的精度和速度的权衡。一般，关键帧应该是图像内容具有显著变化时。</p>
-<p>如何设计高效和调整关键真的安排是我们之后改进工作。不同的视频任务可能有不同的行为和需求。从数据调整关键帧的安排是一个有趣的选择。</p>
-<h2 id="4-网络架构"><a href="#4-网络架构" class="headerlink" title="4. 网络架构"></a>4. 网络架构</h2><p>本方法拟用于不同的网络和识别任务，因此我们采用先进的架构和重要的视觉任务。</p>
-<h3 id="Flow-Network"><a href="#Flow-Network" class="headerlink" title="Flow Network"></a>Flow Network</h3><p>我们采用基于CNN的FlowNet[^9] 作为默认方法，并设计了两个低复杂度变体 FlowNet Half，每层减少一半的卷积核，复杂度为1&#x2F;4，另一个采用Inception 结构[^42] 的FlowNet Inception，复杂度减少为1&#x2F;8。</p>
-<p>三个网络都在相同的数据集上训练，输出的stride为4。输入图像为1&#x2F;2，因此流网络的输出是原图的1&#x2F;8。特征图的stride是16，使用双线性差值将流场降采样，双线性差值为网络的中的非参数层，且可微。</p>
-<h3 id="特征网络"><a href="#特征网络" class="headerlink" title="特征网络"></a>特征网络</h3><p>我们使用ResNet作为特征网络，最后一层1000路分类层去掉，特征stride从32减少为16得到分辨率更高的特征图，后面接DeepLab用于语义分割和R-FCN用于物体检测。跳着第一个block的conv5，其stride从2变为1，使用holing算法，保证感知域的情况下。另外我们增加了（dilation&#x3D;6）的3x3卷积核，减少特征通道维度减少为1024。该1024维的特征图作为后续任务的中间特征图。</p>
-<p>表2显示了复杂度的比例。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515678762441.png" alt="1515678762441"></p>
-<h3 id="语义分割"><a href="#语义分割" class="headerlink" title="语义分割"></a>语义分割</h3><p>随机初始化1x1的卷积核得到（C+1）得分图，C是类别数。之后跟一个softmax层输出每个像素的概率。因此任务网络仅有一个可学习的网络层，整体的网络结果与DeepLab类似。</p>
-<h3 id="物体检测"><a href="#物体检测" class="headerlink" title="物体检测"></a>物体检测</h3><p>我们采用先进的R-FCN，对于中间特征图，两个全卷积网络分别应用于前512维特征和后512维特征，分别用于区域推荐任务和检测任务。</p>
-<p>区域推荐分支，使用RPN，我们设定9个anchors，两个并排的1x1的卷积层得到2n维的物体得分和4n的回归值。通过NMS（0.7）后得到300个ROI。</p>
-<p>检测分支，两个并排的1x1卷积层输出位置敏感的得分图和bbox回归图。他们的维度是$(C+1)k^2$和$4k^2$。k是检测器&#x2F;回归器数量，细节见[^8] 。最后使用NMS（0.3）得到最后的结果。</p>
-<h2 id="5-实验"><a href="#5-实验" class="headerlink" title="5. 实验"></a>5. 实验</h2><p>Cityscapes用于语义分割，ImageNet VID用于物体检测。</p>
-<h3 id="5-1-实验设置"><a href="#5-1-实验设置" class="headerlink" title="5.1 实验设置"></a>5.1 实验设置</h3><h4 id="Cityscapes"><a href="#Cityscapes" class="headerlink" title="Cityscapes"></a>Cityscapes</h4><p>50个不同城市，帧率17fps，训练集2975，验证500，测试1525个snippets。每个snippet有30帧，第20帧一像素级的标注，可用于语义分割，30个语义类别。遵守[^5]的规则，训练集上训练，验证集上测试，语义分割的精确度使用像素级的平均交并比得分评估。</p>
-<p>对于训练，图像都缩放为短边1024pixels用于特征网络，512pixels用于流网络。使用SGD训练，20K迭代，在8GPU上，每个GPU一个mini-batch，学习率前15K迭代0.001，后5K迭代0.0001。</p>
-<h4 id="ImageNet-VID"><a href="#ImageNet-VID" class="headerlink" title="ImageNet VID"></a>ImageNet VID</h4><p>训练集3862，验证集555，测试集937，全标注的视频段，帧率25或30，30个类别，使用mAP作为评价。</p>
-<p>训练图像短边分别为600和300pixels，60K迭代，40K学习率0.001，20K学习率0.0001。</p>
-<p>训练时，不仅使用VID训练集，还使用DET训练集，每个mini-batch提取图像的比例VID:DET &#x3D; 2:1。</p>
-<h3 id="5-2-评估方法和结果"><a href="#5-2-评估方法和结果" class="headerlink" title="5.2 评估方法和结果"></a>5.2 评估方法和结果</h3><p>由于DFF灵活且有多种设计选择，我们为了评估，设定一些默认设置，特征网络ResNet-101，流网络使用FlowNet，关键帧$l$为5用于C的语义分割，10用于I的物体检测。对于每个snippet我们评估l个图像对，k&#x3D;i-l+1,…,i，每个帧i有gt标注。</p>
-<h4 id="验证DFF架构"><a href="#验证DFF架构" class="headerlink" title="验证DFF架构"></a>验证DFF架构</h4><p>如表3所示。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515682224218.png" alt="1515682224218"></p>
-<ul>
-<li>Frame：在单帧上训练N</li>
-<li>SFF：使用预先计算大偏移flow，SFF-fast和SFF-slow采用不同的参数。</li>
-<li>DFF：N和F使用端到端训练，固定N训练，固定F训练，分别训练</li>
-</ul>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515682632317.png" alt="1515682632317"></p>
-<p>图4整理各种方法的精度和速度。我们发现单帧方法具有很强性能可以作为参考方法。我们使用DeepLab和R-FCN作为参考。SFF方法的精度不够好，虽然采用了最优的参数，提升有限，速度下降很大。</p>
-<p>DFF得到了最后的结果，速度相同。但是发现固定N或F，或者分别训练精度下降很大，说明联合序列的重要性。</p>
-<h4 id="精度与速度的平衡"><a href="#精度与速度的平衡" class="headerlink" title="精度与速度的平衡"></a>精度与速度的平衡</h4><p>我们设定了不同的关键帧区间l，看对与精度和速度的影响。结果如图3所示，DFF得到了极大的速度提升，速度和精度的变化是平滑的，因此可针对特定应用调整，例如对于检测任务ResNet-101从4.05fps增加到41.26fps，10倍的速度提升，精度仅从73.9%下降到69.5%。对于分割任务，ResNet-50的速度从2.24fps提升到17.48 fps，精度从69.7%下降到62.4%。</p>
-<p>图3也显示我们应用使用那个流场网络，发现最小的FlowNet Inception优势最大，在相同精度下比另外两个网络更快。</p>
-<p>应该用什么特征网络呢，在高精度区域，明显ResNet-101更好，在高速度区域，对于检测ResNet-101更好，对分割ResNet-50更好。这个差别可能与视频帧率有关，对于数据集C，其帧率更低，变化更大，因此很难采用长时间的传播，而为了获得较快的速度，ResNet-101要采用比ResNet-50更大的l才行。</p>
-<p>上面的发现对于实际应用具有一定推荐意义，然而收到数据和任务限制，为了我们开发更多的设计得到更多的经验。</p>
-<h4 id="分类网络的分割点"><a href="#分类网络的分割点" class="headerlink" title="分类网络的分割点"></a>分类网络的分割点</h4><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Deep_Feature_Flow/1515683850796.png" alt="1515683850796"></p>
-<p>我们应该在网络的什么位置对特征和任务网络进行分割，默认只保留一层网络。分割点分别为5，12，21层。5层是增加了一个维度约减层（1层）和一个瓶颈单元（conv5c，3层），21层是增加了两个单元（conv5a和conv5b），21层是增加了三个单元（conv4）。0层是把任务网络加入到特征网络中，等同于直接输出最后的结果进行传播。</p>
-<p>表5展示了不同的结果，可以发现精度的变化可以忽略，而随着任务网络层的增加，速度降低。任务层使用1层和0基本抑制，我们设定为1是为了给特征融合后提供以小额可调的参数，使其更具一般性。</p>
-<p>由于版面限制，更多的结果和细节请看本的在线版。</p>
-<h2 id="6-未来工作"><a href="#6-未来工作" class="headerlink" title="6. 未来工作"></a>6. 未来工作</h2><p>有几个研究重点用于之后的研究。首先就是联合学习对于流场质量的影响，我们无法评估由于缺少gt数据。目前的光流工作受限于合成数据或小数据，对与深度学习不足。</p>
-<p>我们的工作在流场估计和关键帧安排上有改进空间，本文我们采用FlowNet主要是能选择的方法很少。设计更快更精确的流场网络在未来值得研究。对于关键帧的安排，好的方法能够同时显著提升精度和速度。</p>
-<p>我们详细该项研究打开了许多新的研究问题，并希望激发更多的研究工作。</p>
-]]></content>
-      <categories>
-        <category>Note 笔记</category>
-        <category>Video Object Detection</category>
-      </categories>
-      <tags>
-        <tag>Video Object Detection</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>论文笔记《Training Region-Based Object Detectors with Online Hard Example Mining》</title>
-    <url>/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Training-Region-Based-Object-Detectors-with-Online-Hard-Example-Mining/</url>
-    <content><![CDATA[<p>![](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;f1.png)</p>
-<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>region-based ConvNets（R-CNN）极大的推动了目标检测领域的发展，但是其训练过程仍然包括很多启发知识和超参来进行优化。我们提出一种简单但是非常有效的<em>在线困难样本挖掘算法online hard example mining（OHEM）</em>用于训练R-CNN检测器。<strong>我们的动机是：在被检测的数据集中总是包含大量简单的样本和少量困难样本。自动的选择这些困难样本进行训练能够更加快速和有效</strong>。OHEM是一种简单直观的算法，能够避免一些常用的启发只是和超参。更重要的是，其对检测性能有稳定和显著的提升。在数据集变得越来越大的今天，如MS COCO，这项工作是十分有意义的。最后，OHEM与该领域先进的方法结合后，在PASCAL VOC 2007和2012数据集上实现78.9%和76.3%的mAP。</p>
-<ul>
-<li>OHEM</li>
-<li>FAIR</li>
-<li>Ross Girshick</li>
-<li>Hard Example Mining</li>
-</ul>
-<span id="more"></span>
-
-<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>图像分类和目标检测是计算机时间两项基本任务。通常将目标检测任务简化为分类任务进行训练。这个简化操作带来了图像分类任务中不存在的新挑战：训练集中的目标和背景样本的数量非常不平衡。在滑窗目标检测器中，例如DPM，这种不平衡的比例可以达到100000:1。最近研究提出的基于目标推荐的检测器能够缓解上述问题，但是比例仍然有70:1。这项挑战属于学习方法领域，如何处理不平衡，并且更快速的训练，实现更高精度。</p>
-<p>很明显，这不是一个新问题，一种标准的解决方法叫做<code>bootstrapping</code>，现在称为<code>hard negative mining</code>，从提出已有20年。Bootstrapping是Sung和Poggio[^33]在90年代中期提出，用于训练人流检测模型。其核心思想是逐渐的增长或bootstrap，选择检测器检测的虚警样本，进行训练。通过一种迭代的算法，先以当前训练集训练检测器，然后发现新的虚警样本增加到bootstrapped训练集。这个操作一般包含所有的目标样本和少量随机的背景样本（所以说，这个方法可以辅助选择负样本）。</p>
-<p>Bootstrapping广泛应用于目标检测研究：</p>
-<ul>
-<li>Dala和Triggs的SVM行人检测器</li>
-<li>Felzenszwalb之后证明bootstrapping能够使得SVM在整个数据集上达到全局优化的效果。</li>
-</ul>
-<p>这些算法一般被认为是<code>hard negative mining</code>，经常用于训练目标检测的SVM。Bootstrapping还成功的用于许多其他的学习模型，包括浅层神经网络、boosted决策树。甚至目前先进的基于深度卷积神经网络[^19,20]，如R-CNN[^15]，SPPnet[^16]，仍然采用hard negative mining训练的SVM。</p>
-<p>然而目前先进的目标检测器如Fast R-CNN以及变体没有使用Bootstrapping。<strong>可能的原因是将目前的技术转为纯在线学习算法是困难的，尤其是在几百万个样本中进行SGD训练深度卷积网络的情况下。</strong> Bootstrapping需要依赖上述交换模版：（a）一会固定模型寻找新样本；（b）一会固定样本训练模型。SGD训练深度卷积网络需要几十万次SGD，因此在几个迭代中固定模型也会极大的减慢处理过程。因此，需要的是一种在线的困难样本选择方法。</p>
-<p>本文，我们提出一个新型的Bootstrapping技术，称为OHEM——在线困难样本挖掘，用于训练基于深度卷积网络的检测器。该算法是对SGD的简单修改，其中训练样本根据正在计算的每个样本当前的损失进行不均匀、非平稳分布的采样。该方法利用了检测问题的优势，该问题中每个SGD mini-batch虽然仅包含1或2个图像，但是有上千个候选样本。<strong>对候选样本进行降采样，考虑样本多样性和高损失值。</strong>由于仅使用候选区的一个小子集，因此梯度计算仍然是高效的。我们将OHEM应用与Fast R-CNN方法，显示出3个优点：</p>
-<ul>
-<li>去除了一些常用的启发式线索和超参</li>
-<li>在mAP上显示出稳定、显著的提升</li>
-<li>在更大更困难的数据集上效率更高，如MS COCO数据集</li>
-</ul>
-<p>除此之外，OHEM与目前的一些方法互补，如多尺度测试[^16]，迭代bounding-box回归[^13]。与上面这些技巧结合，OHEM在VOC 2007和2012的结果分别为78.9%，76.3%。</p>
-<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p>目标检测是计算机视觉领域最古老也是最基础的问题之一。数据集的Bootstrapping，目前称为hard negative mining，应用于很多目标检测器的训练中。这些方法用深度卷积神经网络提取特这后，大部分使用SVM作为检测器对样本打分排序。其中的例外是Fast R-CNN和Faster R-CNN。由于这些方法步使用SVM，使用纯粹的在线SGD训练，因此目前的困难样本挖掘方法不能直接使用。本文使用在线困难样本挖掘算法解决这个问题，提高效率和进度。我们简单回顾下困难样本挖掘、基于卷积网络的目标检测器，以及他们之间的合作——使用困难样本挖掘训练深度网络。</p>
-<h3 id="困难样本挖掘HEM"><a href="#困难样本挖掘HEM" class="headerlink" title="困难样本挖掘HEM"></a>困难样本挖掘HEM</h3><p>目前主要有两种HEM。</p>
-<p>第一种主要用于优化SVM。方法就是先在一个样本集上训练SVM至收敛，然后根据一定的规则去除一些样本，新增一些样本。去除的是在当前模型下离分类边界很远的那些“容易”分类的样本。反之，将违反当前边界的样本，即错分的样本加入训练集中。应用上述规则实现全局优化的SVM。重要的是通常工作集是整个训练样本集的一个小子集。</p>
-<p>第二种一般用于非SVM方法，例如浅神经网络和boosted决策树。该算法首先包含正样本和随机负样本。然后训练模型至收敛。之后在一个更大的数据集上获取虚警。将虚警加入训练集中再次进行训练。这个流程一般只迭代一次，并且没有任何收敛性证明。</p>
-<h3 id="基于卷积网络的目标检测"><a href="#基于卷积网络的目标检测" class="headerlink" title="基于卷积网络的目标检测"></a>基于卷积网络的目标检测</h3><p>近三年，目标检测领域发展迅速。这种进步主要是由于ImageNet出现后对深度卷积网络的训练。R-CNN和Over Feat[^26]检测器在PASCAL VOC和ImageNet detection上的结果改善显著。OverFeat基于滑窗法，R-CNN基于区域推荐法——Selective search算法。由于R-CNN基于卷积网络的处理流程更快，SPPnet[^16]，MR-CNN[^13]，Fast R-CNN[^14]，因此我们的工作主要在此模型上展开。</p>
-<h3 id="深度学习中的困难样本选择"><a href="#深度学习中的困难样本选择" class="headerlink" title="深度学习中的困难样本选择"></a>深度学习中的困难样本选择</h3><p>目前有也有一些工作研究在训练深度网络中挑选困难样本[^22][^27][^33]。与我们的方法类似，这些方法也都是具有当前数据点的损失值来挑选样本。</p>
-<ul>
-<li>论文[^27]从一个大型数据集中随机样本的loss独立的选择困难正样本和负样本，用于学习图像描述符。</li>
-<li>论文[^33]对于给定的一对正样本块，使用triplet loss在数据集中寻找困难负样本块</li>
-<li>与我们的方法类似，论文[^22]研究对mini-batch SGD的在线困难样本选择方法。他们的方法也基于loss，但是主要面向分类问题。<em>而我们的关注于基于区域推荐的目标检测器的在线困难样本选择策略。</em>（这个理由有点牵强）</li>
-</ul>
-<h2 id="3-Fast-R-CNN简介"><a href="#3-Fast-R-CNN简介" class="headerlink" title="3. Fast R-CNN简介"></a>3. Fast R-CNN简介</h2><p>![](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;f1.png)</p>
-<p>我们首先总结下Fast R-CNN（FRCN）的框架。FRCN是输入一幅图像和一系列ROI。FRCN网络本身分为两个部分：一个是卷积网络层，包含卷积和池化层；另一个是ROI网络，包含ROI池化层，以及全连接层和两个损失层。如图1。</p>
-<p>卷积网络将图像转换为卷积特征图，然后对于每个目标推荐，ROI池化层，将ROI映射到卷积特征图上，然后提取固定长度的特征向量（<em>通过插值或超采样</em>）。每个特征向量输入给fc层，最后输出两个结果：（1）softmax，所有类别和背景的概率分布；（2）bounding-box的重新定位的位置回归。</p>
-<p>选择FRCN作为我们的基础目标检测器有以下原因：</p>
-<ul>
-<li>一个快速的端到端的系统</li>
-<li>conv和ROI两个网络层是设计也用于其他的检测器SPPnet和MR-CNN，因此我们提出的方法更加有广泛性</li>
-<li>基本设置相似，FRCN也允许训练整个卷积网络，相反SPPnet和MR-CNN会固定卷积层。</li>
-<li>SPPnet和MR-CNN都需要缓存ROI网络的特征用于训练一个分离的SVM分类器（用于困难负样本挖掘）。FRCN使用ROI网络本身来训练期望的分类器。后面会证明在统一系统中使用SVM分类器是没必要的。</li>
-</ul>
-<h3 id="3-1-Training"><a href="#3-1-Training" class="headerlink" title="3.1 Training"></a>3.1 Training</h3><p>类似大部分深度网络，FRCN也是使用随机梯度下降进行训练。每个ROI的loss是所有分类的log loss的综合，目的是鼓励准确预测目标类别；另一个位置loss孤立预测精确的bounding box位置。</p>
-<p>为了分享ROI之间的卷积计算，SGD的mini-batch创建为层级结构。对于每个mini-batch，先从数据集中选择N个图像，每个图像选择B&#x2F;N个ROI。设置N&#x3D;2，B&#x3D;128。ROI的采样设计到一些启发式方法，后面我们进行简要介绍。<strong>本文的一个贡献是去除一些启发式方法和他们的超参数。</strong></p>
-<h4 id="前景ROI"><a href="#前景ROI" class="headerlink" title="前景ROI"></a>前景ROI</h4><p>例如一个ROI被标记为前景fg，其与gt的IoU应该≥0.5。这是一种标准的设计选择，是PASCAL VOC目标检测基准数据集的评估标准。相同的标准也用在R-CNN，SPPnet，MR-CNN等模型中SVM的困难样本挖掘。我们也使用相同的标准。</p>
-<h4 id="背景ROI"><a href="#背景ROI" class="headerlink" title="背景ROI"></a>背景ROI</h4><p>一个区域被标记为bg，其最大IoU的区间在[bg_lo, 0.5)之间。在FRCN和SPPnet中使用bg_lo&#x3D;0.1，文献[^14]使用更粗略的困难负样本。<strong>这里假设区域与gt有一些重叠的区域更有可能混淆，称为困难样本。</strong>5.4节显示启发式方法能够帮助收敛、提高精度，这是一种次优方法，<strong>因为忽略一些不经常出现但是重要困难的背景区域。我们的方法移除了bg_lo的阈值。</strong></p>
-<h4 id="平衡fg-bg的ROI"><a href="#平衡fg-bg的ROI" class="headerlink" title="平衡fg-bg的ROI"></a>平衡fg-bg的ROI</h4><p>为了处理section1中的数据不平衡性，论文[^14]设计启发式方法平衡每个mini-batch的fg-bg比例，目标比例为1：3，通过随机降采样背景块，因此确保mini-batch中25%的样本是fg。我们发现这是一个训练FRCN的重要设计。去除这个比例（随机采样ROI）或者增加比例，会降低检测精度mAP，3个点。基于我们的方法，可以去除这个比例参数，并且不造成影响。</p>
-<h2 id="4-我们的方法"><a href="#4-我们的方法" class="headerlink" title="4. 我们的方法"></a>4. 我们的方法</h2><p>我们提出简单、有效的在线困难样本挖掘算法用于训练Fast R-CNN（或Fast R-CNN类似的目标检测器）。我们认为目前的方法构造mini-batch用于SGD是低效、次优的。我们方法能够更好的训练（训练误差更低）更高的检测性能（mAP）。</p>
-<h3 id="4-1-在线困难样本挖掘"><a href="#4-1-在线困难样本挖掘" class="headerlink" title="4.1 在线困难样本挖掘"></a>4.1 在线困难样本挖掘</h3><p>基于SVM的目标检测器中，例如R-CNN或SPPnet中训练的SVM，其步骤是：</p>
-<ul>
-<li>激活一定数量的图片（j经常为10多，100多）使得训练集达到一定阈值</li>
-<li>在该激活的训练集上训练SVM至收敛。</li>
-<li>重复上述过程，直到激活训练集包含所有支持向量</li>
-</ul>
-<p>将类似的策略应用于FRCN后会减慢训练速度，因为在挑选样本时不能更新模型。</p>
-<p>我们发现，两个步骤可以结合FRCN的在线SGD进行训练。主要原因是虽然每个SGD迭代只有少量图像，但是每个图像包含上千个ROI样本，从中我们可以挑选困难样本，而不是启发式筛选子集。这个策略适用于SGD中固定模型用于mini-batch的交换模版，且只固定模型一次，在一个mini-batch中。因此模型更新速度跟SGD方法一样快，所以学习没有延迟。</p>
-<ul>
-<li>输入图像，在SGD的第t次迭代，计算卷积特征图</li>
-<li>ROI网络计算所有输入的ROI，ROI池化，几个全连接层，计算loss</li>
-<li>loss表示对当前ROI的性能</li>
-<li>对ROI以loss排序选择前B&#x2F;N个ROI表示当前检测最差的ROI</li>
-<li>由于只选择一小部分ROI更新模型，反向传播更加快速</li>
-</ul>
-<p>但是，这里有个小问题：区域重叠的位置相关ROI区域具有相关的损失。并且重叠的ROI可能投影到相同的卷积特征区域，因此导致对同一区域的loss加倍考虑。为了处理这些冗余和相关的区域，我们使用标准的非极大值抑制NMS删除重复数据。对于给定的ROI列表和他们的损失，NMS的工作是选择高loss的ROI，删除低loss的ROI和具有高度重叠的区域。我们选择的IoU阈值为0.7。</p>
-<p>网盘， 发现上面描述的过程不需要fg-bg比例参数用于数据平衡。如果任何类被忽略，那他们的loss会增加，然后就会有更高的可能性对其采样。</p>
-<h3 id="4-2-实现细节"><a href="#4-2-实现细节" class="headerlink" title="4.2 实现细节"></a>4.2 实现细节</h3><p>![](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;f2.png)</p>
-<p>有很多方法可以实现OHEM，每种都有不同的权衡。一个明显的方法是修改loss层来做困难样本的选择。loss层可以计算所有ROI的loss，然后排序，然后选择困难的ROI，然后将所有非困难ROI的loss置0。这种方法虽然直接，但是并不高效，因为ROI网络仍然会分配内存给所有的ROI，进行反向传播，即使大部分ROI的loss是0，因此没有梯度更新。</p>
-<p>为了解决这个，我们提出的架构如图2所示。我们实现维护两个相同的ROI网络，其中一个是只读的。这意味着，只读的ROI网络只在前向传播的时候分配内存，而一般的网络是前向&#x2F;反向都分配内存。对于一个SGD迭代，给定一个卷积特征图，只读ROI网络前向计算所有ROI的损失值，然后困难ROI采样模块使用如4.1描述的方法选择困难样本($R_{hard-set}$)，其输入给一般的ROI网络这个网络分别计算前向和反向，但是仅在$R_{hard-set}$上累计梯度并传递给卷积网络。实际中，我们使用N个图片的所有ROI作为R，因此只读网络的的batch尺寸是$|R|$，而常规网络是$|B|$。</p>
-<p>我们使用Caffe实现上述网络，N次前向反向梯度累积，在一个image mini-batch。对于FRCN，我们使用N&#x3D;2，B&#x3D;128。使用上述方法后速度提升两倍。除非特殊说明，否则本文使用上述方法。</p>
-<h2 id="5-分析在线困难样本挖掘"><a href="#5-分析在线困难样本挖掘" class="headerlink" title="5. 分析在线困难样本挖掘"></a>5. 分析在线困难样本挖掘</h2><p>这一届比较采用OHEM的FRCN的模型和一般的启发式样本算则方法。我们还比较了一些更抵消的方法，即使用所有ROI，而不是仅仅B个最困难的样本。</p>
-<h3 id="5-1-实验设置"><a href="#5-1-实验设置" class="headerlink" title="5.1 实验设置"></a>5.1 实验设置</h3><p>我们主要对两个标准卷积网络架构实验：一个是VGG_CNN_M_1024(VGGM)，是AlexNet的一种扩展版，一个是VGG16。所有实验都在VOC 07数据集上进行。训练所有的SGD对80k个mini-batch迭代，初始化学习率为0.001，每30k次迭代衰减0.1。表1中的1，2行是我们的标准做法，比原文的结果稍微提高。</p>
-<p>![](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;t1.png)</p>
-<h3 id="5-2-OHEM与启发式方法"><a href="#5-2-OHEM与启发式方法" class="headerlink" title="5.2 OHEM与启发式方法"></a>5.2 OHEM与启发式方法</h3><p>标准的FRCN，如表1所述，1-2行。为了测试启发式方法的重要性，去除bg_lo，之后VGGM的mAP掉了2.4，但是VGG16基本一致。与OHEM训练FRCN相比，有2.4mAP的提升。这证明启发式方法是次优的，我们的OHEM是更有效的方法。</p>
-<h3 id="5-3-鲁棒梯度估计"><a href="#5-3-鲁棒梯度估计" class="headerlink" title="5.3 鲁棒梯度估计"></a>5.3 鲁棒梯度估计</h3><p>采用两个图片的ROI进行优化，这是因为单一图像由于ROI具有较高的相似性，可能会导致不稳定的梯度，从而减慢收敛的过程。这个对于FRCN可能不是一个问题，但是对我们的方法可能是需要考虑的，因为我们对同一幅图像中的高loss进行采样，这些ROI可能具有较高的相似性。为了解决这个问题，我们实验了当N&#x3D;1时，增加ROI相关性，FRCN会产生1个点的下降，但是我们的方法没有下降，说明更加具有鲁棒性。</p>
-<h3 id="5-4-为什么只是困难样本，当你使用所有样本的时候呢？"><a href="#5-4-为什么只是困难样本，当你使用所有样本的时候呢？" class="headerlink" title="5.4 为什么只是困难样本，当你使用所有样本的时候呢？"></a>5.4 为什么只是困难样本，当你使用所有样本的时候呢？</h3><p>在线困难样本挖掘有一个基本假设，考虑所有ROI是必要的，然后选择困难的样本进行训练。但是如果我用所有ROI进行训练呢？容易样本具有低loss，不会对gradient具有太多贡献，本身训练的过程就会关注困难的样本。为了比较这个，我们使用了大尺寸的mini-size，B&#x3D;2048，由于使用了大数据量，调整学习率是必要。虽然结果不基准要高1个点，但是我们的方法更加好。</p>
-<h3 id="5-5-更好的优化"><a href="#5-5-更好的优化" class="headerlink" title="5.5 更好的优化"></a>5.5 更好的优化</h3><p>最后，我们分析上述不同FRCN训练方法的loss的变化。我们每20k次优化计算一次所有ROI的平均loss。图3显示了结果：</p>
-<p>![](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;f3.png)</p>
-<h3 id="5-6-计算成本"><a href="#5-6-计算成本" class="headerlink" title="5.6 计算成本"></a>5.6 计算成本</h3><p>OHEM整机了合理的计算量和内存消耗。</p>
-<p>![](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;t2.png)</p>
-<h2 id="7-增加的方法"><a href="#7-增加的方法" class="headerlink" title="7 增加的方法"></a>7 增加的方法</h2><h4 id="Multi-scale（M）多尺度"><a href="#Multi-scale（M）多尺度" class="headerlink" title="Multi-scale（M）多尺度"></a>Multi-scale（M）多尺度</h4><p>我们采用多尺度策略。尺度定义为图像的短边长s，训练期间随机选择尺度，测试时测试所有尺度。对于VGG16，训练时s&#x3D;{480,576,688,864,900}，测试时s&#x3D;{480,576,688,864,1000}</p>
-<h4 id="迭代BB回归（B）"><a href="#迭代BB回归（B）" class="headerlink" title="迭代BB回归（B）"></a>迭代BB回归（B）</h4><p>论文[^13]中采用迭代定位和bbox投票方案。网络评估每个ROI得到一个得分和重新定位的box R1。高得分的R1进行再次评价和定位得到R2。R1和R1组成最终的RF用于后处理，RF_NMS得到NMS后的RF，IoU为0.3。</p>
-<p><strong>BibTex</strong></p>
-<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">@inproceedings&#123;</span><br><span class="line">Shrivastava2016,</span><br><span class="line">author = &#123;Shrivastava, Abhinav and Gupta, Abhinav and Girshick, Ross&#125;,</span><br><span class="line">booktitle = &#123;2016 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)&#125;,</span><br><span class="line">doi = &#123;10.1109/CVPR.2016.89&#125;,</span><br><span class="line">month = &#123;jun&#125;,</span><br><span class="line">pages = &#123;761--769&#125;,</span><br><span class="line">publisher = &#123;IEEE&#125;,</span><br><span class="line">title = &#123;&#123;Training Region-Based Object Detectors with Online Hard Example Mining&#125;&#125;,</span><br><span class="line">year = &#123;2016&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-]]></content>
-      <categories>
-        <category>Note 笔记</category>
-        <category>Object Detection</category>
-      </categories>
-      <tags>
-        <tag>Video Object Detection</tag>
-        <tag>OHEM</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>TensorFlow1.8+Ubuntu16.05+CUDA8.0+cuDNN+Anaconda2安装</title>
     <url>/Tutorial-%E6%95%99%E7%A8%8B/TensorFlow-on-Ubuntu16-04/</url>
     <content><![CDATA[<p>环境：</p>
@@ -1914,88 +1813,104 @@
       </tags>
   </entry>
   <entry>
-    <title>论文笔记 Data Distillation: Towards Omni-Supervised Learning</title>
-    <url>/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Data-Distillation-Towards-Omni-Supervised-Learning/</url>
-    <content><![CDATA[<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><ul>
-<li>Omni-supervised learning: 全方位学习：一种特殊的半监督学习，包括所有可学习的数据和来自Internet的为标记数据</li>
-<li>Data Distillation: 数据蒸馏：一种集成预处理方法，将未标记的数据进行多种变化，使用单一模型自动生成新的训练标记</li>
-<li>作者主张，目前的视觉识别模型已经具有足够的精度进行自学习（self-learning）,从而挑战真实世界的数据</li>
-<li>实验表面，使用<strong>数据蒸馏</strong>训练的模型超过完全使用标注数据训练的方法</li>
+    <title>论文笔记《Training Region-Based Object Detectors with Online Hard Example Mining》</title>
+    <url>/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Training-Region-Based-Object-Detectors-with-Online-Hard-Example-Mining/</url>
+    <content><![CDATA[<p>![](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;f1.png)</p>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>region-based ConvNets（R-CNN）极大的推动了目标检测领域的发展，但是其训练过程仍然包括很多启发知识和超参来进行优化。我们提出一种简单但是非常有效的<em>在线困难样本挖掘算法online hard example mining（OHEM）</em>用于训练R-CNN检测器。<strong>我们的动机是：在被检测的数据集中总是包含大量简单的样本和少量困难样本。自动的选择这些困难样本进行训练能够更加快速和有效</strong>。OHEM是一种简单直观的算法，能够避免一些常用的启发只是和超参。更重要的是，其对检测性能有稳定和显著的提升。在数据集变得越来越大的今天，如MS COCO，这项工作是十分有意义的。最后，OHEM与该领域先进的方法结合后，在PASCAL VOC 2007和2012数据集上实现78.9%和76.3%的mAP。</p>
+<ul>
+<li>OHEM</li>
+<li>FAIR</li>
+<li>Ross Girshick</li>
+<li>Hard Example Mining</li>
 </ul>
 <span id="more"></span>
 
-<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>Omni-supervised learning，利用所以可利用的训练数据，包括标记和未标记的。</p>
-<p>semi-supervised learning，研究主要针对一个完整数据集，将其分为标记和未标记的，然后进行训练，这类研究具有上限，即全部使用标记数据训练。omni-supervised learning 没有上限，只有下限，使用全部数据训练是其下限。</p>
-<p>为了解决Omni-supervised learning，本文提出数据蒸馏概念，即使用大量标记数据训练一个模型对未标记数据进行标记，然后使用多出来的数据进行训练。<strong>但是使用自己标注的数据进行训练往往没有意义</strong>。为了解决这个问题，我们集成单一模型在多种变换上的结果。</p>
-<p>self-learning的研究可以追溯到1960s，但是由于近几年监督模型的快速改进，允许我们相信其对于未标记数据的预测，降低了对数据清洗的需要。</p>
-<p>为了测试数据蒸馏，我们使用人形骨架检测任务，COCO。训练模型为Mask R-CNN，提升了2个百分点。</p>
-<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><h2 id="3-Data-Distillation"><a href="#3-Data-Distillation" class="headerlink" title="3. Data Distillation"></a>3. Data Distillation</h2><p>四步：</p>
-<ol>
-<li>在手工标记数据上训练一个模型</li>
-<li>将该模型应用于未标记数据的多种变换上</li>
-<li>将多种预测集成，使预测称为标记</li>
-<li>联合所有数据再次训练</li>
-</ol>
-<h4 id="Multi-transform-inference"><a href="#Multi-transform-inference" class="headerlink" title="Multi-transform inference"></a>Multi-transform inference</h4><p>变换输入来增强精度是一种常见策略，例如：图像裁剪、多尺度等。我们对单一模型使用多种变换推理。</p>
-<h4 id="Generating-labels-on-unlabeled-data"><a href="#Generating-labels-on-unlabeled-data" class="headerlink" title="Generating labels on unlabeled data"></a>Generating labels on unlabeled data</h4><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Data_Distillation/f2.png"></p>
-<p>集成多种变换的预测结果经常能获得优于单一模型预测结果。如图2所示。我们发现集成后的预测能产生新的知识，并用于训练模型本身。</p>
-<p>例如对于分类问题，可以对一个图片生成平均类别概率向量[^18] ，但是会存在两个问题。1）“soft”标签不能直接用于训练模型，需要修改loss。2）结构化输出的问题，物体检测或姿势估计，平均结果是不合理的。</p>
-<p>我们简单的组合这些多变换预测，生成“hard”标签，与手工标记数据中具有相同的结构或类型。生成硬标签需要一些任务特定的逻辑能表征问题结构（例如NMS）。之后即可进行训练。该过程尽管需要推理多次，但是也不训练多个模型更高效。</p>
-<h3 id="Knowledge-distillation"><a href="#Knowledge-distillation" class="headerlink" title="Knowledge distillation"></a>Knowledge distillation</h3><p>1）每个minibatch包含手工标记数据和自动标记数据</p>
-<p>2）训练schedule需要延长，配合数据量的增加</p>
-<h2 id="4-数据蒸馏用于骨架检测"><a href="#4-数据蒸馏用于骨架检测" class="headerlink" title="4. 数据蒸馏用于骨架检测"></a>4. 数据蒸馏用于骨架检测</h2><h4 id="Data-transformations"><a href="#Data-transformations" class="headerlink" title="Data transformations"></a>Data transformations</h4><p>本文使用几何变换，其能够满足集成预测结果的需求，在集成时需要进行反变换，再集成。本文使用两种常用的变化：尺度变化、水平翻转（<em>数据增强而已</em>）我们对为标记的图片进行缩放，短边从[400,1200]，步长100像素。在验证集上应用相同策略，选择一个最优的变换使得模型提升最大，并将该模型作为teacher模型。</p>
-<h4 id="Retraining"><a href="#Retraining" class="headerlink" title="Retraining"></a>Retraining</h4><p>学生模型在联合数据集上训练，每个minibatch比例为6:4。学生模型可以采用teacher model初始化也可以用ImageNet初始化，我们发现使用ImageNet初始化的效果总是更好，说明teacher 模型进入了局部最优</p>
-<h2 id="5-Keypoint检测实验"><a href="#5-Keypoint检测实验" class="headerlink" title="5. Keypoint检测实验"></a>5. Keypoint检测实验</h2><h3 id="5-1-数据分割"><a href="#5-1-数据分割" class="headerlink" title="5.1 数据分割"></a>5.1 数据分割</h3><ul>
-<li>co-80: COCO 80K张训练图像</li>
-<li>co-35，2014 val的子集 35k张图</li>
-<li>co-115，上面的组合为：2017 COCO 训练集，115k张图</li>
-<li>un-120，COCO 2017提供了120k张未标记的图片</li>
-<li>s1m-180，从Sports-1M[^19] 随机选择180k个视频，每个视频随机选择1帧</li>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>图像分类和目标检测是计算机时间两项基本任务。通常将目标检测任务简化为分类任务进行训练。这个简化操作带来了图像分类任务中不存在的新挑战：训练集中的目标和背景样本的数量非常不平衡。在滑窗目标检测器中，例如DPM，这种不平衡的比例可以达到100000:1。最近研究提出的基于目标推荐的检测器能够缓解上述问题，但是比例仍然有70:1。这项挑战属于学习方法领域，如何处理不平衡，并且更快速的训练，实现更高精度。</p>
+<p>很明显，这不是一个新问题，一种标准的解决方法叫做<code>bootstrapping</code>，现在称为<code>hard negative mining</code>，从提出已有20年。Bootstrapping是Sung和Poggio[^33]在90年代中期提出，用于训练人流检测模型。其核心思想是逐渐的增长或bootstrap，选择检测器检测的虚警样本，进行训练。通过一种迭代的算法，先以当前训练集训练检测器，然后发现新的虚警样本增加到bootstrapped训练集。这个操作一般包含所有的目标样本和少量随机的背景样本（所以说，这个方法可以辅助选择负样本）。</p>
+<p>Bootstrapping广泛应用于目标检测研究：</p>
+<ul>
+<li>Dala和Triggs的SVM行人检测器</li>
+<li>Felzenszwalb之后证明bootstrapping能够使得SVM在整个数据集上达到全局优化的效果。</li>
 </ul>
-<h3 id="5-2-主要结果"><a href="#5-2-主要结果" class="headerlink" title="5.2 主要结果"></a>5.2 主要结果</h3><p>1）co-35作为标记数据，co-80作为未标记数据</p>
-<p>2）co-115作为标记数据，分布相似的un-120作为未标记数据</p>
-<p>3）co-115作为标记数据，分布不相似的s1m-180作为未标记数据</p>
-<p>结果如表1所示</p>
-<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Data_Distillation/t1.png" width="70%" />
-
-<h4 id="小数据量"><a href="#小数据量" class="headerlink" title="小数据量"></a>小数据量</h4><p>这里的实验类似经典的半监督问题策略，即使用一部分标注和完全标注的性能对比，完全标注的结果作为上界。本文提出的方法主要还是用于对实际未标注的数据进行提升更具挑战性。（但是半监督的研究也可以应用于本文的问题，作者为什么没有进行比较？）</p>
-<h4 id="大数据量-相似分布"><a href="#大数据量-相似分布" class="headerlink" title="大数据量-相似分布"></a>大数据量-相似分布</h4><p>使用co-115和un-120进行训练，使用DD方法进行标注。均匀不同提升。在论文[^27]中使用率1.5倍的全标注数据进行训练AP提升了3个百分点，本文的方法使用DD也提升了2个百分点。</p>
-<h4 id="大数据量-不相似分布"><a href="#大数据量-不相似分布" class="headerlink" title="大数据量-不相似分布"></a>大数据量-不相似分布</h4><p>使用co-115和s1m-180训练，尽管数据分布不一致，但是AP仍然具有提升，说明DD对数据分布差异具有鲁棒性。</p>
-<h3 id="5-3-消融实验"><a href="#5-3-消融实验" class="headerlink" title="5.3 消融实验"></a>5.3 消融实验</h3><h4 id="迭代次数"><a href="#迭代次数" class="headerlink" title="迭代次数"></a>迭代次数</h4><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Data_Distillation/t2.png" width="70%" />
-
-<p>由于数据量增加，因此迭代次数也应该相应增加。为了表面我们的提升不是来自迭代次数的增加，实验结果如表2所示。</p>
-<p>对于全监督baseline，130k迭代达到最优，相比默认的90k来说。但是增加到130k时下降，说明过耦合。</p>
-<p>另外，DD增加数据量后，360k迭代还未完全耦合。</p>
-<h4 id="未标记数据量"><a href="#未标记数据量" class="headerlink" title="未标记数据量"></a>未标记数据量</h4><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Data_Distillation/t5.png" width="70%" />
-
-<p>如图5所示，使用不同比例的未标记数据p，minibatch的比例为1:p，迭代次数也相应增加1+p倍（基准次数为130k）。从图5所示，随着数据的增加，AP持续提升。</p>
-<h4 id="teacher-模型的影响"><a href="#teacher-模型的影响" class="headerlink" title="teacher 模型的影响"></a>teacher 模型的影响</h4><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Data_Distillation/f6.png" width="70%" />
-
-<p>不同的teacher AP的提升，导致student AP的提升</p>
-<h4 id="测试时增强"><a href="#测试时增强" class="headerlink" title="测试时增强"></a>测试时增强</h4><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Data_Distillation/t3.png" width="70%" />
-
-<p>在测试时使用多变换推理也会改进结果。</p>
-<h2 id="6-物体检测实验"><a href="#6-物体检测实验" class="headerlink" title="6. 物体检测实验"></a>6. 物体检测实验</h2><h3 id="6-1-实现"><a href="#6-1-实现" class="headerlink" title="6.1 实现"></a>6.1 实现</h3><p>本文选择物体检测器为Faster R-CNN[^30] 使用FPN[^23] 为backbone，并使用RoIAlign改进[^15] 。我们采用如[^31] 中描述的端到端训练。</p>
-<p>使用bbox投票[^10] 方法进行组合union训练集。</p>
-<p>物体检测涉及多种类别，对每个类别设定得分阈值。我们选择阈值使得未标记图片集中平均每张图片选择的类别数量与标记的数据中每个类别的数量匹配。</p>
-<p>图7显示u-120中生成的标记。</p>
-<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Data_Distillation/f7.png" width="70%" />
-
-<h3 id="6-2-物体检测结果"><a href="#6-2-物体检测结果" class="headerlink" title="6.2 物体检测结果"></a>6.2 物体检测结果</h3><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Data_Distillation/t4.png" width="70%" />
-
-<p>表4显示了结果：</p>
-<p>1）小数据量：通过类似半监督的方法，将co-80作为无标记数据进行训练。</p>
-<p>2）大数据量：co-115作为标记数据，un-120作为非标记数据</p>
-<h4 id="小数据量-1"><a href="#小数据量-1" class="headerlink" title="小数据量"></a>小数据量</h4><p>co-35是下界，co-115是上界，我们发现DD方法更接近下界，这个问题在未来将进行更进一步的研究</p>
-<h4 id="大数据量"><a href="#大数据量" class="headerlink" title="大数据量"></a>大数据量</h4><p>co-115是下界，应用DD之后数据都有不同的增长。</p>
-<p>表4显示使用为标记的数据训练物体检测是一个更具挑战性的问题，但是DD策略仍然能够改进。</p>
+<p>这些算法一般被认为是<code>hard negative mining</code>，经常用于训练目标检测的SVM。Bootstrapping还成功的用于许多其他的学习模型，包括浅层神经网络、boosted决策树。甚至目前先进的基于深度卷积神经网络[^19,20]，如R-CNN[^15]，SPPnet[^16]，仍然采用hard negative mining训练的SVM。</p>
+<p>然而目前先进的目标检测器如Fast R-CNN以及变体没有使用Bootstrapping。<strong>可能的原因是将目前的技术转为纯在线学习算法是困难的，尤其是在几百万个样本中进行SGD训练深度卷积网络的情况下。</strong> Bootstrapping需要依赖上述交换模版：（a）一会固定模型寻找新样本；（b）一会固定样本训练模型。SGD训练深度卷积网络需要几十万次SGD，因此在几个迭代中固定模型也会极大的减慢处理过程。因此，需要的是一种在线的困难样本选择方法。</p>
+<p>本文，我们提出一个新型的Bootstrapping技术，称为OHEM——在线困难样本挖掘，用于训练基于深度卷积网络的检测器。该算法是对SGD的简单修改，其中训练样本根据正在计算的每个样本当前的损失进行不均匀、非平稳分布的采样。该方法利用了检测问题的优势，该问题中每个SGD mini-batch虽然仅包含1或2个图像，但是有上千个候选样本。<strong>对候选样本进行降采样，考虑样本多样性和高损失值。</strong>由于仅使用候选区的一个小子集，因此梯度计算仍然是高效的。我们将OHEM应用与Fast R-CNN方法，显示出3个优点：</p>
+<ul>
+<li>去除了一些常用的启发式线索和超参</li>
+<li>在mAP上显示出稳定、显著的提升</li>
+<li>在更大更困难的数据集上效率更高，如MS COCO数据集</li>
+</ul>
+<p>除此之外，OHEM与目前的一些方法互补，如多尺度测试[^16]，迭代bounding-box回归[^13]。与上面这些技巧结合，OHEM在VOC 2007和2012的结果分别为78.9%，76.3%。</p>
+<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p>目标检测是计算机视觉领域最古老也是最基础的问题之一。数据集的Bootstrapping，目前称为hard negative mining，应用于很多目标检测器的训练中。这些方法用深度卷积神经网络提取特这后，大部分使用SVM作为检测器对样本打分排序。其中的例外是Fast R-CNN和Faster R-CNN。由于这些方法步使用SVM，使用纯粹的在线SGD训练，因此目前的困难样本挖掘方法不能直接使用。本文使用在线困难样本挖掘算法解决这个问题，提高效率和进度。我们简单回顾下困难样本挖掘、基于卷积网络的目标检测器，以及他们之间的合作——使用困难样本挖掘训练深度网络。</p>
+<h3 id="困难样本挖掘HEM"><a href="#困难样本挖掘HEM" class="headerlink" title="困难样本挖掘HEM"></a>困难样本挖掘HEM</h3><p>目前主要有两种HEM。</p>
+<p>第一种主要用于优化SVM。方法就是先在一个样本集上训练SVM至收敛，然后根据一定的规则去除一些样本，新增一些样本。去除的是在当前模型下离分类边界很远的那些“容易”分类的样本。反之，将违反当前边界的样本，即错分的样本加入训练集中。应用上述规则实现全局优化的SVM。重要的是通常工作集是整个训练样本集的一个小子集。</p>
+<p>第二种一般用于非SVM方法，例如浅神经网络和boosted决策树。该算法首先包含正样本和随机负样本。然后训练模型至收敛。之后在一个更大的数据集上获取虚警。将虚警加入训练集中再次进行训练。这个流程一般只迭代一次，并且没有任何收敛性证明。</p>
+<h3 id="基于卷积网络的目标检测"><a href="#基于卷积网络的目标检测" class="headerlink" title="基于卷积网络的目标检测"></a>基于卷积网络的目标检测</h3><p>近三年，目标检测领域发展迅速。这种进步主要是由于ImageNet出现后对深度卷积网络的训练。R-CNN和Over Feat[^26]检测器在PASCAL VOC和ImageNet detection上的结果改善显著。OverFeat基于滑窗法，R-CNN基于区域推荐法——Selective search算法。由于R-CNN基于卷积网络的处理流程更快，SPPnet[^16]，MR-CNN[^13]，Fast R-CNN[^14]，因此我们的工作主要在此模型上展开。</p>
+<h3 id="深度学习中的困难样本选择"><a href="#深度学习中的困难样本选择" class="headerlink" title="深度学习中的困难样本选择"></a>深度学习中的困难样本选择</h3><p>目前有也有一些工作研究在训练深度网络中挑选困难样本[^22][^27][^33]。与我们的方法类似，这些方法也都是具有当前数据点的损失值来挑选样本。</p>
+<ul>
+<li>论文[^27]从一个大型数据集中随机样本的loss独立的选择困难正样本和负样本，用于学习图像描述符。</li>
+<li>论文[^33]对于给定的一对正样本块，使用triplet loss在数据集中寻找困难负样本块</li>
+<li>与我们的方法类似，论文[^22]研究对mini-batch SGD的在线困难样本选择方法。他们的方法也基于loss，但是主要面向分类问题。<em>而我们的关注于基于区域推荐的目标检测器的在线困难样本选择策略。</em>（这个理由有点牵强）</li>
+</ul>
+<h2 id="3-Fast-R-CNN简介"><a href="#3-Fast-R-CNN简介" class="headerlink" title="3. Fast R-CNN简介"></a>3. Fast R-CNN简介</h2><p>![](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;f1.png)</p>
+<p>我们首先总结下Fast R-CNN（FRCN）的框架。FRCN是输入一幅图像和一系列ROI。FRCN网络本身分为两个部分：一个是卷积网络层，包含卷积和池化层；另一个是ROI网络，包含ROI池化层，以及全连接层和两个损失层。如图1。</p>
+<p>卷积网络将图像转换为卷积特征图，然后对于每个目标推荐，ROI池化层，将ROI映射到卷积特征图上，然后提取固定长度的特征向量（<em>通过插值或超采样</em>）。每个特征向量输入给fc层，最后输出两个结果：（1）softmax，所有类别和背景的概率分布；（2）bounding-box的重新定位的位置回归。</p>
+<p>选择FRCN作为我们的基础目标检测器有以下原因：</p>
+<ul>
+<li>一个快速的端到端的系统</li>
+<li>conv和ROI两个网络层是设计也用于其他的检测器SPPnet和MR-CNN，因此我们提出的方法更加有广泛性</li>
+<li>基本设置相似，FRCN也允许训练整个卷积网络，相反SPPnet和MR-CNN会固定卷积层。</li>
+<li>SPPnet和MR-CNN都需要缓存ROI网络的特征用于训练一个分离的SVM分类器（用于困难负样本挖掘）。FRCN使用ROI网络本身来训练期望的分类器。后面会证明在统一系统中使用SVM分类器是没必要的。</li>
+</ul>
+<h3 id="3-1-Training"><a href="#3-1-Training" class="headerlink" title="3.1 Training"></a>3.1 Training</h3><p>类似大部分深度网络，FRCN也是使用随机梯度下降进行训练。每个ROI的loss是所有分类的log loss的综合，目的是鼓励准确预测目标类别；另一个位置loss孤立预测精确的bounding box位置。</p>
+<p>为了分享ROI之间的卷积计算，SGD的mini-batch创建为层级结构。对于每个mini-batch，先从数据集中选择N个图像，每个图像选择B&#x2F;N个ROI。设置N&#x3D;2，B&#x3D;128。ROI的采样设计到一些启发式方法，后面我们进行简要介绍。<strong>本文的一个贡献是去除一些启发式方法和他们的超参数。</strong></p>
+<h4 id="前景ROI"><a href="#前景ROI" class="headerlink" title="前景ROI"></a>前景ROI</h4><p>例如一个ROI被标记为前景fg，其与gt的IoU应该≥0.5。这是一种标准的设计选择，是PASCAL VOC目标检测基准数据集的评估标准。相同的标准也用在R-CNN，SPPnet，MR-CNN等模型中SVM的困难样本挖掘。我们也使用相同的标准。</p>
+<h4 id="背景ROI"><a href="#背景ROI" class="headerlink" title="背景ROI"></a>背景ROI</h4><p>一个区域被标记为bg，其最大IoU的区间在[bg_lo, 0.5)之间。在FRCN和SPPnet中使用bg_lo&#x3D;0.1，文献[^14]使用更粗略的困难负样本。<strong>这里假设区域与gt有一些重叠的区域更有可能混淆，称为困难样本。</strong>5.4节显示启发式方法能够帮助收敛、提高精度，这是一种次优方法，<strong>因为忽略一些不经常出现但是重要困难的背景区域。我们的方法移除了bg_lo的阈值。</strong></p>
+<h4 id="平衡fg-bg的ROI"><a href="#平衡fg-bg的ROI" class="headerlink" title="平衡fg-bg的ROI"></a>平衡fg-bg的ROI</h4><p>为了处理section1中的数据不平衡性，论文[^14]设计启发式方法平衡每个mini-batch的fg-bg比例，目标比例为1：3，通过随机降采样背景块，因此确保mini-batch中25%的样本是fg。我们发现这是一个训练FRCN的重要设计。去除这个比例（随机采样ROI）或者增加比例，会降低检测精度mAP，3个点。基于我们的方法，可以去除这个比例参数，并且不造成影响。</p>
+<h2 id="4-我们的方法"><a href="#4-我们的方法" class="headerlink" title="4. 我们的方法"></a>4. 我们的方法</h2><p>我们提出简单、有效的在线困难样本挖掘算法用于训练Fast R-CNN（或Fast R-CNN类似的目标检测器）。我们认为目前的方法构造mini-batch用于SGD是低效、次优的。我们方法能够更好的训练（训练误差更低）更高的检测性能（mAP）。</p>
+<h3 id="4-1-在线困难样本挖掘"><a href="#4-1-在线困难样本挖掘" class="headerlink" title="4.1 在线困难样本挖掘"></a>4.1 在线困难样本挖掘</h3><p>基于SVM的目标检测器中，例如R-CNN或SPPnet中训练的SVM，其步骤是：</p>
+<ul>
+<li>激活一定数量的图片（j经常为10多，100多）使得训练集达到一定阈值</li>
+<li>在该激活的训练集上训练SVM至收敛。</li>
+<li>重复上述过程，直到激活训练集包含所有支持向量</li>
+</ul>
+<p>将类似的策略应用于FRCN后会减慢训练速度，因为在挑选样本时不能更新模型。</p>
+<p>我们发现，两个步骤可以结合FRCN的在线SGD进行训练。主要原因是虽然每个SGD迭代只有少量图像，但是每个图像包含上千个ROI样本，从中我们可以挑选困难样本，而不是启发式筛选子集。这个策略适用于SGD中固定模型用于mini-batch的交换模版，且只固定模型一次，在一个mini-batch中。因此模型更新速度跟SGD方法一样快，所以学习没有延迟。</p>
+<ul>
+<li>输入图像，在SGD的第t次迭代，计算卷积特征图</li>
+<li>ROI网络计算所有输入的ROI，ROI池化，几个全连接层，计算loss</li>
+<li>loss表示对当前ROI的性能</li>
+<li>对ROI以loss排序选择前B&#x2F;N个ROI表示当前检测最差的ROI</li>
+<li>由于只选择一小部分ROI更新模型，反向传播更加快速</li>
+</ul>
+<p>但是，这里有个小问题：区域重叠的位置相关ROI区域具有相关的损失。并且重叠的ROI可能投影到相同的卷积特征区域，因此导致对同一区域的loss加倍考虑。为了处理这些冗余和相关的区域，我们使用标准的非极大值抑制NMS删除重复数据。对于给定的ROI列表和他们的损失，NMS的工作是选择高loss的ROI，删除低loss的ROI和具有高度重叠的区域。我们选择的IoU阈值为0.7。</p>
+<p>网盘， 发现上面描述的过程不需要fg-bg比例参数用于数据平衡。如果任何类被忽略，那他们的loss会增加，然后就会有更高的可能性对其采样。</p>
+<h3 id="4-2-实现细节"><a href="#4-2-实现细节" class="headerlink" title="4.2 实现细节"></a>4.2 实现细节</h3><p>![](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;f2.png)</p>
+<p>有很多方法可以实现OHEM，每种都有不同的权衡。一个明显的方法是修改loss层来做困难样本的选择。loss层可以计算所有ROI的loss，然后排序，然后选择困难的ROI，然后将所有非困难ROI的loss置0。这种方法虽然直接，但是并不高效，因为ROI网络仍然会分配内存给所有的ROI，进行反向传播，即使大部分ROI的loss是0，因此没有梯度更新。</p>
+<p>为了解决这个，我们提出的架构如图2所示。我们实现维护两个相同的ROI网络，其中一个是只读的。这意味着，只读的ROI网络只在前向传播的时候分配内存，而一般的网络是前向&#x2F;反向都分配内存。对于一个SGD迭代，给定一个卷积特征图，只读ROI网络前向计算所有ROI的损失值，然后困难ROI采样模块使用如4.1描述的方法选择困难样本($R_{hard-set}$)，其输入给一般的ROI网络这个网络分别计算前向和反向，但是仅在$R_{hard-set}$上累计梯度并传递给卷积网络。实际中，我们使用N个图片的所有ROI作为R，因此只读网络的的batch尺寸是$|R|$，而常规网络是$|B|$。</p>
+<p>我们使用Caffe实现上述网络，N次前向反向梯度累积，在一个image mini-batch。对于FRCN，我们使用N&#x3D;2，B&#x3D;128。使用上述方法后速度提升两倍。除非特殊说明，否则本文使用上述方法。</p>
+<h2 id="5-分析在线困难样本挖掘"><a href="#5-分析在线困难样本挖掘" class="headerlink" title="5. 分析在线困难样本挖掘"></a>5. 分析在线困难样本挖掘</h2><p>这一届比较采用OHEM的FRCN的模型和一般的启发式样本算则方法。我们还比较了一些更抵消的方法，即使用所有ROI，而不是仅仅B个最困难的样本。</p>
+<h3 id="5-1-实验设置"><a href="#5-1-实验设置" class="headerlink" title="5.1 实验设置"></a>5.1 实验设置</h3><p>我们主要对两个标准卷积网络架构实验：一个是VGG_CNN_M_1024(VGGM)，是AlexNet的一种扩展版，一个是VGG16。所有实验都在VOC 07数据集上进行。训练所有的SGD对80k个mini-batch迭代，初始化学习率为0.001，每30k次迭代衰减0.1。表1中的1，2行是我们的标准做法，比原文的结果稍微提高。</p>
+<p>![](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;t1.png)</p>
+<h3 id="5-2-OHEM与启发式方法"><a href="#5-2-OHEM与启发式方法" class="headerlink" title="5.2 OHEM与启发式方法"></a>5.2 OHEM与启发式方法</h3><p>标准的FRCN，如表1所述，1-2行。为了测试启发式方法的重要性，去除bg_lo，之后VGGM的mAP掉了2.4，但是VGG16基本一致。与OHEM训练FRCN相比，有2.4mAP的提升。这证明启发式方法是次优的，我们的OHEM是更有效的方法。</p>
+<h3 id="5-3-鲁棒梯度估计"><a href="#5-3-鲁棒梯度估计" class="headerlink" title="5.3 鲁棒梯度估计"></a>5.3 鲁棒梯度估计</h3><p>采用两个图片的ROI进行优化，这是因为单一图像由于ROI具有较高的相似性，可能会导致不稳定的梯度，从而减慢收敛的过程。这个对于FRCN可能不是一个问题，但是对我们的方法可能是需要考虑的，因为我们对同一幅图像中的高loss进行采样，这些ROI可能具有较高的相似性。为了解决这个问题，我们实验了当N&#x3D;1时，增加ROI相关性，FRCN会产生1个点的下降，但是我们的方法没有下降，说明更加具有鲁棒性。</p>
+<h3 id="5-4-为什么只是困难样本，当你使用所有样本的时候呢？"><a href="#5-4-为什么只是困难样本，当你使用所有样本的时候呢？" class="headerlink" title="5.4 为什么只是困难样本，当你使用所有样本的时候呢？"></a>5.4 为什么只是困难样本，当你使用所有样本的时候呢？</h3><p>在线困难样本挖掘有一个基本假设，考虑所有ROI是必要的，然后选择困难的样本进行训练。但是如果我用所有ROI进行训练呢？容易样本具有低loss，不会对gradient具有太多贡献，本身训练的过程就会关注困难的样本。为了比较这个，我们使用了大尺寸的mini-size，B&#x3D;2048，由于使用了大数据量，调整学习率是必要。虽然结果不基准要高1个点，但是我们的方法更加好。</p>
+<h3 id="5-5-更好的优化"><a href="#5-5-更好的优化" class="headerlink" title="5.5 更好的优化"></a>5.5 更好的优化</h3><p>最后，我们分析上述不同FRCN训练方法的loss的变化。我们每20k次优化计算一次所有ROI的平均loss。图3显示了结果：</p>
+<p>![](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;f3.png)</p>
+<h3 id="5-6-计算成本"><a href="#5-6-计算成本" class="headerlink" title="5.6 计算成本"></a>5.6 计算成本</h3><p>OHEM整机了合理的计算量和内存消耗。</p>
+<p>![](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/Training</a> Region-based Object Detectors with Online Hard Example Mining&#x2F;t2.png)</p>
+<h2 id="7-增加的方法"><a href="#7-增加的方法" class="headerlink" title="7 增加的方法"></a>7 增加的方法</h2><h4 id="Multi-scale（M）多尺度"><a href="#Multi-scale（M）多尺度" class="headerlink" title="Multi-scale（M）多尺度"></a>Multi-scale（M）多尺度</h4><p>我们采用多尺度策略。尺度定义为图像的短边长s，训练期间随机选择尺度，测试时测试所有尺度。对于VGG16，训练时s&#x3D;{480,576,688,864,900}，测试时s&#x3D;{480,576,688,864,1000}</p>
+<h4 id="迭代BB回归（B）"><a href="#迭代BB回归（B）" class="headerlink" title="迭代BB回归（B）"></a>迭代BB回归（B）</h4><p>论文[^13]中采用迭代定位和bbox投票方案。网络评估每个ROI得到一个得分和重新定位的box R1。高得分的R1进行再次评价和定位得到R2。R1和R1组成最终的RF用于后处理，RF_NMS得到NMS后的RF，IoU为0.3。</p>
+<p><strong>BibTex</strong></p>
+<figure class="highlight latex"><table><tr><td class="code"><pre><span class="line">@inproceedings&#123;</span><br><span class="line">Shrivastava2016,</span><br><span class="line">author = &#123;Shrivastava, Abhinav and Gupta, Abhinav and Girshick, Ross&#125;,</span><br><span class="line">booktitle = &#123;2016 IEEE Conference on Computer Vision and Pattern Recognition (CVPR)&#125;,</span><br><span class="line">doi = &#123;10.1109/CVPR.2016.89&#125;,</span><br><span class="line">month = &#123;jun&#125;,</span><br><span class="line">pages = &#123;761--769&#125;,</span><br><span class="line">publisher = &#123;IEEE&#125;,</span><br><span class="line">title = &#123;&#123;Training Region-Based Object Detectors with Online Hard Example Mining&#125;&#125;,</span><br><span class="line">year = &#123;2016&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 ]]></content>
       <categories>
         <category>Note 笔记</category>
         <category>Object Detection</category>
       </categories>
       <tags>
-        <tag>Omni Supervised Learning</tag>
+        <tag>Video Object Detection</tag>
+        <tag>OHEM</tag>
       </tags>
   </entry>
   <entry>
@@ -2089,6 +2004,216 @@
       </tags>
   </entry>
   <entry>
+    <title>论文笔记 Data Distillation: Towards Omni-Supervised Learning</title>
+    <url>/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Data-Distillation-Towards-Omni-Supervised-Learning/</url>
+    <content><![CDATA[<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><ul>
+<li>Omni-supervised learning: 全方位学习：一种特殊的半监督学习，包括所有可学习的数据和来自Internet的为标记数据</li>
+<li>Data Distillation: 数据蒸馏：一种集成预处理方法，将未标记的数据进行多种变化，使用单一模型自动生成新的训练标记</li>
+<li>作者主张，目前的视觉识别模型已经具有足够的精度进行自学习（self-learning）,从而挑战真实世界的数据</li>
+<li>实验表面，使用<strong>数据蒸馏</strong>训练的模型超过完全使用标注数据训练的方法</li>
+</ul>
+<span id="more"></span>
+
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>Omni-supervised learning，利用所以可利用的训练数据，包括标记和未标记的。</p>
+<p>semi-supervised learning，研究主要针对一个完整数据集，将其分为标记和未标记的，然后进行训练，这类研究具有上限，即全部使用标记数据训练。omni-supervised learning 没有上限，只有下限，使用全部数据训练是其下限。</p>
+<p>为了解决Omni-supervised learning，本文提出数据蒸馏概念，即使用大量标记数据训练一个模型对未标记数据进行标记，然后使用多出来的数据进行训练。<strong>但是使用自己标注的数据进行训练往往没有意义</strong>。为了解决这个问题，我们集成单一模型在多种变换上的结果。</p>
+<p>self-learning的研究可以追溯到1960s，但是由于近几年监督模型的快速改进，允许我们相信其对于未标记数据的预测，降低了对数据清洗的需要。</p>
+<p>为了测试数据蒸馏，我们使用人形骨架检测任务，COCO。训练模型为Mask R-CNN，提升了2个百分点。</p>
+<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><h2 id="3-Data-Distillation"><a href="#3-Data-Distillation" class="headerlink" title="3. Data Distillation"></a>3. Data Distillation</h2><p>四步：</p>
+<ol>
+<li>在手工标记数据上训练一个模型</li>
+<li>将该模型应用于未标记数据的多种变换上</li>
+<li>将多种预测集成，使预测称为标记</li>
+<li>联合所有数据再次训练</li>
+</ol>
+<h4 id="Multi-transform-inference"><a href="#Multi-transform-inference" class="headerlink" title="Multi-transform inference"></a>Multi-transform inference</h4><p>变换输入来增强精度是一种常见策略，例如：图像裁剪、多尺度等。我们对单一模型使用多种变换推理。</p>
+<h4 id="Generating-labels-on-unlabeled-data"><a href="#Generating-labels-on-unlabeled-data" class="headerlink" title="Generating labels on unlabeled data"></a>Generating labels on unlabeled data</h4><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Data_Distillation/f2.png"></p>
+<p>集成多种变换的预测结果经常能获得优于单一模型预测结果。如图2所示。我们发现集成后的预测能产生新的知识，并用于训练模型本身。</p>
+<p>例如对于分类问题，可以对一个图片生成平均类别概率向量[^18] ，但是会存在两个问题。1）“soft”标签不能直接用于训练模型，需要修改loss。2）结构化输出的问题，物体检测或姿势估计，平均结果是不合理的。</p>
+<p>我们简单的组合这些多变换预测，生成“hard”标签，与手工标记数据中具有相同的结构或类型。生成硬标签需要一些任务特定的逻辑能表征问题结构（例如NMS）。之后即可进行训练。该过程尽管需要推理多次，但是也不训练多个模型更高效。</p>
+<h3 id="Knowledge-distillation"><a href="#Knowledge-distillation" class="headerlink" title="Knowledge distillation"></a>Knowledge distillation</h3><p>1）每个minibatch包含手工标记数据和自动标记数据</p>
+<p>2）训练schedule需要延长，配合数据量的增加</p>
+<h2 id="4-数据蒸馏用于骨架检测"><a href="#4-数据蒸馏用于骨架检测" class="headerlink" title="4. 数据蒸馏用于骨架检测"></a>4. 数据蒸馏用于骨架检测</h2><h4 id="Data-transformations"><a href="#Data-transformations" class="headerlink" title="Data transformations"></a>Data transformations</h4><p>本文使用几何变换，其能够满足集成预测结果的需求，在集成时需要进行反变换，再集成。本文使用两种常用的变化：尺度变化、水平翻转（<em>数据增强而已</em>）我们对为标记的图片进行缩放，短边从[400,1200]，步长100像素。在验证集上应用相同策略，选择一个最优的变换使得模型提升最大，并将该模型作为teacher模型。</p>
+<h4 id="Retraining"><a href="#Retraining" class="headerlink" title="Retraining"></a>Retraining</h4><p>学生模型在联合数据集上训练，每个minibatch比例为6:4。学生模型可以采用teacher model初始化也可以用ImageNet初始化，我们发现使用ImageNet初始化的效果总是更好，说明teacher 模型进入了局部最优</p>
+<h2 id="5-Keypoint检测实验"><a href="#5-Keypoint检测实验" class="headerlink" title="5. Keypoint检测实验"></a>5. Keypoint检测实验</h2><h3 id="5-1-数据分割"><a href="#5-1-数据分割" class="headerlink" title="5.1 数据分割"></a>5.1 数据分割</h3><ul>
+<li>co-80: COCO 80K张训练图像</li>
+<li>co-35，2014 val的子集 35k张图</li>
+<li>co-115，上面的组合为：2017 COCO 训练集，115k张图</li>
+<li>un-120，COCO 2017提供了120k张未标记的图片</li>
+<li>s1m-180，从Sports-1M[^19] 随机选择180k个视频，每个视频随机选择1帧</li>
+</ul>
+<h3 id="5-2-主要结果"><a href="#5-2-主要结果" class="headerlink" title="5.2 主要结果"></a>5.2 主要结果</h3><p>1）co-35作为标记数据，co-80作为未标记数据</p>
+<p>2）co-115作为标记数据，分布相似的un-120作为未标记数据</p>
+<p>3）co-115作为标记数据，分布不相似的s1m-180作为未标记数据</p>
+<p>结果如表1所示</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Data_Distillation/t1.png" width="70%" />
+
+<h4 id="小数据量"><a href="#小数据量" class="headerlink" title="小数据量"></a>小数据量</h4><p>这里的实验类似经典的半监督问题策略，即使用一部分标注和完全标注的性能对比，完全标注的结果作为上界。本文提出的方法主要还是用于对实际未标注的数据进行提升更具挑战性。（但是半监督的研究也可以应用于本文的问题，作者为什么没有进行比较？）</p>
+<h4 id="大数据量-相似分布"><a href="#大数据量-相似分布" class="headerlink" title="大数据量-相似分布"></a>大数据量-相似分布</h4><p>使用co-115和un-120进行训练，使用DD方法进行标注。均匀不同提升。在论文[^27]中使用率1.5倍的全标注数据进行训练AP提升了3个百分点，本文的方法使用DD也提升了2个百分点。</p>
+<h4 id="大数据量-不相似分布"><a href="#大数据量-不相似分布" class="headerlink" title="大数据量-不相似分布"></a>大数据量-不相似分布</h4><p>使用co-115和s1m-180训练，尽管数据分布不一致，但是AP仍然具有提升，说明DD对数据分布差异具有鲁棒性。</p>
+<h3 id="5-3-消融实验"><a href="#5-3-消融实验" class="headerlink" title="5.3 消融实验"></a>5.3 消融实验</h3><h4 id="迭代次数"><a href="#迭代次数" class="headerlink" title="迭代次数"></a>迭代次数</h4><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Data_Distillation/t2.png" width="70%" />
+
+<p>由于数据量增加，因此迭代次数也应该相应增加。为了表面我们的提升不是来自迭代次数的增加，实验结果如表2所示。</p>
+<p>对于全监督baseline，130k迭代达到最优，相比默认的90k来说。但是增加到130k时下降，说明过耦合。</p>
+<p>另外，DD增加数据量后，360k迭代还未完全耦合。</p>
+<h4 id="未标记数据量"><a href="#未标记数据量" class="headerlink" title="未标记数据量"></a>未标记数据量</h4><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Data_Distillation/t5.png" width="70%" />
+
+<p>如图5所示，使用不同比例的未标记数据p，minibatch的比例为1:p，迭代次数也相应增加1+p倍（基准次数为130k）。从图5所示，随着数据的增加，AP持续提升。</p>
+<h4 id="teacher-模型的影响"><a href="#teacher-模型的影响" class="headerlink" title="teacher 模型的影响"></a>teacher 模型的影响</h4><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Data_Distillation/f6.png" width="70%" />
+
+<p>不同的teacher AP的提升，导致student AP的提升</p>
+<h4 id="测试时增强"><a href="#测试时增强" class="headerlink" title="测试时增强"></a>测试时增强</h4><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Data_Distillation/t3.png" width="70%" />
+
+<p>在测试时使用多变换推理也会改进结果。</p>
+<h2 id="6-物体检测实验"><a href="#6-物体检测实验" class="headerlink" title="6. 物体检测实验"></a>6. 物体检测实验</h2><h3 id="6-1-实现"><a href="#6-1-实现" class="headerlink" title="6.1 实现"></a>6.1 实现</h3><p>本文选择物体检测器为Faster R-CNN[^30] 使用FPN[^23] 为backbone，并使用RoIAlign改进[^15] 。我们采用如[^31] 中描述的端到端训练。</p>
+<p>使用bbox投票[^10] 方法进行组合union训练集。</p>
+<p>物体检测涉及多种类别，对每个类别设定得分阈值。我们选择阈值使得未标记图片集中平均每张图片选择的类别数量与标记的数据中每个类别的数量匹配。</p>
+<p>图7显示u-120中生成的标记。</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Data_Distillation/f7.png" width="70%" />
+
+<h3 id="6-2-物体检测结果"><a href="#6-2-物体检测结果" class="headerlink" title="6.2 物体检测结果"></a>6.2 物体检测结果</h3><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/Paper/CVPR2018-Data_Distillation/t4.png" width="70%" />
+
+<p>表4显示了结果：</p>
+<p>1）小数据量：通过类似半监督的方法，将co-80作为无标记数据进行训练。</p>
+<p>2）大数据量：co-115作为标记数据，un-120作为非标记数据</p>
+<h4 id="小数据量-1"><a href="#小数据量-1" class="headerlink" title="小数据量"></a>小数据量</h4><p>co-35是下界，co-115是上界，我们发现DD方法更接近下界，这个问题在未来将进行更进一步的研究</p>
+<h4 id="大数据量"><a href="#大数据量" class="headerlink" title="大数据量"></a>大数据量</h4><p>co-115是下界，应用DD之后数据都有不同的增长。</p>
+<p>表4显示使用为标记的数据训练物体检测是一个更具挑战性的问题，但是DD策略仍然能够改进。</p>
+]]></content>
+      <categories>
+        <category>Note 笔记</category>
+        <category>Object Detection</category>
+      </categories>
+      <tags>
+        <tag>Omni Supervised Learning</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>论文笔记 Individualness and Determinantal Point Processes for Pedestrian Detection</title>
+    <url>/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/</url>
+    <content><![CDATA[<ul>
+<li>机构：首尔大学，加州大学</li>
+<li>行人检测后处理，个体性估计</li>
+<li>代码:<a href="http://cpslab.snu.ac.kr/software">http://cpslab.snu.ac.kr/software</a></li>
+</ul>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>本文，我们介绍了检测候选的个体性作为一个补充用于评价行人检测。个体性从目标推荐和滑窗得到的原始检测候选中分配一个检测结果给每个物体。我们表明，传统的方法，如NMS，是次优的，因为其仅基于周围检测结果的得分来抑制。我们使用行列式点过程(determinantal point process)结合个体性优化选择最后的结果。该方法使用质量和相似性对每个检测结果建模。然后，检测结果中具有高检测得分和低相关性（通过矩阵行列式计算概率）的作为最后的结果。此矩阵由quality terms作为对角元素，其他位置是相似性元素。具体地，我们专注于行人检测问题，该问题由于其频繁的遮挡和不可预知的运动使其称为最具挑战的问题之一。实验结果显示本文提出的方法比NMS和不受约束的二次优化问题更好。</p>
+<span id="more"></span>
+
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>目标检测的目的是在图像中定位一个已知类别的目标。这对于许多视觉任务的基础，例如跟踪、场景识别、动作识别等。在视觉跟踪中，基于检测的跟踪是在连续图像中基于连续的检测结果定位目标，是非常有效的方法[^1]。通过定位图像中目标的位置，我们能更好理解场景中发生的事情[^2]。目标检测也应用于动作识别，通过发现一系列特定相关的动作序列[^3]。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1511942386442.png" alt="1511942386442"></p>
+<p>一般目标检测的框架在测试图像上进行滑窗或者通过训练的分类器推荐目标。目前已经有许多目标检测器能够将独立的目标检测好。然而，一个检测器对每个目标的检测结果周围都会产生大量的原始检测结果（raw detection responses），如图1a所示。冗余的检测结果一般通过贪心算法进行抑制得到图1b，如NMS。</p>
+<p>采用上述框架，很难检测高度被遮挡的目标。因为分类器在训练时设计为用于分辨不同的类别，而不是分别类内差异。例如图1中A、B行人外接矩形高度重叠，我们检测时需要判断是FP还是FN。基于NMS，由于A被遮挡，其检测得分会低于B，因此会被抑制。因此，NMS方法不可避免的产生一些FN，当目标相互遮挡时。另一方面，如果一些先验知识能够利用，例如不同的identities，这样的问题就能避免。事实上，false rejection能够极大影响检测精度，例如原始的检测结果召回率为90%，经过NMS之后检测结果仅为50%。因此，从原始检测结果挑选是一件重要的任务。</p>
+<p>本文，我们提出一个算法基于个体性（individualness）和行列式点过程（determinantal point process, DPP）用于精确检测，并且可以应用于任何目标检测器。该方法可以作为目标性检测的一个独立补充。物体性检测得到一组候选结果，个体性检测发现候选结果的关系，得到最终检测结果。我们定义个体性使用特征向量的相关性，其包含bbox中的外观和空间信息。具体的，我们关注人群场景中的多行人检测问题。</p>
+<p>DPP是一个随机过程，使用量子物理理论中的互斥粒子模型，其禁止高度相关的量子态同时出现。这个特性很适合排除冗余的检测结果。为了应用DPP，需要定义质量和多样性因子，通常为unary score和pair-wise correlation。基于此，我们可以选择一个更优化的子集如图1c所示。</p>
+<p>本文的贡献如下所示：</p>
+<ol>
+<li>现有检测框架中，从候选检测结果中选择最后结果的方法存在问题</li>
+<li>引入DPP增强检测精度，通过设计质量和多样性特征设计</li>
+<li>用DPP选择优化的检测结果，并在多个行人数据集上验证。</li>
+<li>在PETS 2009上，DPM基于本文方法达到41.9%的准确度和99%的精度，而NMS只达到23.2%的准确度和98.2%的精度。</li>
+<li>在30个行人的图像上处理超过300个候选结果的时间少于30ms</li>
+</ol>
+<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p>行人检测方法：HOG、SVM、DPM、Boosting-Based，Faster R-CNN</p>
+<p>融合检测结果：NMS。</p>
+<ol>
+<li>文献[^13]指出定位精确性与检测得分没有很强的相关性。因此其提出一个回归模型学习检测结果与GT的相对位置。</li>
+<li>文献[^14]将NMS框架整合到深度学习模型中，但是NMS的参数在训练时仍然是固定的。</li>
+</ol>
+<p>NMS可以看为优化问题：</p>
+<ol>
+<li>文献[^15]提出二次无约束二元优化方法（quadratic unconstrained binary optimization，QUBO）替代NMS。QUBO的目的是找到一个二元向量，其中每个元素表示对应的检测BBox是否应该被抑制。目标函数包含一元和二元项。一元项测量BBox是行人的置信度，二元项基于BBox的重叠区域进行惩罚。目标函数使用贪心算法求解。QUBO的问题在于其估计行人之间的分布使用二元目标函数。</li>
+<li>文献[^16]提出基于吸引力传播聚类（affinity propagation clustering，APC）的方法。统计BBox两辆之间的相似性，然后聚类相似性最大的。 但是APC没有显式的惩罚相互接近的物体。尽管可以增加互斥函数进行改进，但是检测精度也没用显著的增加。</li>
+</ol>
+<h2 id="3-方法"><a href="#3-方法" class="headerlink" title="3. 方法"></a>3. 方法</h2><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512616433920.png" alt="1512616433920"></p>
+<p>提出的方法包含连个阶段：物体性检测和个体性检测。本文使用DDP建模BBox之间的关系。</p>
+<h3 id="3-1-行列式点过程方程（Determinantal-Point-Process-Formulation）"><a href="#3-1-行列式点过程方程（Determinantal-Point-Process-Formulation）" class="headerlink" title="3.1 行列式点过程方程（Determinantal Point Process Formulation）"></a>3.1 行列式点过程方程（Determinantal Point Process Formulation）</h3><p>定义：</p>
+<ul>
+<li>DPP基于BBox的质量和相似性计算最终选择的BBox</li>
+<li>有个N个BBox，$y$表示所有BBox的集合，$Y$标示最终选择的子集</li>
+<li>BBox的质量为$q_i$</li>
+<li>BBox的相似性为$S_{ij}$，两个BBox向量的内积</li>
+<li>计算正-半正定核矩阵（positive-semidefinite kernel matrix）$L_Y&#x3D;[L_{ij}]_{i,j\in Y}$</li>
+<li><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512620048441.png" alt="1512620048441"></li>
+</ul>
+<p>则选择BBox的过程即为最优化问题</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512619743792.png" alt="1512619743792"></p>
+<p>通常来说这是一个NP-hard（non-deterministic polynomial）问题，需要对所以的可能进行评估，但是幸运的是该问题是log-submodular问题，可以通过简单的贪心算法估计。</p>
+<blockquote>
+<p><a href="https://baike.baidu.com/item/NP-hard">百度</a><br>NP-hard，其中，NP是指非确定性多项式（non-deterministic polynomial，缩写NP）。所谓的非确定性是指，可用一定数量的运算去解决多项式时间内可解决的问题。NP-hard问题通俗来说是其解的正确性能够被“很容易检查”的问题，这里“很容易检查”指的是存在一个多项式检查算法。相应的，若NP中所有问题到某一个问题是图灵可归约的，则该问题为NP困难问题。</p>
+</blockquote>
+<p>例如图，当选择$Y&#x3D;{i,j}$时，DPP选择其的得分$P_L(Y)$为</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512621004358.png" alt="1512621004358"></p>
+<p>可以发现，当$q$增大时行列式的值增加，当$|S_{i,j}|$增大时，行列式的值减小。因此DPP过程自动的选择高质量和低相似性的组合。</p>
+<h3 id="3-2-质量项"><a href="#3-2-质量项" class="headerlink" title="3.2 质量项"></a>3.2 质量项</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512629712724.png" alt="1512629712724"></p>
+<p>一般来说质量项就是检测得分，但是原始得分是相互独立的。我们提出一个检测策略考虑周围结果的关系。一个图像中的虚警可能会抑制真正行人BBox。这种问题在BBox很大时更严重，统计一个GT中具有的检测BBox数量如图3b所示。可以发现大部分GT中包含的BBox非常少（这里有个问题，是不是本来滑窗ROI的尺寸本来就比较大，然后0也被统计进去了）。基于这个发现，提出重得分函数</p>
+<p>$$s_i^c&#x3D;s_i^oexp(-\lambda n_i)$$</p>
+<p>$\lambda$是一个常数。并且这样还可以得到更加贴紧行人的BBox，如第四节所示。（这个想法很特别，而且似乎特别适合二元检测任务，因为根据透视原理，不可能在一个大目标前面还存在多个小目标）。</p>
+<p>特别地，在相机固定的场景中，行人的高度变化不大，而且高度$h_i$与位置$(x_i,y_i)$存在函数关系，可以容易的拟合出函数的系数：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512630353869.png" alt="1512630353869"></p>
+<p>假设行人的身高成高斯分布，我们根据BBox的偏差来对其进行重打分：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512630798943.png" alt="1512630798943"></p>
+<p>最后质量项$q$表示为：</p>
+<p>$$q&#x3D;\alpha s + \beta$$</p>
+<p>权重的设置需要根据检测器来确定，比如DPM的平均得分为0.7，ACF的得分是33.2。</p>
+<h3 id="3-3-个体性和多样性特征"><a href="#3-3-个体性和多样性特征" class="headerlink" title="3.3 个体性和多样性特征"></a>3.3 个体性和多样性特征</h3><p>个体性旨在确定两个图像是否是指同一个人。类似多相机环境中的行人身份再识别问题。但是这两个问题不同且难度不一样。</p>
+<ol>
+<li>重叠区域有完全相同的信息</li>
+<li>两个图像快交叠靠的很近</li>
+<li>需要考虑被遮挡的行人，再识别问题通常不考虑</li>
+</ol>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512631315204.png" alt="1512631315204"></p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512633314567.png" alt="1512633314567"></p>
+<p>为了克服这个问题，我们考虑测量BBox特征描述的相关性。特征应该对背景、尺度不敏感。为了实现这个目的，我们采用卷积特征。总体上，相关矩阵是块对角并且个体相关性较低，因此我们决定采用CNN特征。</p>
+<p>仅只用CNN不够有效，如图4所示，对单个行人有多个聚类结果，例如图5中间男人BBox右边有个BBox，尽管两个BBox中有轮廓不一样，但是仍然是一个行人。为了解决这个问题，我们增加考虑BBox的控制位置。空间个体性设计为单个行人周围的BBox具有高相关性。则第i个检测结果的个体性表示为：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512635866556.png" alt="1512635866556"></p>
+<p>k表示像素序号，$\pi_i$表示属于检测结果i的bbox的像素集合。尽管$\varphi_i$的纬度等同于图像尺寸，但是两个BBox的空间相关性可以检测计算得到:</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636179348.png" alt="1512636179348"></p>
+<p>同时不需要存储完整的相关性向量，只需保存检测的BBox尺寸和重叠面积：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636263251.png" alt="1512636263251"></p>
+<p>（晕，这不就是IOU么）</p>
+<p>得到了BBox的物体性特征$\phi_i$和$\varphi_i$，如何融合两个特征为一个多样性特征？可以采用平均值，但是其要求特征具有相同纬度。我们提出一个更通用有效的方法设计多样性特征，并直接构造正-半正定相似性矩阵S。$S^c$，$S^s$分别为有两个特征构建，换句话说$S_{ij}^c&#x3D;\phi_i^T\phi_j$。然后使用一个平和权重（0.8）融合：</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636884079.png" alt="1512636884079"></p>
+<h3 id="3-4-Mode-Finding"><a href="#3-4-Mode-Finding" class="headerlink" title="3.4 Mode Finding"></a>3.4 Mode Finding</h3><p>这一节描述如何求解上面的最优化函数。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512637471602.png" alt="1512637471602"></p>
+<ol>
+<li>每次选择最大的j</li>
+<li>加入到Y集合中</li>
+<li>计算P，若增加倍数超过阈值，则继续，并将j从y中删除</li>
+<li>直到P不再增加，或y为空</li>
+</ol>
+<h3 id="3-5-与QUBO的关系"><a href="#3-5-与QUBO的关系" class="headerlink" title="3.5 与QUBO的关系"></a>3.5 与QUBO的关系</h3><p>QUBO使用DPP目标函数转换为相似的形式。DPP是寻找最大化$L_Y$的行列式。QUBO有两个缺点</p>
+<ol>
+<li>QUBO cannot deal with positively correlated items. 这句话不理解</li>
+<li>QUBO 更加惩罚高度相关的BBox，可能不适合遮挡的行人。</li>
+</ol>
+<p>假设$L_y&#x3D;[2,-0.8;-0.8,1.4]$，QUBO将不选择第二个检测结果因为$-0.8-0.8+1.4&#x3D;-0.2&lt;0$，在DPP中$det(Y_L)&#x3D;2.16&gt;2$ 因此会选择第二个结果。</p>
+<h2 id="4-实验"><a href="#4-实验" class="headerlink" title="4. 实验"></a>4. 实验</h2><p>数据集</p>
+<ul>
+<li>INRIA：288个图像</li>
+<li>PETS2009：S1.L1的190帧，平均每帧33个行人，行人较密</li>
+<li>EPFL Terrace：5010帧，每25帧取1帧，平均每帧5人</li>
+</ul>
+<p>模型：DPM，ACF，Faster RCNN</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512654724175.png" alt="1512654724175"></p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512654762753.png" alt="1512654762753"></p>
+<p>表1和图7显示结果，可以看见DPP都比NMS好或一致，并且在PET2009这类数据集上有显著提升。并且RCNN这类方法在INRIA上有较好的效果，但是在PET2009上效果不好，可能是因为区域推荐的方法会生成很多重叠的框，而不是独立个体的框。上述实验不会使用先验知识。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512655923604.png" alt="1512655923604"></p>
+<p>图8a里面有贪心NMS，另一种为特殊NMS$\frac{area(d_g\bigcap d_e)}{min(area(d_g),area(d_e))}&gt;0.65$ 能够实现更好的精度。非贪心NMS不排除被抑制的BBox。QUBO的精度与非贪心NMS相似。并且DPP比其他的都显著改善。</p>
+<p>图8b表示了CNN网络层的有效性。显示，检测结果对不同的网络层不敏感。我们使用4096维向量用于计算多样性特征。</p>
+<p>图8c显示了计算速度。最多300个proposal，只统计算法1的计算时间。卷积计算时间248ms。计算平台Intel Xeon 2.3 GHz，128 RAM，TITAN X D5 12GB CPU。处理过程平均少于30ms。</p>
+<p>BBox定位精度使用$\frac{|d_e\bigcap d_g|}{|d_e|}$测量。PET2009中DPP是0.81，NMS是0.76。图9显示一些结果示例。DPP产生更贴紧的BBox，如EPFL-84帧，NMS和QUBO都漏检了中间穿白衣服的人，DPP成功检测。</p>
+<h2 id="5-结论"><a href="#5-结论" class="headerlink" title="5 结论"></a>5 结论</h2><p>我们提出一种基于个体性改进检测性能的算法。个体性评价两个检测候选的相似性，物体性基于得分生成候选框。每个BBox外观和空间信息用于考虑个体性。然后行列式点处理过程结合得分和相似性得到最后结果。实验结果表明DPP比NMS和QUBO更好。并且在平均包含30个行人的图像上处理300个候选框的速度小于30ms。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>[^13]: Liu, S., Lu, C., Jia, J.: Box aggregation for proposal decimation: last mile of object detection. In ICCV, pp. 2569–2577 (2015)<br>[^14]: Wan, L., Eigen, D., Fergus, R.: End-to-end integration of a convolution network, deformable partsmodel and non-maximum suppression. In CVPR, pp. 851–859 (2015)<br>[^15]: Rujikietgumjorn, S., Collins, R.T.: Optimized pedestrian detection for multiple and occluded people. In CVPR (2013)<br>[^16]: Rothe, R.,Guillaumin,M., Gool, L.V.: Non-maximum suppression for object detec- tion by passing messages between windows. In ACCV (2014)</p>
+]]></content>
+      <categories>
+        <category>Note 笔记</category>
+        <category>Pedestrian Detection</category>
+      </categories>
+      <tags>
+        <tag>Post Processing</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>论文笔记 Learning non-maximum suppression</title>
     <url>/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-Learning-non-maximum-suppression/</url>
     <content><![CDATA[<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>目标检测器受益于端到端的训练范式：推荐、特征、分类器开始成为一个神经网络。另一个独立不可缺的组件是NMS，一个后处理算法将属于同一目标的bbox合并。NMS仍然是手工设计，策略简单，基于固定阈值的贪心聚类算法，导致召回率和精度之间权衡。我们提出一个新的网络架构来实现NMS，仅基于其box和得分。我们在PETS上验证行人检测和COCO上验证目标检测。结果表明该方法能够改进定位和遮挡问题。</p>
@@ -2158,117 +2283,6 @@
       </categories>
       <tags>
         <tag>NMS</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>论文笔记 Road detection using convolutional neural networks</title>
-    <url>/Note-%E7%AC%94%E8%AE%B0/Note-Road-detection-using-convolutional-neural-networks/</url>
-    <content><![CDATA[<ul>
-<li>会议：European Conference on Artificial Life (ECAL)</li>
-<li>机构：Aberystwyth University (英国)</li>
-</ul>
-<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><ul>
-<li>解决自动驾驶的问题：使用卷积神经网络预测图像中路面的位置和宽度。</li>
-<li>实验了两种网络架构，六种色彩模型</li>
-<li>使用机器人Pioneer 3-AT，离线测试5个不同的路段</li>
-</ul>
-<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><ul>
-<li>自动驾驶车辆都需要判断前方的路面和非路面区域</li>
-<li>当道路线清晰，标准的图像处理+视觉方法可以直接解决</li>
-<li>当路面不清晰时就会变得复杂</li>
-<li>图像处理应该足够鲁棒，满足动态复杂路面检测的需求</li>
-<li>如果能判断前方路面的位置的形状，能够使得问题变简单</li>
-</ul>
-<span id="more"></span>
-
-<ul>
-<li><p>Alvarez[^1]，Thrun[^2] 尝试通过路面颜色分布的差异进行分割，这种方法不依赖道路标识，但是道路的颜色分布不是一直静止的，局部和动态的变化（阴影，水坑，纹理）都可以降低精度。此外，有些颜色通道，路面和非路面的分布基本没差异。</p>
-</li>
-<li><p>Ososinski[^3] 提出 Adaptive Statistical Colour Based（ASC），在图像上投影体形来定义路面区域。评估路面检测，采用Mahalanobis距离<a href="https://en.wikipedia.org/wiki/Mahalanobis_distance">^wiki</a> 评估在梯形内和外的像素。在多个道路上测试，大部分情况较好，但还是存在识别案例，以及有些具有系统性偏差。依赖前一帧颜色通道，当发生突变时可能存在问题。</p>
-<blockquote>
-<p>本文主要参考这篇文章的工作框架</p>
-</blockquote>
-</li>
-</ul>
-<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><ul>
-<li>Zhou，提出支持向量机分割输入图像。其假设路面的结构路面，为了能够使用不同路面及减少分类错误，其不断加入新帧中的像素，删除旧帧中的像素。但是在复杂场景中该方法失效。</li>
-<li>Pomerleau，ALVINN项目，最早使用神经网络控制无人车在室外驾驶。三层前馈网络，输入灰度图像，输出车辆方向命令。网络的训练数据通过一个人在一个模拟道路环境中驾驶生成。之后在户外的一个运行车辆上让驾驶员假设车辆来训练网络。该网络能够在已训练过的路上进行假设，但是不能迁移到新的道路环境。</li>
-<li>为了克服上述问题，Jochem，提出MANIAC模块，其包含几个独立的NN，分别对应基准不同的道路类型，然后整合到一个模块中，基于所有NN的输出，最后得出结果。该方法无法覆盖所以道路类型，需要大量NN，而且每加入一个新NN，整个系统需要重新训练。</li>
-<li>Shinzato，提出一种多网络方法适应多种路段。首先，每个图像被分为多块，每个块10x10像素，每个块被标记为可行或不可信，然后从block提取特征输入NN，然后综合结果输出预测。NN等方法对训练过的路段较好，但是对其他路段较差。</li>
-</ul>
-<p>近几年神经网络发展迅速，在检测、识别相关的视觉问题上，卷积神经网络能实现更高的精度。神经网络能获得高层语义特征，对路面检测来说，提取高级语义能够实现更好的鲁棒性。</p>
-<ul>
-<li>Hadsell，使用CNN实现了野地自动驾驶</li>
-<li>Chen，Liu，使用赛车模拟器视频训练CNN，其效果比使用Gabor的baseline方法好。该方法还是主要限制在城市道路场景。</li>
-<li>Huval，使用CNN检测高速公路的车道线，训练数据采用大量采集的视频数据。</li>
-<li>Badrinarayanan，提出反卷积网络用于图片语义分割</li>
-<li>据作者所知，上述方法没有在非城市道路评估，我们评估了Bad等人的方法在各种不同路面上的效果，如图1所示，效果较差。</li>
-</ul>
-<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521976193935.png" width="50%"/>
-
-<h3 id="Method"><a href="#Method" class="headerlink" title="Method"></a>Method</h3><ul>
-<li>两个网络架构</li>
-<li>10组道路序列图像，满足多样的道路环境</li>
-<li>6个色彩模型（RGB，HSV，YUV，YCbCr，lab，CbCra），看是否会影响CNN的性能</li>
-<li>评估方法类似Ososinski，结果显示最好的网络性能与ASC基本一致，在一两个环境下CNN更好</li>
-</ul>
-<h4 id="Road-Shap"><a href="#Road-Shap" class="headerlink" title="Road Shap"></a>Road Shap</h4><ul>
-<li><p>路面模型，梯形，两个可变参数，位置$x$，宽度$w$，如图2</p>
-</li>
-<li><p>增加高度$h$和角度$\theta$，能够实现更好匹配，但是会增加网络任务的复杂度。</p>
-</li>
-<li><p>对机器人来说位置x已足够让其保持在路面上，宽度w使其满足不同速度需求，使其保证行动的顺滑，不会产生突变。</p>
-<blockquote>
-<p>个人觉得这个模型太简单</p>
-</blockquote>
-</li>
-</ul>
-<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521619448741.png" width="70%"/>
-
-<h4 id="CNN"><a href="#CNN" class="headerlink" title="CNN"></a>CNN</h4><ul>
-<li>是否更深的网络能得到更精确的结果</li>
-<li>作者设计了一个4层的网络LCNN，输入图像是50x50x3的图像，两层网络（见图3中红框），分别有1000和600个神经元，最后两个节点输出参数x和w</li>
-<li>平均位置偏差大于20个像素</li>
-</ul>
-<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521621510078.png" width="100%"/>
-
-<ul>
-<li>另一个模型采用AlexNet</li>
-<li>参数随机初始化</li>
-<li>学习率0.0001</li>
-<li>dropout：0.2（conv）0.5（fc）</li>
-<li>Caffe</li>
-<li>使用ImageNet初始化，然后去掉最后两个全连接层，使用随机初始化两个输出节点</li>
-<li>迭代30次</li>
-</ul>
-<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521622327058.png">
-
-<h4 id="Datasets"><a href="#Datasets" class="headerlink" title="Datasets"></a>Datasets</h4><p>自己采集标注了数据集，下载地址：<a href="https://www.aber.ac.uk/en/cs/research/ir/dss/#road-driving">https://www.aber.ac.uk/en/cs/research/ir/dss/#road-driving</a></p>
-<h3 id="离线检测"><a href="#离线检测" class="headerlink" title="离线检测"></a>离线检测</h3><p>从6种色彩模型中选择选择每个模型最好的，好的标准是平均像素偏差。可以发现RGB不区分明度和颜色，YUV和YCbCr是相似的颜色模型，也具有相对更低的偏差。AlexNet跨颜色模型的效果更好。但是如果选择和是的色彩模型LCNN也可以与AlexNet比较。</p>
-<p>![1521642366208](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017</a> - Narayan et al. - Road detection using convolutional neural networks&#x2F;1521642366208.png)</p>
-<p>选择两个表现最好的ASC的色彩模型（HSV和lab）与LCNN和AlexNet进行比较。比较结果如下面两个图所示。</p>
-<p>![1521642885864](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017</a> - Narayan et al. - Road detection using convolutional neural networks&#x2F;1521642885864.png)</p>
-<p>![1521642902451](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017</a> - Narayan et al. - Road detection using convolutional neural networks&#x2F;1521642902451.png)</p>
-<blockquote>
-<p>Boxplots是一种统计图标，<a href="https://en.wikipedia.org/wiki/Box_plot">wiki</a>，其关键是理解四分位数，Q1：25%数据小于等于它，Q2：50%数据小于等于它，即中位数，Q3，75%数据小于等于它，四分卫距IQR&#x3D;Q3-Q1。Q3+1.5IQR就是外限，Q1-1.5IQR就是外限。超过外限的则显示出来。</p>
-<img src="http://www.physics.csbsju.edu/stats/complex.box.defs.gif" width="50%"/>
-</blockquote>
-<p>可以发现AlexNet的性能比ASC要好，同时也比LCNN好。Lakeside数据集，NN方法偏右，ACS在KITTI数据集的效果较差，如图7所示。</p>
-<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521644566071.png"  width="70%"/>
-
-<h2 id="Robot-Trials"><a href="#Robot-Trials" class="headerlink" title="Robot Trials"></a>Robot Trials</h2><p>在室内进行多种颜色环境的训练，25条线路，5种不同道路环境。如图8所示。</p>
-<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521644918748.png" width="50%"/>
-
-<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521644977589.png" width="50%"/>
-
-<p>25条线路，只有两个没有成功。Red-Blue路线，Robot很难保持在中间，如图8所示，会往右边的绿色区域偏离。</p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>CNN可能不容易分解为清晰的操作原则，但是它们不受人主观意见的干扰，导致系统的鲁棒性受限。我们以ASC方法为baseline，AlexNet展现了更好的效果，并且其简化版LCNN也能达到相似等级的精度。我们在室内环境验证了方法的可行性。为了我们会在更广泛的数据上测试，并将在我们的robot移动平台上嵌入一个GPU模块，使其满足运行CNN，实现实时的控制需求。</p>
-]]></content>
-      <categories>
-        <category>Note 笔记</category>
-      </categories>
-      <tags>
-        <tag>Road Detection</tag>
       </tags>
   </entry>
   <entry>
@@ -2622,160 +2636,6 @@
       </tags>
   </entry>
   <entry>
-    <title>论文笔记 Individualness and Determinantal Point Processes for Pedestrian Detection</title>
-    <url>/Note-%E7%AC%94%E8%AE%B0/Pedestrian-Detection/Note-Individualness-and-Determinantal-Point-Processes-for-Pedestrian-Detection/</url>
-    <content><![CDATA[<ul>
-<li>机构：首尔大学，加州大学</li>
-<li>行人检测后处理，个体性估计</li>
-<li>代码:<a href="http://cpslab.snu.ac.kr/software">http://cpslab.snu.ac.kr/software</a></li>
-</ul>
-<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>本文，我们介绍了检测候选的个体性作为一个补充用于评价行人检测。个体性从目标推荐和滑窗得到的原始检测候选中分配一个检测结果给每个物体。我们表明，传统的方法，如NMS，是次优的，因为其仅基于周围检测结果的得分来抑制。我们使用行列式点过程(determinantal point process)结合个体性优化选择最后的结果。该方法使用质量和相似性对每个检测结果建模。然后，检测结果中具有高检测得分和低相关性（通过矩阵行列式计算概率）的作为最后的结果。此矩阵由quality terms作为对角元素，其他位置是相似性元素。具体地，我们专注于行人检测问题，该问题由于其频繁的遮挡和不可预知的运动使其称为最具挑战的问题之一。实验结果显示本文提出的方法比NMS和不受约束的二次优化问题更好。</p>
-<span id="more"></span>
-
-<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><p>目标检测的目的是在图像中定位一个已知类别的目标。这对于许多视觉任务的基础，例如跟踪、场景识别、动作识别等。在视觉跟踪中，基于检测的跟踪是在连续图像中基于连续的检测结果定位目标，是非常有效的方法[^1]。通过定位图像中目标的位置，我们能更好理解场景中发生的事情[^2]。目标检测也应用于动作识别，通过发现一系列特定相关的动作序列[^3]。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1511942386442.png" alt="1511942386442"></p>
-<p>一般目标检测的框架在测试图像上进行滑窗或者通过训练的分类器推荐目标。目前已经有许多目标检测器能够将独立的目标检测好。然而，一个检测器对每个目标的检测结果周围都会产生大量的原始检测结果（raw detection responses），如图1a所示。冗余的检测结果一般通过贪心算法进行抑制得到图1b，如NMS。</p>
-<p>采用上述框架，很难检测高度被遮挡的目标。因为分类器在训练时设计为用于分辨不同的类别，而不是分别类内差异。例如图1中A、B行人外接矩形高度重叠，我们检测时需要判断是FP还是FN。基于NMS，由于A被遮挡，其检测得分会低于B，因此会被抑制。因此，NMS方法不可避免的产生一些FN，当目标相互遮挡时。另一方面，如果一些先验知识能够利用，例如不同的identities，这样的问题就能避免。事实上，false rejection能够极大影响检测精度，例如原始的检测结果召回率为90%，经过NMS之后检测结果仅为50%。因此，从原始检测结果挑选是一件重要的任务。</p>
-<p>本文，我们提出一个算法基于个体性（individualness）和行列式点过程（determinantal point process, DPP）用于精确检测，并且可以应用于任何目标检测器。该方法可以作为目标性检测的一个独立补充。物体性检测得到一组候选结果，个体性检测发现候选结果的关系，得到最终检测结果。我们定义个体性使用特征向量的相关性，其包含bbox中的外观和空间信息。具体的，我们关注人群场景中的多行人检测问题。</p>
-<p>DPP是一个随机过程，使用量子物理理论中的互斥粒子模型，其禁止高度相关的量子态同时出现。这个特性很适合排除冗余的检测结果。为了应用DPP，需要定义质量和多样性因子，通常为unary score和pair-wise correlation。基于此，我们可以选择一个更优化的子集如图1c所示。</p>
-<p>本文的贡献如下所示：</p>
-<ol>
-<li>现有检测框架中，从候选检测结果中选择最后结果的方法存在问题</li>
-<li>引入DPP增强检测精度，通过设计质量和多样性特征设计</li>
-<li>用DPP选择优化的检测结果，并在多个行人数据集上验证。</li>
-<li>在PETS 2009上，DPM基于本文方法达到41.9%的准确度和99%的精度，而NMS只达到23.2%的准确度和98.2%的精度。</li>
-<li>在30个行人的图像上处理超过300个候选结果的时间少于30ms</li>
-</ol>
-<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><p>行人检测方法：HOG、SVM、DPM、Boosting-Based，Faster R-CNN</p>
-<p>融合检测结果：NMS。</p>
-<ol>
-<li>文献[^13]指出定位精确性与检测得分没有很强的相关性。因此其提出一个回归模型学习检测结果与GT的相对位置。</li>
-<li>文献[^14]将NMS框架整合到深度学习模型中，但是NMS的参数在训练时仍然是固定的。</li>
-</ol>
-<p>NMS可以看为优化问题：</p>
-<ol>
-<li>文献[^15]提出二次无约束二元优化方法（quadratic unconstrained binary optimization，QUBO）替代NMS。QUBO的目的是找到一个二元向量，其中每个元素表示对应的检测BBox是否应该被抑制。目标函数包含一元和二元项。一元项测量BBox是行人的置信度，二元项基于BBox的重叠区域进行惩罚。目标函数使用贪心算法求解。QUBO的问题在于其估计行人之间的分布使用二元目标函数。</li>
-<li>文献[^16]提出基于吸引力传播聚类（affinity propagation clustering，APC）的方法。统计BBox两辆之间的相似性，然后聚类相似性最大的。 但是APC没有显式的惩罚相互接近的物体。尽管可以增加互斥函数进行改进，但是检测精度也没用显著的增加。</li>
-</ol>
-<h2 id="3-方法"><a href="#3-方法" class="headerlink" title="3. 方法"></a>3. 方法</h2><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512616433920.png" alt="1512616433920"></p>
-<p>提出的方法包含连个阶段：物体性检测和个体性检测。本文使用DDP建模BBox之间的关系。</p>
-<h3 id="3-1-行列式点过程方程（Determinantal-Point-Process-Formulation）"><a href="#3-1-行列式点过程方程（Determinantal-Point-Process-Formulation）" class="headerlink" title="3.1 行列式点过程方程（Determinantal Point Process Formulation）"></a>3.1 行列式点过程方程（Determinantal Point Process Formulation）</h3><p>定义：</p>
-<ul>
-<li>DPP基于BBox的质量和相似性计算最终选择的BBox</li>
-<li>有个N个BBox，$y$表示所有BBox的集合，$Y$标示最终选择的子集</li>
-<li>BBox的质量为$q_i$</li>
-<li>BBox的相似性为$S_{ij}$，两个BBox向量的内积</li>
-<li>计算正-半正定核矩阵（positive-semidefinite kernel matrix）$L_Y&#x3D;[L_{ij}]_{i,j\in Y}$</li>
-<li><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512620048441.png" alt="1512620048441"></li>
-</ul>
-<p>则选择BBox的过程即为最优化问题</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512619743792.png" alt="1512619743792"></p>
-<p>通常来说这是一个NP-hard（non-deterministic polynomial）问题，需要对所以的可能进行评估，但是幸运的是该问题是log-submodular问题，可以通过简单的贪心算法估计。</p>
-<blockquote>
-<p><a href="https://baike.baidu.com/item/NP-hard">百度</a><br>NP-hard，其中，NP是指非确定性多项式（non-deterministic polynomial，缩写NP）。所谓的非确定性是指，可用一定数量的运算去解决多项式时间内可解决的问题。NP-hard问题通俗来说是其解的正确性能够被“很容易检查”的问题，这里“很容易检查”指的是存在一个多项式检查算法。相应的，若NP中所有问题到某一个问题是图灵可归约的，则该问题为NP困难问题。</p>
-</blockquote>
-<p>例如图，当选择$Y&#x3D;{i,j}$时，DPP选择其的得分$P_L(Y)$为</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512621004358.png" alt="1512621004358"></p>
-<p>可以发现，当$q$增大时行列式的值增加，当$|S_{i,j}|$增大时，行列式的值减小。因此DPP过程自动的选择高质量和低相似性的组合。</p>
-<h3 id="3-2-质量项"><a href="#3-2-质量项" class="headerlink" title="3.2 质量项"></a>3.2 质量项</h3><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512629712724.png" alt="1512629712724"></p>
-<p>一般来说质量项就是检测得分，但是原始得分是相互独立的。我们提出一个检测策略考虑周围结果的关系。一个图像中的虚警可能会抑制真正行人BBox。这种问题在BBox很大时更严重，统计一个GT中具有的检测BBox数量如图3b所示。可以发现大部分GT中包含的BBox非常少（这里有个问题，是不是本来滑窗ROI的尺寸本来就比较大，然后0也被统计进去了）。基于这个发现，提出重得分函数</p>
-<p>$$s_i^c&#x3D;s_i^oexp(-\lambda n_i)$$</p>
-<p>$\lambda$是一个常数。并且这样还可以得到更加贴紧行人的BBox，如第四节所示。（这个想法很特别，而且似乎特别适合二元检测任务，因为根据透视原理，不可能在一个大目标前面还存在多个小目标）。</p>
-<p>特别地，在相机固定的场景中，行人的高度变化不大，而且高度$h_i$与位置$(x_i,y_i)$存在函数关系，可以容易的拟合出函数的系数：</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512630353869.png" alt="1512630353869"></p>
-<p>假设行人的身高成高斯分布，我们根据BBox的偏差来对其进行重打分：</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512630798943.png" alt="1512630798943"></p>
-<p>最后质量项$q$表示为：</p>
-<p>$$q&#x3D;\alpha s + \beta$$</p>
-<p>权重的设置需要根据检测器来确定，比如DPM的平均得分为0.7，ACF的得分是33.2。</p>
-<h3 id="3-3-个体性和多样性特征"><a href="#3-3-个体性和多样性特征" class="headerlink" title="3.3 个体性和多样性特征"></a>3.3 个体性和多样性特征</h3><p>个体性旨在确定两个图像是否是指同一个人。类似多相机环境中的行人身份再识别问题。但是这两个问题不同且难度不一样。</p>
-<ol>
-<li>重叠区域有完全相同的信息</li>
-<li>两个图像快交叠靠的很近</li>
-<li>需要考虑被遮挡的行人，再识别问题通常不考虑</li>
-</ol>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512631315204.png" alt="1512631315204"></p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512633314567.png" alt="1512633314567"></p>
-<p>为了克服这个问题，我们考虑测量BBox特征描述的相关性。特征应该对背景、尺度不敏感。为了实现这个目的，我们采用卷积特征。总体上，相关矩阵是块对角并且个体相关性较低，因此我们决定采用CNN特征。</p>
-<p>仅只用CNN不够有效，如图4所示，对单个行人有多个聚类结果，例如图5中间男人BBox右边有个BBox，尽管两个BBox中有轮廓不一样，但是仍然是一个行人。为了解决这个问题，我们增加考虑BBox的控制位置。空间个体性设计为单个行人周围的BBox具有高相关性。则第i个检测结果的个体性表示为：</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512635866556.png" alt="1512635866556"></p>
-<p>k表示像素序号，$\pi_i$表示属于检测结果i的bbox的像素集合。尽管$\varphi_i$的纬度等同于图像尺寸，但是两个BBox的空间相关性可以检测计算得到:</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636179348.png" alt="1512636179348"></p>
-<p>同时不需要存储完整的相关性向量，只需保存检测的BBox尺寸和重叠面积：</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636263251.png" alt="1512636263251"></p>
-<p>（晕，这不就是IOU么）</p>
-<p>得到了BBox的物体性特征$\phi_i$和$\varphi_i$，如何融合两个特征为一个多样性特征？可以采用平均值，但是其要求特征具有相同纬度。我们提出一个更通用有效的方法设计多样性特征，并直接构造正-半正定相似性矩阵S。$S^c$，$S^s$分别为有两个特征构建，换句话说$S_{ij}^c&#x3D;\phi_i^T\phi_j$。然后使用一个平和权重（0.8）融合：</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512636884079.png" alt="1512636884079"></p>
-<h3 id="3-4-Mode-Finding"><a href="#3-4-Mode-Finding" class="headerlink" title="3.4 Mode Finding"></a>3.4 Mode Finding</h3><p>这一节描述如何求解上面的最优化函数。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512637471602.png" alt="1512637471602"></p>
-<ol>
-<li>每次选择最大的j</li>
-<li>加入到Y集合中</li>
-<li>计算P，若增加倍数超过阈值，则继续，并将j从y中删除</li>
-<li>直到P不再增加，或y为空</li>
-</ol>
-<h3 id="3-5-与QUBO的关系"><a href="#3-5-与QUBO的关系" class="headerlink" title="3.5 与QUBO的关系"></a>3.5 与QUBO的关系</h3><p>QUBO使用DPP目标函数转换为相似的形式。DPP是寻找最大化$L_Y$的行列式。QUBO有两个缺点</p>
-<ol>
-<li>QUBO cannot deal with positively correlated items. 这句话不理解</li>
-<li>QUBO 更加惩罚高度相关的BBox，可能不适合遮挡的行人。</li>
-</ol>
-<p>假设$L_y&#x3D;[2,-0.8;-0.8,1.4]$，QUBO将不选择第二个检测结果因为$-0.8-0.8+1.4&#x3D;-0.2&lt;0$，在DPP中$det(Y_L)&#x3D;2.16&gt;2$ 因此会选择第二个结果。</p>
-<h2 id="4-实验"><a href="#4-实验" class="headerlink" title="4. 实验"></a>4. 实验</h2><p>数据集</p>
-<ul>
-<li>INRIA：288个图像</li>
-<li>PETS2009：S1.L1的190帧，平均每帧33个行人，行人较密</li>
-<li>EPFL Terrace：5010帧，每25帧取1帧，平均每帧5人</li>
-</ul>
-<p>模型：DPM，ACF，Faster RCNN</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512654724175.png" alt="1512654724175"></p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512654762753.png" alt="1512654762753"></p>
-<p>表1和图7显示结果，可以看见DPP都比NMS好或一致，并且在PET2009这类数据集上有显著提升。并且RCNN这类方法在INRIA上有较好的效果，但是在PET2009上效果不好，可能是因为区域推荐的方法会生成很多重叠的框，而不是独立个体的框。上述实验不会使用先验知识。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/IndividualnessDPP/1512655923604.png" alt="1512655923604"></p>
-<p>图8a里面有贪心NMS，另一种为特殊NMS$\frac{area(d_g\bigcap d_e)}{min(area(d_g),area(d_e))}&gt;0.65$ 能够实现更好的精度。非贪心NMS不排除被抑制的BBox。QUBO的精度与非贪心NMS相似。并且DPP比其他的都显著改善。</p>
-<p>图8b表示了CNN网络层的有效性。显示，检测结果对不同的网络层不敏感。我们使用4096维向量用于计算多样性特征。</p>
-<p>图8c显示了计算速度。最多300个proposal，只统计算法1的计算时间。卷积计算时间248ms。计算平台Intel Xeon 2.3 GHz，128 RAM，TITAN X D5 12GB CPU。处理过程平均少于30ms。</p>
-<p>BBox定位精度使用$\frac{|d_e\bigcap d_g|}{|d_e|}$测量。PET2009中DPP是0.81，NMS是0.76。图9显示一些结果示例。DPP产生更贴紧的BBox，如EPFL-84帧，NMS和QUBO都漏检了中间穿白衣服的人，DPP成功检测。</p>
-<h2 id="5-结论"><a href="#5-结论" class="headerlink" title="5 结论"></a>5 结论</h2><p>我们提出一种基于个体性改进检测性能的算法。个体性评价两个检测候选的相似性，物体性基于得分生成候选框。每个BBox外观和空间信息用于考虑个体性。然后行列式点处理过程结合得分和相似性得到最后结果。实验结果表明DPP比NMS和QUBO更好。并且在平均包含30个行人的图像上处理300个候选框的速度小于30ms。</p>
-<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p>[^13]: Liu, S., Lu, C., Jia, J.: Box aggregation for proposal decimation: last mile of object detection. In ICCV, pp. 2569–2577 (2015)<br>[^14]: Wan, L., Eigen, D., Fergus, R.: End-to-end integration of a convolution network, deformable partsmodel and non-maximum suppression. In CVPR, pp. 851–859 (2015)<br>[^15]: Rujikietgumjorn, S., Collins, R.T.: Optimized pedestrian detection for multiple and occluded people. In CVPR (2013)<br>[^16]: Rothe, R.,Guillaumin,M., Gool, L.V.: Non-maximum suppression for object detec- tion by passing messages between windows. In ACCV (2014)</p>
-]]></content>
-      <categories>
-        <category>Note 笔记</category>
-        <category>Pedestrian Detection</category>
-      </categories>
-      <tags>
-        <tag>Post Processing</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>修改Matlab默认编码格式为UTF-8</title>
-    <url>/Tutorial-%E6%95%99%E7%A8%8B/%E4%BF%AE%E6%94%B9Matlab%E9%BB%98%E8%AE%A4%E7%BC%96%E7%A0%81%E6%A0%BC%E5%BC%8F%E4%B8%BAUTF-8/</url>
-    <content><![CDATA[<p>输入<code>feature(&#39;lcoal&#39;)</code>查看当前环境编码格式</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">           ctype: &#x27;zh_CN.GBK&#x27;</span><br><span class="line">         collate: &#x27;zh_CN.GBK&#x27;</span><br><span class="line">            time: &#x27;zh_CN.GBK&#x27;</span><br><span class="line">         numeric: &#x27;en_US_POSIX.UTF-8&#x27;</span><br><span class="line">        monetary: &#x27;zh_CN.GBK&#x27;</span><br><span class="line">        messages: &#x27;zh_CN.GBK&#x27;</span><br><span class="line">        encoding: &#x27;GBK&#x27;</span><br><span class="line">terminalEncoding: &#x27;GBK&#x27;</span><br><span class="line">     jvmEncoding: &#x27;GBK&#x27;</span><br><span class="line">          status: &#x27;MathWorks locale management system initialized.&#x27;</span><br><span class="line">         warning: &#x27;&#x27;</span><br></pre></td></tr></table></figure>
-
-<p>进入matlab安装路径，打开lcdata.xml文件</p>
-<p><code>D:\Program Files\MATLAB\R2014b\bin\lcdata.xml</code></p>
-<p>将<code>UTF-8</code>与<code>GBK</code>编码对应</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;encoding name=”UTF-8”&gt;</span><br></pre></td></tr></table></figure>
-
-<p>修改为</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;encoding name=&quot;UTF-8&quot;&gt;</span><br><span class="line">    &lt;encoding_alias name=&quot;utf8&quot;/&gt;</span><br><span class="line">    &lt;encoding_alias name=&quot;GBK&quot;/&gt;</span><br><span class="line">&lt;/encoding&gt;</span><br></pre></td></tr></table></figure>
-
-<p>然后修改</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;locale name=&quot;zh_CN&quot; encoding=&quot;GBK&quot; xpg_name=&quot;zh_CN.GBK&quot;&gt;</span><br></pre></td></tr></table></figure>
-
-<p>为</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;locale name=&quot;zh_CN&quot; encoding=&quot;UTF-8&quot; xpg_name=&quot;zh_CN.UTF-8&quot;&gt;</span><br></pre></td></tr></table></figure>
-
-<p>重启matlab</p>
-]]></content>
-      <categories>
-        <category>Tutorial 教程</category>
-      </categories>
-      <tags>
-        <tag>Matlab</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Note Seq-NMS for Video Object Detection</title>
     <url>/Note-%E7%AC%94%E8%AE%B0/Video-Object-Detection/Note-Seq-NMS-for-Video-Object-Detection/</url>
     <content><![CDATA[<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><p>用于视频目标检测的NMS方法</p>
@@ -2829,104 +2689,143 @@
       </tags>
   </entry>
   <entry>
-    <title>Note-DuBox: No-Prior Box Objection Detection via Residual Dual Scale Detectors</title>
-    <url>/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DuBox-No-Prior-Box-Objection-Detection-via-Residual-Dual-Scale-Detectors/</url>
-    <content><![CDATA[<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>一篇Anchor-free方法，没有预设Box尺寸。</p>
-<ol>
-<li><p>直接回归Box的四个点，和IoU</p>
-</li>
-<li><p>FPN的金字塔结构归为两个尺寸</p>
-</li>
-<li><p>CPRS Loss, 回归和分类的分离导致经常回归正确的框却分类错误，在loss中增加IoU门函数。但是似乎都是这么做的。</p>
-</li>
-<li><p>各种tirck。见表1.</p>
-</li>
-</ol>
-<p>正片文章虽然结果优秀但是论述没有重点，每个trick都用相同的篇幅叙述，让人抓不到重点。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-1.png"></p>
+    <title>论文笔记 Road detection using convolutional neural networks</title>
+    <url>/Note-%E7%AC%94%E8%AE%B0/Note-Road-detection-using-convolutional-neural-networks/</url>
+    <content><![CDATA[<ul>
+<li>会议：European Conference on Artificial Life (ECAL)</li>
+<li>机构：Aberystwyth University (英国)</li>
+</ul>
+<h2 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h2><ul>
+<li>解决自动驾驶的问题：使用卷积神经网络预测图像中路面的位置和宽度。</li>
+<li>实验了两种网络架构，六种色彩模型</li>
+<li>使用机器人Pioneer 3-AT，离线测试5个不同的路段</li>
+</ul>
+<h2 id="1-Introduction"><a href="#1-Introduction" class="headerlink" title="1. Introduction"></a>1. Introduction</h2><ul>
+<li>自动驾驶车辆都需要判断前方的路面和非路面区域</li>
+<li>当道路线清晰，标准的图像处理+视觉方法可以直接解决</li>
+<li>当路面不清晰时就会变得复杂</li>
+<li>图像处理应该足够鲁棒，满足动态复杂路面检测的需求</li>
+<li>如果能判断前方路面的位置的形状，能够使得问题变简单</li>
+</ul>
 <span id="more"></span>
 
-<h2 id="Research-Objective"><a href="#Research-Objective" class="headerlink" title="Research Objective"></a>Research Objective</h2><blockquote>
-<p>Traditional neural objection detection methods use multi-scale features that allow multiple detectors to perform detecting tasks independently and in parallel. At the same time, with the handling of the prior box, the algorithm’s ability to deal with scale invariance is enhanced. However, too many prior boxes and independent detectors will increase the computational redundancy of the detection algorithm.</p>
+<ul>
+<li><p>Alvarez[^1]，Thrun[^2] 尝试通过路面颜色分布的差异进行分割，这种方法不依赖道路标识，但是道路的颜色分布不是一直静止的，局部和动态的变化（阴影，水坑，纹理）都可以降低精度。此外，有些颜色通道，路面和非路面的分布基本没差异。</p>
+</li>
+<li><p>Ososinski[^3] 提出 Adaptive Statistical Colour Based（ASC），在图像上投影体形来定义路面区域。评估路面检测，采用Mahalanobis距离<a href="https://en.wikipedia.org/wiki/Mahalanobis_distance">^wiki</a> 评估在梯形内和外的像素。在多个道路上测试，大部分情况较好，但还是存在识别案例，以及有些具有系统性偏差。依赖前一帧颜色通道，当发生突变时可能存在问题。</p>
+<blockquote>
+<p>本文主要参考这篇文章的工作框架</p>
 </blockquote>
-<p>本文是一个anchor-free方法，但是作者是从多尺度的角度来叙述。说预设anchor和多尺度检测会增加计算开销。因此预设anchor尺寸，减少检测器提升精度和效率是目的。</p>
-<h2 id="Problem-Statement"><a href="#Problem-Statement" class="headerlink" title="Problem Statement"></a>Problem Statement</h2><p>多尺度检测器中每层都预设很多anchor box，每层都有一个检测器，造成计算冗余。例如RetinaNet中有超过100K个anchor。作者提出两个疑问：</p>
-<ol>
-<li>使用更少的尺度，实现较好的性能</li>
-<li>不使用anchor也回归精确的box</li>
-</ol>
-<h2 id="Method-s"><a href="#Method-s" class="headerlink" title="Method(s)"></a>Method(s)</h2><h3 id="No-prior-Box-Detection"><a href="#No-prior-Box-Detection" class="headerlink" title="No-prior Box Detection"></a>No-prior Box Detection</h3><p>只使用hook作为预设的位置，而不预设scale和ratio。在anchor-based方法中先生成anchor然后与gt匹配后选择正负样本。没有了anchor如何选择正样本呢？本文给出的方法是设定一个position range $\Theta$。当hook $(i,j)$ 在此范围中，则此hook应回归此目标box。每个位置回归一个box$(Pr_{\Delta w_1},Pr_{\Delta w_2},Pr_{\Delta h_1},Pr_{\Delta h_2})$ 和一个置信度得分$Pr_{cls}$。<br>$$<br>r &#x3D; \sqrt{(x_2-x_1)^2+(y_2-y_1)^2}&#x2F;p<br>$$</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-2.png"></p>
-<h3 id="Residual-Dual-Scale-Detectors"><a href="#Residual-Dual-Scale-Detectors" class="headerlink" title="Residual Dual Scale Detectors"></a>Residual Dual Scale Detectors</h3><p>残差双尺度检测器，如图3所示。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-3.png"></p>
-<p>首先原来FPN中是5层特征金字塔，作者认为太多，可以减少，因此采用p3+p4组成detector1, p5+p6组成detector2的形式，这样只有两个尺度进行预测。</p>
-<h4 id="Refine-module"><a href="#Refine-module" class="headerlink" title="Refine module"></a>Refine module</h4><p>该模块是一个简单的通道和空间注意力模块[^27]，特征图得到一个注意力的加权图后与原特征图相乘。图显示其具体结构，卷积，再反卷积，得到与原特征图相同尺寸的权重图后相乘。作者说该技术能够使得检测器考虑hook周围的特征提升精度。</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-4-2.png"></p>
-<h4 id="BBox-bridge-module"><a href="#BBox-bridge-module" class="headerlink" title="BBox bridge module"></a>BBox bridge module</h4><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-4-1.png"></p>
-<p>该模块是将低级和高级检测器连接在一起，低级检测器的特征图通过两个卷积后缩小4倍后跟高级检测器特征相加。这使得高级检测器在之前的基础上训练（感觉有点像两阶段）。</p>
-<h3 id="Classification-Regression-Progressive-Strapped-Loss"><a href="#Classification-Regression-Progressive-Strapped-Loss" class="headerlink" title="Classification-Regression Progressive Strapped Loss"></a>Classification-Regression Progressive Strapped Loss</h3><p>使用IoU loss<br>$$<br>L{bbox}&#x3D;-\sum{i,j\in \Theta}ln(IoU(Pr^{i,j}{bbox},Gt^{i,j}{bbox}))<br>$$</p>
-<p>分类损失在原来的基础上增加一个IoU门函数$\sigma$<br>$$<br>L_{cls}&#x3D;-\sum_{i,j\in \Theta}CE(Pr^{i,j}<em>{cls},T^{i,j}</em>{cls})\sigma(Pr^{i,j}{bbox},Gt^{i,j}{bbox})-\sum_{i,j\notin \Theta}CE(Pr^{i,j}<em>{cls},T^{i,j}</em>{cls})<br>$$<br>当门函数大于0.5时取1，否则为0 （这里其实跟anchor-based方法中match方法一样）</p>
-<h3 id="Reducing-Redundancy-Strategy"><a href="#Reducing-Redundancy-Strategy" class="headerlink" title="Reducing Redundancy Strategy"></a>Reducing Redundancy Strategy</h3><p>一些Trick：</p>
-<ol>
-<li>detector1中p取10，detector2中p取9，且r最小为3</li>
-<li>当目标的面积&#x2F;图片面积大于0.3时，此时不统计此box的回归损失</li>
-</ol>
-<h3 id="Data-Augment-and-Sample-Balance"><a href="#Data-Augment-and-Sample-Balance" class="headerlink" title="Data Augment and Sample Balance"></a>Data Augment and Sample Balance</h3><h4 id="数据增强"><a href="#数据增强" class="headerlink" title="数据增强"></a>数据增强</h4><ul>
-<li>随机裁剪</li>
-<li>随机photo-metric distortion</li>
-<li>翻转</li>
+</li>
 </ul>
-<h4 id="批次平衡"><a href="#批次平衡" class="headerlink" title="批次平衡"></a>批次平衡</h4><p>为每个类别建立一个图片列表，每次batch选择一个类别为主要类别，然后选择相关的图片进行训练，这样保证每个类别的有相同的概率被选中。</p>
-<h4 id="正负样本平衡"><a href="#正负样本平衡" class="headerlink" title="正负样本平衡"></a>正负样本平衡</h4><p>1:3的比例</p>
-<h2 id="Evaluation"><a href="#Evaluation" class="headerlink" title="Evaluation"></a>Evaluation</h2><p>实验结果如表1所示，每个模块和trick对结果的影响</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-table-1.png"></p>
-<p>在VOC数据集上的比较</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-table-3.png"></p>
-<p>在COCO数据集上的比较</p>
-<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-table-4.png"></p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Anchor-based目前不是唯一的选择，Dubox不预设box也能work。</p>
-<p>双尺度比多尺度启发式选择更有效，且高、低级别级联检测。</p>
-<p>一些Trick能有效减少冗余结果，提升性能。</p>
-<p>[^27]: S.Woo, J. Park, J.-Y. Lee, and I. So Kweon. Cbam: Convolutional block attention module. In The European Conference on Computer Vision (ECCV), September 2018.</p>
+<h2 id="2-Related-Work"><a href="#2-Related-Work" class="headerlink" title="2. Related Work"></a>2. Related Work</h2><ul>
+<li>Zhou，提出支持向量机分割输入图像。其假设路面的结构路面，为了能够使用不同路面及减少分类错误，其不断加入新帧中的像素，删除旧帧中的像素。但是在复杂场景中该方法失效。</li>
+<li>Pomerleau，ALVINN项目，最早使用神经网络控制无人车在室外驾驶。三层前馈网络，输入灰度图像，输出车辆方向命令。网络的训练数据通过一个人在一个模拟道路环境中驾驶生成。之后在户外的一个运行车辆上让驾驶员假设车辆来训练网络。该网络能够在已训练过的路上进行假设，但是不能迁移到新的道路环境。</li>
+<li>为了克服上述问题，Jochem，提出MANIAC模块，其包含几个独立的NN，分别对应基准不同的道路类型，然后整合到一个模块中，基于所有NN的输出，最后得出结果。该方法无法覆盖所以道路类型，需要大量NN，而且每加入一个新NN，整个系统需要重新训练。</li>
+<li>Shinzato，提出一种多网络方法适应多种路段。首先，每个图像被分为多块，每个块10x10像素，每个块被标记为可行或不可信，然后从block提取特征输入NN，然后综合结果输出预测。NN等方法对训练过的路段较好，但是对其他路段较差。</li>
+</ul>
+<p>近几年神经网络发展迅速，在检测、识别相关的视觉问题上，卷积神经网络能实现更高的精度。神经网络能获得高层语义特征，对路面检测来说，提取高级语义能够实现更好的鲁棒性。</p>
+<ul>
+<li>Hadsell，使用CNN实现了野地自动驾驶</li>
+<li>Chen，Liu，使用赛车模拟器视频训练CNN，其效果比使用Gabor的baseline方法好。该方法还是主要限制在城市道路场景。</li>
+<li>Huval，使用CNN检测高速公路的车道线，训练数据采用大量采集的视频数据。</li>
+<li>Badrinarayanan，提出反卷积网络用于图片语义分割</li>
+<li>据作者所知，上述方法没有在非城市道路评估，我们评估了Bad等人的方法在各种不同路面上的效果，如图1所示，效果较差。</li>
+</ul>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521976193935.png" width="50%"/>
+
+<h3 id="Method"><a href="#Method" class="headerlink" title="Method"></a>Method</h3><ul>
+<li>两个网络架构</li>
+<li>10组道路序列图像，满足多样的道路环境</li>
+<li>6个色彩模型（RGB，HSV，YUV，YCbCr，lab，CbCra），看是否会影响CNN的性能</li>
+<li>评估方法类似Ososinski，结果显示最好的网络性能与ASC基本一致，在一两个环境下CNN更好</li>
+</ul>
+<h4 id="Road-Shap"><a href="#Road-Shap" class="headerlink" title="Road Shap"></a>Road Shap</h4><ul>
+<li><p>路面模型，梯形，两个可变参数，位置$x$，宽度$w$，如图2</p>
+</li>
+<li><p>增加高度$h$和角度$\theta$，能够实现更好匹配，但是会增加网络任务的复杂度。</p>
+</li>
+<li><p>对机器人来说位置x已足够让其保持在路面上，宽度w使其满足不同速度需求，使其保证行动的顺滑，不会产生突变。</p>
+<blockquote>
+<p>个人觉得这个模型太简单</p>
+</blockquote>
+</li>
+</ul>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521619448741.png" width="70%"/>
+
+<h4 id="CNN"><a href="#CNN" class="headerlink" title="CNN"></a>CNN</h4><ul>
+<li>是否更深的网络能得到更精确的结果</li>
+<li>作者设计了一个4层的网络LCNN，输入图像是50x50x3的图像，两层网络（见图3中红框），分别有1000和600个神经元，最后两个节点输出参数x和w</li>
+<li>平均位置偏差大于20个像素</li>
+</ul>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521621510078.png" width="100%"/>
+
+<ul>
+<li>另一个模型采用AlexNet</li>
+<li>参数随机初始化</li>
+<li>学习率0.0001</li>
+<li>dropout：0.2（conv）0.5（fc）</li>
+<li>Caffe</li>
+<li>使用ImageNet初始化，然后去掉最后两个全连接层，使用随机初始化两个输出节点</li>
+<li>迭代30次</li>
+</ul>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521622327058.png">
+
+<h4 id="Datasets"><a href="#Datasets" class="headerlink" title="Datasets"></a>Datasets</h4><p>自己采集标注了数据集，下载地址：<a href="https://www.aber.ac.uk/en/cs/research/ir/dss/#road-driving">https://www.aber.ac.uk/en/cs/research/ir/dss/#road-driving</a></p>
+<h3 id="离线检测"><a href="#离线检测" class="headerlink" title="离线检测"></a>离线检测</h3><p>从6种色彩模型中选择选择每个模型最好的，好的标准是平均像素偏差。可以发现RGB不区分明度和颜色，YUV和YCbCr是相似的颜色模型，也具有相对更低的偏差。AlexNet跨颜色模型的效果更好。但是如果选择和是的色彩模型LCNN也可以与AlexNet比较。</p>
+<p>![1521642366208](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017</a> - Narayan et al. - Road detection using convolutional neural networks&#x2F;1521642366208.png)</p>
+<p>选择两个表现最好的ASC的色彩模型（HSV和lab）与LCNN和AlexNet进行比较。比较结果如下面两个图所示。</p>
+<p>![1521642885864](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017</a> - Narayan et al. - Road detection using convolutional neural networks&#x2F;1521642885864.png)</p>
+<p>![1521642902451](<a href="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017">http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017</a> - Narayan et al. - Road detection using convolutional neural networks&#x2F;1521642902451.png)</p>
+<blockquote>
+<p>Boxplots是一种统计图标，<a href="https://en.wikipedia.org/wiki/Box_plot">wiki</a>，其关键是理解四分位数，Q1：25%数据小于等于它，Q2：50%数据小于等于它，即中位数，Q3，75%数据小于等于它，四分卫距IQR&#x3D;Q3-Q1。Q3+1.5IQR就是外限，Q1-1.5IQR就是外限。超过外限的则显示出来。</p>
+<img src="http://www.physics.csbsju.edu/stats/complex.box.defs.gif" width="50%"/>
+</blockquote>
+<p>可以发现AlexNet的性能比ASC要好，同时也比LCNN好。Lakeside数据集，NN方法偏右，ACS在KITTI数据集的效果较差，如图7所示。</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521644566071.png"  width="70%"/>
+
+<h2 id="Robot-Trials"><a href="#Robot-Trials" class="headerlink" title="Robot Trials"></a>Robot Trials</h2><p>在室内进行多种颜色环境的训练，25条线路，5种不同道路环境。如图8所示。</p>
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521644918748.png" width="50%"/>
+
+<img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/note/2017 - Narayan et al. - Road detection using convolutional neural networks/1521644977589.png" width="50%"/>
+
+<p>25条线路，只有两个没有成功。Red-Blue路线，Robot很难保持在中间，如图8所示，会往右边的绿色区域偏离。</p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>CNN可能不容易分解为清晰的操作原则，但是它们不受人主观意见的干扰，导致系统的鲁棒性受限。我们以ASC方法为baseline，AlexNet展现了更好的效果，并且其简化版LCNN也能达到相似等级的精度。我们在室内环境验证了方法的可行性。为了我们会在更广泛的数据上测试，并将在我们的robot移动平台上嵌入一个GPU模块，使其满足运行CNN，实现实时的控制需求。</p>
 ]]></content>
       <categories>
         <category>Note 笔记</category>
-        <category>Object Detection</category>
       </categories>
       <tags>
-        <tag>Anchor Free</tag>
+        <tag>Road Detection</tag>
       </tags>
   </entry>
   <entry>
-    <title>多用户多账户GitHub的ssh设置</title>
-    <url>/uncategorized/%E5%A4%9A%E7%94%A8%E6%88%B7%E5%A4%9A%E8%B4%A6%E6%88%B7GitHub%E7%9A%84ssh%E8%AE%BE%E7%BD%AE/</url>
-    <content><![CDATA[<p>我有两个github账号，在同一台电脑上，一个用于个人，一个用于团队。如何使用同时使用ssh对github进行数据推送呢？</p>
-<p>场景：</p>
-<p>用户名1：jobs</p>
-<p>用户名2：musk</p>
-<p>仓库1：<a href="mailto:&#x67;&#x69;&#116;&#x40;&#103;&#105;&#116;&#104;&#117;&#98;&#46;&#99;&#111;&#109;">&#x67;&#x69;&#116;&#x40;&#103;&#105;&#116;&#104;&#117;&#98;&#46;&#99;&#111;&#109;</a>:jobs&#x2F;apple.git</p>
-<p>仓库2：<a href="mailto:&#103;&#x69;&#116;&#x40;&#x67;&#105;&#116;&#104;&#x75;&#x62;&#x2e;&#99;&#x6f;&#109;">&#103;&#x69;&#116;&#x40;&#x67;&#105;&#116;&#104;&#x75;&#x62;&#x2e;&#99;&#x6f;&#109;</a>:musk&#x2F;tesla.git</p>
-<p>ssh密钥1：~&#x2F;.ssh&#x2F;jobs</p>
-<p>ssh密钥2：~&#x2F;.ssh&#x2F;musk</p>
-<span id="more"></span>
+    <title>修改Matlab默认编码格式为UTF-8</title>
+    <url>/Tutorial-%E6%95%99%E7%A8%8B/%E4%BF%AE%E6%94%B9Matlab%E9%BB%98%E8%AE%A4%E7%BC%96%E7%A0%81%E6%A0%BC%E5%BC%8F%E4%B8%BAUTF-8/</url>
+    <content><![CDATA[<p>输入<code>feature(&#39;lcoal&#39;)</code>查看当前环境编码格式</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">           ctype: &#x27;zh_CN.GBK&#x27;</span><br><span class="line">         collate: &#x27;zh_CN.GBK&#x27;</span><br><span class="line">            time: &#x27;zh_CN.GBK&#x27;</span><br><span class="line">         numeric: &#x27;en_US_POSIX.UTF-8&#x27;</span><br><span class="line">        monetary: &#x27;zh_CN.GBK&#x27;</span><br><span class="line">        messages: &#x27;zh_CN.GBK&#x27;</span><br><span class="line">        encoding: &#x27;GBK&#x27;</span><br><span class="line">terminalEncoding: &#x27;GBK&#x27;</span><br><span class="line">     jvmEncoding: &#x27;GBK&#x27;</span><br><span class="line">          status: &#x27;MathWorks locale management system initialized.&#x27;</span><br><span class="line">         warning: &#x27;&#x27;</span><br></pre></td></tr></table></figure>
 
-<p>首先，假设你已经按照官方教程将jobs.pub和musk.pub分别加入两个账户的ssh公钥中。</p>
-<p>在~&#x2F;.ssh目录下找到config文件，如果没有就创建一个</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">touch config # 创建config</span><br></pre></td></tr></table></figure>
+<p>进入matlab安装路径，打开lcdata.xml文件</p>
+<p><code>D:\Program Files\MATLAB\R2014b\bin\lcdata.xml</code></p>
+<p>将<code>UTF-8</code>与<code>GBK</code>编码对应</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;encoding name=”UTF-8”&gt;</span><br></pre></td></tr></table></figure>
 
-<p>然后在config中写入如下信息</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 该文件用于配置私钥对应的服务器</span><br><span class="line"># Default github user(first@mail.com)</span><br><span class="line">Host jobs.com</span><br><span class="line"> HostName github.com</span><br><span class="line"> User git</span><br><span class="line"> IdentityFile C:/Users/Administrator/.ssh/jobs</span><br><span class="line"></span><br><span class="line"> # second user(second@mail.com)</span><br><span class="line"> # 建一个github别名，新建的帐号使用这个别名做克隆和更新</span><br><span class="line">Host musk.com</span><br><span class="line"> HostName github.com</span><br><span class="line"> User git</span><br><span class="line"> IdentityFile C:/Users/Administrator/.ssh/musk</span><br></pre></td></tr></table></figure>
+<p>修改为</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;encoding name=&quot;UTF-8&quot;&gt;</span><br><span class="line">    &lt;encoding_alias name=&quot;utf8&quot;/&gt;</span><br><span class="line">    &lt;encoding_alias name=&quot;GBK&quot;/&gt;</span><br><span class="line">&lt;/encoding&gt;</span><br></pre></td></tr></table></figure>
 
-<p>测试一下</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -T jobs.com</span><br><span class="line">Hi jobs! You&#x27;ve successfully authenticated, but GitHub does not provide shell access.</span><br><span class="line">ssh -T musk.com</span><br><span class="line">Hi musk! You&#x27;ve successfully authenticated, but GitHub does not provide shell access.</span><br></pre></td></tr></table></figure>
+<p>然后修改</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;locale name=&quot;zh_CN&quot; encoding=&quot;GBK&quot; xpg_name=&quot;zh_CN.GBK&quot;&gt;</span><br></pre></td></tr></table></figure>
 
-<p>出现以上内容说明设置成功。</p>
-<p>最后，如果用github进行发布hexo，deploy可以写为：</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: jobs.com/jobs.github.io.git</span><br><span class="line">  branch: master</span><br><span class="line">  message: </span><br></pre></td></tr></table></figure>
+<p>为</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;locale name=&quot;zh_CN&quot; encoding=&quot;UTF-8&quot; xpg_name=&quot;zh_CN.UTF-8&quot;&gt;</span><br></pre></td></tr></table></figure>
+
+<p>重启matlab</p>
 ]]></content>
+      <categories>
+        <category>Tutorial 教程</category>
+      </categories>
       <tags>
-        <tag>ssh</tag>
-        <tag>github</tag>
+        <tag>Matlab</tag>
       </tags>
   </entry>
   <entry>
@@ -3022,6 +2921,107 @@
       <tags>
         <tag>Anchor</tag>
         <tag>Small Face</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>多用户多账户GitHub的ssh设置</title>
+    <url>/uncategorized/%E5%A4%9A%E7%94%A8%E6%88%B7%E5%A4%9A%E8%B4%A6%E6%88%B7GitHub%E7%9A%84ssh%E8%AE%BE%E7%BD%AE/</url>
+    <content><![CDATA[<p>我有两个github账号，在同一台电脑上，一个用于个人，一个用于团队。如何使用同时使用ssh对github进行数据推送呢？</p>
+<p>场景：</p>
+<p>用户名1：jobs</p>
+<p>用户名2：musk</p>
+<p>仓库1：<a href="mailto:&#x67;&#x69;&#116;&#x40;&#103;&#x69;&#x74;&#104;&#x75;&#98;&#46;&#99;&#111;&#x6d;">&#x67;&#x69;&#116;&#x40;&#103;&#x69;&#x74;&#104;&#x75;&#98;&#46;&#99;&#111;&#x6d;</a>:jobs&#x2F;apple.git</p>
+<p>仓库2：<a href="mailto:&#x67;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#117;&#x62;&#x2e;&#99;&#x6f;&#x6d;">&#x67;&#x69;&#x74;&#64;&#x67;&#x69;&#x74;&#x68;&#117;&#x62;&#x2e;&#99;&#x6f;&#x6d;</a>:musk&#x2F;tesla.git</p>
+<p>ssh密钥1：~&#x2F;.ssh&#x2F;jobs</p>
+<p>ssh密钥2：~&#x2F;.ssh&#x2F;musk</p>
+<span id="more"></span>
+
+<p>首先，假设你已经按照官方教程将jobs.pub和musk.pub分别加入两个账户的ssh公钥中。</p>
+<p>在~&#x2F;.ssh目录下找到config文件，如果没有就创建一个</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">touch config # 创建config</span><br></pre></td></tr></table></figure>
+
+<p>然后在config中写入如下信息</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># 该文件用于配置私钥对应的服务器</span><br><span class="line"># Default github user(first@mail.com)</span><br><span class="line">Host jobs.com</span><br><span class="line"> HostName github.com</span><br><span class="line"> User git</span><br><span class="line"> IdentityFile C:/Users/Administrator/.ssh/jobs</span><br><span class="line"></span><br><span class="line"> # second user(second@mail.com)</span><br><span class="line"> # 建一个github别名，新建的帐号使用这个别名做克隆和更新</span><br><span class="line">Host musk.com</span><br><span class="line"> HostName github.com</span><br><span class="line"> User git</span><br><span class="line"> IdentityFile C:/Users/Administrator/.ssh/musk</span><br></pre></td></tr></table></figure>
+
+<p>测试一下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">ssh -T jobs.com</span><br><span class="line">Hi jobs! You&#x27;ve successfully authenticated, but GitHub does not provide shell access.</span><br><span class="line">ssh -T musk.com</span><br><span class="line">Hi musk! You&#x27;ve successfully authenticated, but GitHub does not provide shell access.</span><br></pre></td></tr></table></figure>
+
+<p>出现以上内容说明设置成功。</p>
+<p>最后，如果用github进行发布hexo，deploy可以写为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">deploy:</span><br><span class="line">  type: git</span><br><span class="line">  repo: jobs.com/jobs.github.io.git</span><br><span class="line">  branch: master</span><br><span class="line">  message: </span><br></pre></td></tr></table></figure>
+]]></content>
+      <tags>
+        <tag>ssh</tag>
+        <tag>github</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Note-DuBox: No-Prior Box Objection Detection via Residual Dual Scale Detectors</title>
+    <url>/Note-%E7%AC%94%E8%AE%B0/Object-Detection/Note-DuBox-No-Prior-Box-Objection-Detection-via-Residual-Dual-Scale-Detectors/</url>
+    <content><![CDATA[<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>一篇Anchor-free方法，没有预设Box尺寸。</p>
+<ol>
+<li><p>直接回归Box的四个点，和IoU</p>
+</li>
+<li><p>FPN的金字塔结构归为两个尺寸</p>
+</li>
+<li><p>CPRS Loss, 回归和分类的分离导致经常回归正确的框却分类错误，在loss中增加IoU门函数。但是似乎都是这么做的。</p>
+</li>
+<li><p>各种tirck。见表1.</p>
+</li>
+</ol>
+<p>正片文章虽然结果优秀但是论述没有重点，每个trick都用相同的篇幅叙述，让人抓不到重点。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-1.png"></p>
+<span id="more"></span>
+
+<h2 id="Research-Objective"><a href="#Research-Objective" class="headerlink" title="Research Objective"></a>Research Objective</h2><blockquote>
+<p>Traditional neural objection detection methods use multi-scale features that allow multiple detectors to perform detecting tasks independently and in parallel. At the same time, with the handling of the prior box, the algorithm’s ability to deal with scale invariance is enhanced. However, too many prior boxes and independent detectors will increase the computational redundancy of the detection algorithm.</p>
+</blockquote>
+<p>本文是一个anchor-free方法，但是作者是从多尺度的角度来叙述。说预设anchor和多尺度检测会增加计算开销。因此预设anchor尺寸，减少检测器提升精度和效率是目的。</p>
+<h2 id="Problem-Statement"><a href="#Problem-Statement" class="headerlink" title="Problem Statement"></a>Problem Statement</h2><p>多尺度检测器中每层都预设很多anchor box，每层都有一个检测器，造成计算冗余。例如RetinaNet中有超过100K个anchor。作者提出两个疑问：</p>
+<ol>
+<li>使用更少的尺度，实现较好的性能</li>
+<li>不使用anchor也回归精确的box</li>
+</ol>
+<h2 id="Method-s"><a href="#Method-s" class="headerlink" title="Method(s)"></a>Method(s)</h2><h3 id="No-prior-Box-Detection"><a href="#No-prior-Box-Detection" class="headerlink" title="No-prior Box Detection"></a>No-prior Box Detection</h3><p>只使用hook作为预设的位置，而不预设scale和ratio。在anchor-based方法中先生成anchor然后与gt匹配后选择正负样本。没有了anchor如何选择正样本呢？本文给出的方法是设定一个position range $\Theta$。当hook $(i,j)$ 在此范围中，则此hook应回归此目标box。每个位置回归一个box$(Pr_{\Delta w_1},Pr_{\Delta w_2},Pr_{\Delta h_1},Pr_{\Delta h_2})$ 和一个置信度得分$Pr_{cls}$。<br>$$<br>r &#x3D; \sqrt{(x_2-x_1)^2+(y_2-y_1)^2}&#x2F;p<br>$$</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-2.png"></p>
+<h3 id="Residual-Dual-Scale-Detectors"><a href="#Residual-Dual-Scale-Detectors" class="headerlink" title="Residual Dual Scale Detectors"></a>Residual Dual Scale Detectors</h3><p>残差双尺度检测器，如图3所示。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-3.png"></p>
+<p>首先原来FPN中是5层特征金字塔，作者认为太多，可以减少，因此采用p3+p4组成detector1, p5+p6组成detector2的形式，这样只有两个尺度进行预测。</p>
+<h4 id="Refine-module"><a href="#Refine-module" class="headerlink" title="Refine module"></a>Refine module</h4><p>该模块是一个简单的通道和空间注意力模块[^27]，特征图得到一个注意力的加权图后与原特征图相乘。图显示其具体结构，卷积，再反卷积，得到与原特征图相同尺寸的权重图后相乘。作者说该技术能够使得检测器考虑hook周围的特征提升精度。</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-4-2.png"></p>
+<h4 id="BBox-bridge-module"><a href="#BBox-bridge-module" class="headerlink" title="BBox bridge module"></a>BBox bridge module</h4><p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-fig-4-1.png"></p>
+<p>该模块是将低级和高级检测器连接在一起，低级检测器的特征图通过两个卷积后缩小4倍后跟高级检测器特征相加。这使得高级检测器在之前的基础上训练（感觉有点像两阶段）。</p>
+<h3 id="Classification-Regression-Progressive-Strapped-Loss"><a href="#Classification-Regression-Progressive-Strapped-Loss" class="headerlink" title="Classification-Regression Progressive Strapped Loss"></a>Classification-Regression Progressive Strapped Loss</h3><p>使用IoU loss<br>$$<br>L{bbox}&#x3D;-\sum{i,j\in \Theta}ln(IoU(Pr^{i,j}{bbox},Gt^{i,j}{bbox}))<br>$$</p>
+<p>分类损失在原来的基础上增加一个IoU门函数$\sigma$<br>$$<br>L_{cls}&#x3D;-\sum_{i,j\in \Theta}CE(Pr^{i,j}<em>{cls},T^{i,j}</em>{cls})\sigma(Pr^{i,j}{bbox},Gt^{i,j}{bbox})-\sum_{i,j\notin \Theta}CE(Pr^{i,j}<em>{cls},T^{i,j}</em>{cls})<br>$$<br>当门函数大于0.5时取1，否则为0 （这里其实跟anchor-based方法中match方法一样）</p>
+<h3 id="Reducing-Redundancy-Strategy"><a href="#Reducing-Redundancy-Strategy" class="headerlink" title="Reducing Redundancy Strategy"></a>Reducing Redundancy Strategy</h3><p>一些Trick：</p>
+<ol>
+<li>detector1中p取10，detector2中p取9，且r最小为3</li>
+<li>当目标的面积&#x2F;图片面积大于0.3时，此时不统计此box的回归损失</li>
+</ol>
+<h3 id="Data-Augment-and-Sample-Balance"><a href="#Data-Augment-and-Sample-Balance" class="headerlink" title="Data Augment and Sample Balance"></a>Data Augment and Sample Balance</h3><h4 id="数据增强"><a href="#数据增强" class="headerlink" title="数据增强"></a>数据增强</h4><ul>
+<li>随机裁剪</li>
+<li>随机photo-metric distortion</li>
+<li>翻转</li>
+</ul>
+<h4 id="批次平衡"><a href="#批次平衡" class="headerlink" title="批次平衡"></a>批次平衡</h4><p>为每个类别建立一个图片列表，每次batch选择一个类别为主要类别，然后选择相关的图片进行训练，这样保证每个类别的有相同的概率被选中。</p>
+<h4 id="正负样本平衡"><a href="#正负样本平衡" class="headerlink" title="正负样本平衡"></a>正负样本平衡</h4><p>1:3的比例</p>
+<h2 id="Evaluation"><a href="#Evaluation" class="headerlink" title="Evaluation"></a>Evaluation</h2><p>实验结果如表1所示，每个模块和trick对结果的影响</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-table-1.png"></p>
+<p>在VOC数据集上的比较</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-table-3.png"></p>
+<p>在COCO数据集上的比较</p>
+<p><img src="http://zavix-image.oss-cn-shenzhen.aliyuncs.com/picgo/DuBox-table-4.png"></p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>Anchor-based目前不是唯一的选择，Dubox不预设box也能work。</p>
+<p>双尺度比多尺度启发式选择更有效，且高、低级别级联检测。</p>
+<p>一些Trick能有效减少冗余结果，提升性能。</p>
+<p>[^27]: S.Woo, J. Park, J.-Y. Lee, and I. So Kweon. Cbam: Convolutional block attention module. In The European Conference on Computer Vision (ECCV), September 2018.</p>
+]]></content>
+      <categories>
+        <category>Note 笔记</category>
+        <category>Object Detection</category>
+      </categories>
+      <tags>
+        <tag>Anchor Free</tag>
       </tags>
   </entry>
 </search>
